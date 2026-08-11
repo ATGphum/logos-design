@@ -766,14 +766,17 @@
       cursor: pointer;
       transition: background 0.15s, border-color 0.15s, color 0.15s;
     }
-    .console-root.light .suggestion-pill {
-      background: rgba(0,0,0,0.015);
-      border-color: rgba(0,0,0,0.15);
-    }
     .console-root .suggestion-pill:hover {
       background: var(--color-surface);
       border-color: var(--color-text-muted);
       color: var(--color-text-primary);
+    }
+    /* placed after :hover — the prototype's body.light rule (0-2-1) outranks
+       .suggestion-pill:hover (0-2-0), so light-mode hover keeps the light
+       background/border; the uniform prefix flattens that to source order */
+    .console-root.light .suggestion-pill {
+      background: rgba(0,0,0,0.015);
+      border-color: rgba(0,0,0,0.15);
     }
     .console-root .suggestion-pill svg { width: 17px; height: 17px; opacity: 0.85; flex-shrink: 0; }
     /* Serif brand-voice greeting */

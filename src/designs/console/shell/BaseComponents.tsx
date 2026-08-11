@@ -106,29 +106,37 @@ export interface CsBaseApi {
  */
 export function useCsBase(): { api: CsBaseApi; elements: ReactNode } {
   const [dlg, setDlg] = useState<CsDialogSpec | null>(null)
+  const [dlgOn, setDlgOn] = useState(false)
   const [drw, setDrw] = useState<CsDrawerSpec | null>(null)
   const [drwOn, setDrwOn] = useState(false)
   const [toasts, setToasts] = useState<ToastEntry[]>([])
   const toastKey = useRef(0)
   const drawerRef = useRef<HTMLElement>(null)
 
-  const dialogClose = useCallback(() => setDlg(null), [])
+  /* like the prototype's csDialogClose(): only drop "on" — the content stays
+     rendered so the populated dialog fades out over the wrap's 0.3s transition */
+  const dialogClose = useCallback(() => setDlgOn(false), [])
   const drawerClose = useCallback(() => setDrwOn(false), [])
 
-  const dialog = useCallback((o: CsDialogSpec) => setDlg(o), [])
+  const dialog = useCallback((o: CsDialogSpec) => {
+    setDlg(o)
+    setDlgOn(true)
+  }, [])
 
   const drawer = useCallback((o: CsDrawerSpec) => {
-    /* reposition with transitions OFF so the slide-in always starts from the correct side */
+    /* reposition with transitions OFF so the slide-in always starts from the correct
+       side — side/width render from state; React commits them before the rAF runs */
     const d = drawerRef.current
-    if (d) {
-      d.style.transition = "none"
-      d.classList.toggle("left", o.side === "left")
-      d.style.width = o.narrow ? "min(300px, 76vw)" : ""
-      void d.offsetWidth
-      d.style.transition = ""
-    }
+    if (d) d.style.transition = "none"
     setDrw(o)
-    requestAnimationFrame(() => setDrwOn(true))
+    requestAnimationFrame(() => {
+      const el = drawerRef.current
+      if (el) {
+        void el.offsetWidth
+        el.style.transition = ""
+      }
+      setDrwOn(true)
+    })
   }, [])
 
   const notify = useCallback((o: CsToastSpec) => {
@@ -141,21 +149,20 @@ export function useCsBase(): { api: CsBaseApi; elements: ReactNode } {
     setToasts((t) => t.filter((x) => x.key !== key))
   }, [])
 
-  const dlgOpen = dlg !== null
-  const scrimOn = dlgOpen || drwOn
+  const scrimOn = dlgOn || drwOn
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape") return
-      if (dlgOpen) dialogClose()
+      if (dlgOn) dialogClose()
       else if (drwOn) drawerClose()
     }
     document.addEventListener("keydown", onKey)
     return () => document.removeEventListener("keydown", onKey)
-  }, [dlgOpen, drwOn, dialogClose, drawerClose])
+  }, [dlgOn, drwOn, dialogClose, drawerClose])
 
   const scrimClick = () => {
-    if (dlgOpen) dialogClose()
+    if (dlgOn) dialogClose()
     else if (drwOn) drawerClose()
   }
 
@@ -166,7 +173,7 @@ export function useCsBase(): { api: CsBaseApi; elements: ReactNode } {
       {/* base components: scrim / dialog / drawer / notifications */}
       <div className={"cs-scrim" + (scrimOn ? " on" : "")} id="cs-scrim" onClick={scrimClick}></div>
       <div
-        className={"cs-dialog-wrap" + (dlgOpen ? " on" : "")}
+        className={"cs-dialog-wrap" + (dlgOn ? " on" : "")}
         id="cs-dialog-wrap"
         role="dialog"
         aria-modal="true"
@@ -192,7 +199,7 @@ export function useCsBase(): { api: CsBaseApi; elements: ReactNode } {
             {dlg?.body}
           </div>
           <div className="cs-dlg-foot" id="cs-dlg-foot">
-            {dlgOpen
+            {dlg
               ? dlgActions.map((a, i) => (
                   <button
                     key={i}
@@ -209,7 +216,12 @@ export function useCsBase(): { api: CsBaseApi; elements: ReactNode } {
           </div>
         </div>
       </div>
-      <aside className={"cs-drawer" + (drwOn ? " on" : "")} id="cs-drawer" ref={drawerRef}>
+      <aside
+        className={"cs-drawer" + (drw?.side === "left" ? " left" : "") + (drwOn ? " on" : "")}
+        id="cs-drawer"
+        ref={drawerRef}
+        style={{ width: drw?.narrow ? "min(300px, 76vw)" : undefined }}
+      >
         <div className="cs-drw-head">
           <div>
             <h3 className="cs-drw-title" id="cs-drw-title">

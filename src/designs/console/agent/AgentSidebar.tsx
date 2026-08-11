@@ -20,6 +20,7 @@ export interface AgentSidebarProps {
   onTogglePin: (id: string) => void
   onDeleteChat: (id: string) => void
   onDeleteProject: (id: string) => void
+  onDeleteSubchat: (projectId: string, key: string) => void
   onNewChat: () => void
   onOpenSearch: () => void
   onOpenConsole: () => void
@@ -141,6 +142,7 @@ export function AgentSidebar(props: AgentSidebarProps) {
     onTogglePin,
     onDeleteChat,
     onDeleteProject,
+    onDeleteSubchat,
     onNewChat,
     onOpenSearch,
     onOpenConsole,
@@ -288,7 +290,11 @@ export function AgentSidebar(props: AgentSidebarProps) {
         <div id="projects-list" className={subsOpen ? "subs-open" : undefined} ref={projectsFold.listRef}>
           {projects.map((proj) => (
             <div key={proj.id} className={"project" + (openProjects[proj.id] ? " open" : "")}>
-              <div className="section-item" data-pinned="0" onClick={() => onSelectChat(proj.id, proj.chatKey)}>
+              <div
+                className={"section-item" + (proj.id === activeChatId ? " active" : "")}
+                data-pinned="0"
+                onClick={() => onSelectChat(proj.id, proj.chatKey)}
+              >
                 <span className="item-main">
                   <span
                     className="proj-caret-btn"
@@ -322,12 +328,23 @@ export function AgentSidebar(props: AgentSidebarProps) {
               </div>
               <div className="project-sub">
                 {proj.subs.map((sub) => (
-                  <div key={sub.key} className="section-item subchat" onClick={() => onSelectChat(proj.id + sub.key, sub.key)}>
+                  <div
+                    key={sub.key}
+                    className={"section-item subchat" + (proj.id + sub.key === activeChatId ? " active" : "")}
+                    onClick={() => onSelectChat(proj.id + sub.key, sub.key)}
+                  >
                     <span className="item-main">
                       <span className="item-title">{sub.title}</span>
                     </span>
                     <span className="chat-actions">
-                      <button className="chat-action trash" onClick={(e) => e.stopPropagation()} title="Delete chat">
+                      <button
+                        className="chat-action trash"
+                        title="Delete chat"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onDeleteSubchat(proj.id, sub.key)
+                        }}
+                      >
                         <TrashIcon />
                       </button>
                     </span>

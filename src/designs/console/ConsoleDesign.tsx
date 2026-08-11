@@ -39,6 +39,8 @@ export default function ConsoleDesign() {
   const [terminalOpen, setTerminalOpen] = useState(false)
   const [watermarkOn, setWatermarkOn] = useState(true)
 
+  /* frozen at mount for the agent surface's load-time mobile DOM tweaks;
+     csEnter()/openConsole() check the live viewport per call like the prototype */
   const [isMobile] = useState(isMobileViewport)
   const timers = useRef<number[]>([])
 
@@ -49,7 +51,7 @@ export default function ConsoleDesign() {
     timers.current.push(window.setTimeout(() => setCsDisplayed(false), 650))
     timers.current.push(window.setTimeout(() => setChatReveal(false), 2600))
     /* mobile: open ready-to-type, like a messaging app */
-    if (isMobile) {
+    if (isMobileViewport()) {
       timers.current.push(
         window.setTimeout(() => {
           const ta = document.querySelector<HTMLTextAreaElement>(".input-bar textarea")
@@ -62,7 +64,7 @@ export default function ConsoleDesign() {
   /* openConsole(): bring the console back over the agent surface */
   const openConsole = () => {
     /* mobile: fold the agent's chats column away so it never lingers over the console */
-    if (isMobile) setSidebarCollapsed(true)
+    if (isMobileViewport()) setSidebarCollapsed(true)
     setCsDisplayed(true)
     requestAnimationFrame(() => setCsHidden(false))
   }

@@ -7,9 +7,9 @@
 import { useEffect, useRef, useState } from "react"
 import ensoWhite from "../assets/enso.svg"
 import ensoInk from "../assets/enso-ink.svg"
-import { initialRecentChats, MODELS, PROJECTS, type ChatItem, type Project } from "../state"
+import { initialRecentChats, isMobileViewport, MODELS, PROJECTS, type ChatItem, type Project } from "../state"
 import { AgentSidebar } from "./AgentSidebar"
-import { ConsoleIcon, GearIcon, NewChatIcon, SearchIcon } from "./icons"
+import { ConsoleIcon, GearIcon, NewChatIcon, SearchIcon, SidebarFoldIcon } from "./icons"
 import { SearchOverlay } from "./SearchOverlay"
 import { SettingsView } from "./SettingsView"
 
@@ -194,18 +194,26 @@ export function AgentView(props: AgentViewProps) {
     setModelMenuOpen(true)
   }
 
-  const togglePin = (id: string) => setChats((cs) => cs.map((c) => (c.id === id ? { ...c, pinned: !c.pinned } : c)))
+  /* togglePin(): the prototype appendChild's the row into its new list, so pinned
+     chats stack in pin order and unpinned chats drop to the end of Recent */
+  const togglePin = (id: string) =>
+    setChats((cs) => {
+      const chat = cs.find((c) => c.id === id)
+      return chat ? [...cs.filter((c) => c.id !== id), { ...chat, pinned: !chat.pinned }] : cs
+    })
   const deleteChat = (id: string) => setChats((cs) => cs.filter((c) => c.id !== id))
   const deleteProject = (id: string) => setProjects((ps) => ps.filter((p) => p.id !== id))
+  const deleteSubchat = (projectId: string, key: string) =>
+    setProjects((ps) => ps.map((p) => (p.id === projectId ? { ...p, subs: p.subs.filter((s) => s.key !== key) } : p)))
 
   const pickSearch = (title: string) => {
     setSearchOpen(false)
     setChatTitle(title)
   }
 
-  /* openSettings(): mobile folds the chats column away first */
+  /* openSettings(): mobile folds the chats column away first (live check, like the prototype) */
   const openSettings = () => {
-    if (isMobile) onCollapseSidebar()
+    if (isMobileViewport()) onCollapseSidebar()
     setSettingsOpen(true)
   }
 
@@ -342,6 +350,7 @@ export function AgentView(props: AgentViewProps) {
         onTogglePin={togglePin}
         onDeleteChat={deleteChat}
         onDeleteProject={deleteProject}
+        onDeleteSubchat={deleteSubchat}
         onNewChat={newChat}
         onOpenSearch={() => setSearchOpen(true)}
         onOpenConsole={onOpenConsole}
@@ -366,11 +375,9 @@ export function AgentView(props: AgentViewProps) {
       <main className="main">
         {/* Top bar */}
         <div className="topbar">
-          {/* mobile: chats fold-out button in the agent top bar */}
+          {/* mobile: chats fold-out button in the agent top bar (same symbol as the sidebar's own fold icon) */}
           <button className="mtop-burger" title="Chats" onClick={onToggleSidebar}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
+            <SidebarFoldIcon />
           </button>
           <div className="topbar-title">
             <span id="chat-title">{chatTitle}</span>

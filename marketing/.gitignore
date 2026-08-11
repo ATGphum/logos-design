@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+._*
+
+# build output — regenerate with: python3 build-preview.py
+preview.html
+
+# local scratch
+_to_delete/
+*.BACKUP-*.html
+llm-interface.backup.html
+
+# stray large binary that was sitting in the folder; re-add deliberately if needed
+zieSLJCe

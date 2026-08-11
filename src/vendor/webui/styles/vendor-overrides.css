@@ -1,0 +1,35 @@
+/*
+ * This file is the only long-term home for third-party rendering overrides.
+ * During migration it should stay intentionally small and focused.
+ */
+
+.hljs {
+  background: transparent;
+}
+
+.xterm {
+  font-family: var(--app-font-mono);
+}
+
+.monaco-editor,
+.monaco-editor .margin,
+.monaco-editor-background {
+  border-radius: 0;
+}
+
+.affent .monaco-editor .find-widget .monaco-inputbox,
+.affent .monaco-editor .find-widget .monaco-inputbox.synthetic-focus {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  outline: none;
+}
+
+.affent .monaco-editor .find-widget .monaco-inputbox > .ibwrapper,
+.affent .monaco-editor .find-widget .monaco-inputbox > .ibwrapper > input {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}

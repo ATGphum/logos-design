@@ -1,0 +1,98 @@
+/* Vendored webui design language — synced by `npm run sync`, do not edit vendor/ */
+@import "../vendor/webui/styles/globals.css";
+
+/* ===== Gallery shell (gal-*) — sandbox chrome, not part of any design ===== */
+.gal-root {
+  min-height: 100vh;
+  padding: 48px clamp(24px, 8vw, 120px);
+  font-family: var(--app-font-sans, sans-serif);
+}
+.gal-header h1 {
+  font-size: 28px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.gal-header p {
+  opacity: 0.65;
+  margin-bottom: 36px;
+}
+.gal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+.gal-card {
+  display: block;
+  border: 1px solid var(--border-weak-base, #3333);
+  border-radius: 12px;
+  padding: 20px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, transform 0.15s;
+}
+a.gal-card:hover {
+  border-color: var(--text-weak, #888);
+  transform: translateY(-2px);
+}
+.gal-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+.gal-title {
+  font-weight: 600;
+  font-size: 17px;
+}
+.gal-status {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  border: 1px solid currentColor;
+  border-radius: 99px;
+  padding: 2px 9px;
+}
+.gal-desc {
+  font-size: 13.5px;
+  line-height: 1.5;
+  opacity: 0.75;
+  margin-bottom: 8px;
+}
+.gal-maps {
+  font-size: 12px;
+  opacity: 0.5;
+  font-family: var(--app-font-mono, monospace);
+}
+.gal-back {
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  z-index: 9999;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid #8886;
+  background: #1118;
+  color: #eee;
+  text-decoration: none;
+  backdrop-filter: blur(6px);
+}
+.gal-loading,
+.gal-error {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+}
+.gal-error pre {
+  max-width: 80ch;
+  white-space: pre-wrap;
+  opacity: 0.7;
+}

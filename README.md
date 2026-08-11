@@ -58,3 +58,6 @@ built from product components). Open it directly in a browser; see
 
 See [AGENTS.md](AGENTS.md) — canonical guide for structure, commands and
 conventions (written for AI agents, accurate for humans too).
+
+New here? [docs/ONBOARDING.md](docs/ONBOARDING.md) has the short version
+for designers and for frontend.

@@ -1,0 +1,69 @@
+name: preview
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  build-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build self-contained preview
+        run: |
+          npm run build:single
+          mkdir -p out
+          cp dist/index.html out/logos-design-preview.html
+
+      - name: Build marketing preview
+        run: |
+          cd marketing && python3 build-preview.py
+          cp preview.html ../out/marketing-preview.html
+
+      - name: Upload previews
+        uses: actions/upload-artifact@v4
+        with:
+          name: previews
+          path: out/
+          retention-days: 30
+
+      # Repo is private on a free plan (no Pages). When it goes public,
+      # replace this comment step with a Pages deploy of dist/ per branch.
+      - name: PR comment with preview link
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const marker = '<!-- preview-build -->'
+            const body = [
+              marker,
+              '### 🖼 Preview builds ready',
+              '',
+              `Download from this run's artifacts: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}#artifacts`,
+              '',
+              '- `logos-design-preview.html` — the React design gallery, one self-contained file (open directly in a browser; deep-link a design with `#/login`, `#/console`)',
+              '- `marketing-preview.html` — the marketing page prototype',
+            ].join('\n')
+            const { data: comments } = await github.rest.issues.listComments({
+              ...context.repo, issue_number: context.issue.number, per_page: 100,
+            })
+            const prev = comments.find(c => c.body?.startsWith(marker))
+            if (prev) {
+              await github.rest.issues.updateComment({ ...context.repo, comment_id: prev.id, body })
+            } else {
+              await github.rest.issues.createComment({ ...context.repo, issue_number: context.issue.number, body })
+            }

@@ -1,0 +1,27 @@
+name-template: "design changelog v$RESOLVED_VERSION"
+tag-template: "v$RESOLVED_VERSION"
+
+categories:
+  - title: "🎨 Needs frontend adaptation"
+    labels: [needs-frontend]
+  - title: "🔄 Product drift syncs"
+    labels: [product-drift]
+  - title: "🧪 Explorations (no action needed)"
+    labels: [exploration]
+  - title: "🔧 Tooling & infra"
+    labels: [infra]
+
+change-template: "- $TITLE — #$NUMBER (@$AUTHOR)"
+category-template: "## $TITLE"
+version-resolver:
+  default: minor
+
+template: |
+  Design changes merged since the last changelog. Each entry links to its PR —
+  the PR body carries the **handoff notes** and a comment links the downloadable
+  rendered preview.
+
+  **@raychen:** the "Needs frontend adaptation" section is your queue. Link your
+  logos-webui PR back to the design PR it implements.
+
+  $CHANGES

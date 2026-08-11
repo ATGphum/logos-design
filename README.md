@@ -32,7 +32,10 @@ inlined. Send it to anyone; it opens without a server (same idea as
 2. PR into `main` using the template — the **handoff notes** section is what
    raychen reads, treat it as the deliverable. Label it:
    `needs-frontend` / `exploration` / `product-drift` / `infra`.
-3. Review happens on the CI preview build, not just the diff.
+3. Review happens on the live preview, not just the diff — CI deploys `main`
+   to https://atgphum.github.io/logos-design/ and every PR to
+   `…/pr-<n>/`, and comments the links on the PR (self-contained download
+   files are attached as run artifacts too).
 4. Merged PRs accumulate into a draft release ("design changelog"). Publish
    the release when a batch is ready for raychen.
 

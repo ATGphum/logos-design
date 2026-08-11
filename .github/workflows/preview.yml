@@ -2,15 +2,21 @@ name: preview
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, closed]
   push:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
   pull-requests: write
 
+concurrency:
+  group: preview-${{ github.event.pull_request.number || 'main' }}
+  cancel-in-progress: true
+
 jobs:
-  build-preview:
+  build-deploy:
+    if: github.event.action != 'closed'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,47 +29,87 @@ jobs:
       - name: Install
         run: npm ci
 
-      - name: Build self-contained preview
+      - name: Build site
         run: |
-          npm run build:single
-          mkdir -p out
-          cp dist/index.html out/logos-design-preview.html
-
-      - name: Build marketing preview
-        run: |
+          npm run build
           cd marketing && python3 build-preview.py
-          cp preview.html ../out/marketing-preview.html
+          cp preview.html ../dist/marketing.html
 
-      - name: Upload previews
+      - name: Build self-contained single-file preview
+        run: |
+          npm run build:single -- --outDir dist-single
+          mkdir -p out
+          cp dist-single/index.html out/logos-design-preview.html
+          cp marketing/preview.html out/marketing-preview.html
+
+      - name: Upload downloadable previews
         uses: actions/upload-artifact@v4
         with:
           name: previews
           path: out/
           retention-days: 30
 
-      # Repo is private on a free plan (no Pages). When it goes public,
-      # replace this comment step with a Pages deploy of dist/ per branch.
-      - name: PR comment with preview link
+      - name: Deploy to Pages (main → root)
+        if: github.event_name == 'push'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: dist
+          keep_files: true # don't wipe pr-<n>/ previews
+
+      - name: Deploy to Pages (PR → pr-<n>/)
+        if: github.event_name == 'pull_request'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: dist
+          destination_dir: pr-${{ github.event.pull_request.number }}
+
+      - name: PR comment with preview links
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
         with:
           script: |
+            const n = context.issue.number
+            const base = 'https://atgphum.github.io/logos-design'
             const marker = '<!-- preview-build -->'
             const body = [
               marker,
-              '### 🖼 Preview builds ready',
+              '### 🖼 Live preview',
               '',
-              `Download from this run's artifacts: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}#artifacts`,
+              `- **This PR:** ${base}/pr-${n}/ (designs at [#/login](${base}/pr-${n}/#/login), [#/console](${base}/pr-${n}/#/console) · [marketing](${base}/pr-${n}/marketing.html))`,
+              `- **main:** ${base}/`,
               '',
-              '- `logos-design-preview.html` — the React design gallery, one self-contained file (open directly in a browser; deep-link a design with `#/login`, `#/console`)',
-              '- `marketing-preview.html` — the marketing page prototype',
+              `Self-contained downloads (for offline/email sharing) are in this run's artifacts: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}#artifacts`,
+              '',
+              '_Preview URLs go live a minute or two after this comment (Pages deploy lag)._',
             ].join('\n')
             const { data: comments } = await github.rest.issues.listComments({
-              ...context.repo, issue_number: context.issue.number, per_page: 100,
+              ...context.repo, issue_number: n, per_page: 100,
             })
             const prev = comments.find(c => c.body?.startsWith(marker))
             if (prev) {
               await github.rest.issues.updateComment({ ...context.repo, comment_id: prev.id, body })
             } else {
-              await github.rest.issues.createComment({ ...context.repo, issue_number: context.issue.number, body })
+              await github.rest.issues.createComment({ ...context.repo, issue_number: n, body })
             }
+
+  cleanup-preview:
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+      - name: Remove this PR's preview dir
+        run: |
+          DIR="pr-${{ github.event.pull_request.number }}"
+          if [ -d "$DIR" ]; then
+            git config user.name github-actions
+            git config user.email github-actions@github.com
+            git rm -rq "$DIR"
+            git commit -m "Remove preview for closed PR #${{ github.event.pull_request.number }}"
+            git push
+          else
+            echo "no preview dir to clean"
+          fi

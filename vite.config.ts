@@ -7,6 +7,8 @@ import { viteSingleFile } from "vite-plugin-singlefile"
 // (JS, CSS and assets inlined). That file is the shareable preview —
 // the React equivalent of marketing/build-preview.py's preview.html.
 export default defineConfig(({ mode }) => ({
+  // relative base so builds work at the Pages root AND under /pr-<n>/ subpaths
+  base: "./",
   plugins: [
     react(),
     tailwindcss(),

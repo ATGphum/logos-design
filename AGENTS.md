@@ -14,9 +14,9 @@ AI tool (Claude Code, Codex, …). CLAUDE.md just points here.
 | `npm run dev` | Vite dev server — gallery at `/`, designs at `#/login`, `#/console` |
 | `npm run build` | typecheck + production build (must pass before any PR) |
 | `npm run build:single` | one self-contained `dist/index.html` — the shareable preview |
-| `npm run sync` | re-sync design-language atoms from both upstreams → `src/vendor/` |
+| `npm run sync` | pull everything newer from both upstreams: atoms → `src/vendor/`, then three-way-merge upstream changes into all adopted designs |
 | `npm run adopt -- <source> <path> <id>` | copy an upstream page into a design, with provenance |
-| `npm run absorb` | three-way-merge upstream changes into adopted designs (`-- <id>` for one) |
+| `npm run sync:atoms` / `npm run absorb` | the two halves of sync, if ever needed separately (`absorb -- <id>` for one design) |
 | `npm run drift` | mechanical drift report vs both upstreams (`-- --mark` to advance state) |
 
 `npm run sync -- webui|infra` syncs one source; `WEBUI_REF`/`INFRA_REF`
@@ -58,11 +58,11 @@ the synced commit:
   then you adapt it (rewire app imports to `src/vendor/` atoms or local
   stubs) until it builds. New upstream pages show up in `npm run drift` as
   adoption candidates.
-- **Absorb** (product → design, ongoing): `npm run absorb` three-way-merges
-  upstream changes into each adopted copy — your adaptations survive, his
-  new files under adopted paths are pulled in, overlapping edits leave
-  standard conflict markers to resolve. It bumps `adopted_commit` itself;
-  `npm run drift` previews what absorb would take in.
+- **Absorb** (product → design, ongoing): part of `npm run sync` — upstream
+  changes are three-way-merged into each adopted copy. Your adaptations
+  survive, new upstream files under adopted paths are pulled in, overlapping
+  edits leave standard conflict markers to resolve (sync exits 2). It bumps
+  `adopted_commit` itself; `npm run drift` previews what sync would take in.
 - **Handoff** (design → product): the drift report's Handoff diff (design
   copy vs upstream at the synced commit) is exactly the patch the frontend
   dev applies upstream. Label the PR `needs-frontend` and fill the Handoff

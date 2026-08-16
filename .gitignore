@@ -4,3 +4,4 @@ dist/
 marketing/preview.html
 .DS_Store
 *.local
+.infra-cache/

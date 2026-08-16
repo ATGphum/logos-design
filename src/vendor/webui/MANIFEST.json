@@ -1,8 +1,8 @@
 {
   "upstream": "https://github.com/angosr/logos-webui.git",
   "ref": "main",
-  "commit": "484648e9bf9f6ed0a5dd69e05913adffc4c7063f",
-  "commitDate": "2026-08-07T16:36:43+08:00",
+  "commit": "ce3d51806ecd37aeff06af9369b7b7dbf137fad7",
+  "commitDate": "2026-08-13T07:00:05Z",
   "allowlist": [
     "src/theme",
     "src/styles",

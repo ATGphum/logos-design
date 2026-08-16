@@ -25,7 +25,7 @@ import { dirname, join, relative } from "node:path"
 import { fileURLToPath } from "node:url"
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..")
-const VENDOR_EXCLUDE = /\.test\.(ts|tsx)$|-source\.css$/
+const VENDOR_EXCLUDE = /\.test\.(ts|tsx)$/
 
 // Vendor allowlists are deliberately narrow: theme systems, token/global
 // stylesheets, icon registries. Widen only with raychen's sign-off —
@@ -52,8 +52,8 @@ export const SOURCES = [
     srcRoot: "web-ui/src", // upstream UI source root — adopt/absorb paths are relative to this
     vendor: join(ROOT, "src", "vendor", "infra"),
     allowlist: [
-      // logos-ui is the scoped design-language workspace inside web-ui;
-      // *-source.css raw static dumps are excluded (see VENDOR_EXCLUDE).
+      // logos-ui is the scoped design-language workspace inside web-ui
+      // (the skin @imports its *-source.css companions, so both are vendored).
       { from: "web-ui/src/logos-ui/styles", to: "styles" },
       { from: "web-ui/src/hooks/useLogosTheme.ts", to: "hooks/useLogosTheme.ts" },
       { from: "web-ui/src/index.css", to: "index.css" },

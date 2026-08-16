@@ -1,0 +1,112 @@
+{
+  "adoptions": [
+    {
+      "source": "infra",
+      "path": "components/billing",
+      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
+      "adopted_at": "2026-08-16T15:40:49.262Z"
+    },
+    {
+      "source": "infra",
+      "path": "billingTypes.ts",
+      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
+      "adopted_at": "2026-08-16T15:43:46.676Z"
+    },
+    {
+      "source": "infra",
+      "path": "billingCatalogText.ts",
+      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
+      "adopted_at": "2026-08-16T15:43:46.843Z"
+    },
+    {
+      "source": "infra",
+      "path": "topupTypes.ts",
+      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
+      "adopted_at": "2026-08-16T15:43:47.007Z"
+    },
+    {
+      "source": "infra",
+      "path": "billingSuccessPresentation.ts",
+      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
+      "adopted_at": "2026-08-16T15:43:47.176Z"
+    },
+    {
+      "source": "infra",
+      "path": "billingPaymentMethods.ts",
+      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
+      "adopted_at": "2026-08-16T15:43:47.345Z"
+    },
+    {
+      "source": "infra",
+      "path": "billingSettingsPresentation.ts",
+      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
+      "adopted_at": "2026-08-16T15:43:47.509Z"
+    },
+    {
+      "source": "infra",
+      "path": "billingRecovery.ts",
+      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
+      "adopted_at": "2026-08-16T15:43:47.659Z"
+    },
+    {
+      "source": "infra",
+      "path": "billingPricing.ts",
+      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
+      "adopted_at": "2026-08-16T15:43:47.819Z"
+    },
+    {
+      "source": "infra",
+      "path": "billingHistoryPresentation.ts",
+      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
+      "adopted_at": "2026-08-16T15:43:47.978Z"
+    },
+    {
+      "source": "infra",
+      "path": "billingCancellation.ts",
+      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
+      "adopted_at": "2026-08-16T15:43:48.142Z"
+    },
+    {
+      "source": "infra",
+      "path": "utils/format.ts",
+      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
+      "adopted_at": "2026-08-16T15:43:48.302Z"
+    },
+    {
+      "source": "infra",
+      "path": "i18n/locale.ts",
+      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
+      "adopted_at": "2026-08-16T15:43:48.467Z"
+    },
+    {
+      "source": "infra",
+      "path": "i18n/locales/en/pages.json",
+      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
+      "adopted_at": "2026-08-16T15:43:48.632Z"
+    },
+    {
+      "source": "infra",
+      "path": "i18n/locales/en/common.json",
+      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
+      "adopted_at": "2026-08-16T15:43:48.790Z"
+    },
+    {
+      "source": "infra",
+      "path": "hooks/billing",
+      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
+      "adopted_at": "2026-08-16T15:43:49.173Z"
+    },
+    {
+      "source": "infra",
+      "path": "components/common/FilterSelect.tsx",
+      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
+      "adopted_at": "2026-08-16T15:43:49.495Z"
+    },
+    {
+      "source": "infra",
+      "path": "components/common/FilterSelect.css",
+      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
+      "adopted_at": "2026-08-16T15:43:49.659Z"
+    }
+  ]
+}

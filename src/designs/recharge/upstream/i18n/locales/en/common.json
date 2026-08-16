@@ -1,0 +1,124 @@
+{
+  "app": {
+    "name": "LOGOS",
+    "title": "LOGOS Console"
+  },
+  "locale": {
+    "label": "Language",
+    "english": "English",
+    "simplifiedChinese": "Simplified Chinese",
+    "description": "Select the interface language",
+    "appliesImmediately": "Changes apply immediately and are saved to this device and your account.",
+    "saving": "Saving language preference…",
+    "saveError": "The language changed on this device, but the account preference could not be saved.",
+    "savedLocally": "The selection is saved automatically."
+  },
+  "actions": {
+    "back": "Back",
+    "cancel": "Cancel",
+    "close": "Close",
+    "confirm": "Confirm",
+    "continue": "Continue",
+    "copy": "Copy",
+    "delete": "Delete",
+    "dismissNotification": "Dismiss notification",
+    "edit": "Edit",
+    "next": "Next",
+    "open": "Open",
+    "previous": "Previous",
+    "refresh": "Refresh",
+    "reset": "Reset",
+    "retry": "Try again",
+    "save": "Save",
+    "search": "Search",
+    "viewDetails": "View details"
+  },
+  "states": {
+    "empty": "No data",
+    "loading": "Loading…",
+    "notAvailable": "Not available",
+    "unavailable": "Unavailable",
+    "unknown": "Unknown"
+  },
+  "pagination": {
+    "label": "Pagination",
+    "next": "Next page",
+    "nextShort": "Next",
+    "previous": "Previous page",
+    "previousShort": "Previous",
+    "range": "{start}–{end} of {total}",
+    "summary": "Page {page} of {pageCount}",
+    "total": "{count, plural, one {# item} other {# items}}"
+  },
+  "search": {
+    "close": "Close search",
+    "consoleAriaLabel": "Search console pages",
+    "consoleEmpty": "No console pages match the current search.",
+    "consolePlaceholder": "Search console pages…",
+    "recent": "Recent",
+    "results": "Results"
+  },
+  "filters": {
+    "all": "All",
+    "clear": "Clear filters",
+    "noMatches": "No records match the current filters."
+  },
+  "roles": {
+    "user": "User",
+    "platform_admin": "Platform administrator",
+    "billing_admin": "Billing administrator"
+  },
+  "permissions": {
+    "billingRead": "View billing",
+    "billingWrite": "Manage billing"
+  },
+  "status": {
+    "active": "Active",
+    "archived": "Archived",
+    "blocked": "Blocked",
+    "closed": "Closed",
+    "completed": "Completed",
+    "converted": "Converted",
+    "current": "Current",
+    "default": "Default",
+    "degraded": "Degraded",
+    "deleted": "Deleted",
+    "disabled": "Disabled",
+    "draft": "Draft",
+    "enabled": "Enabled",
+    "enrolled": "Enrolled",
+    "error": "Error",
+    "expired": "Expired",
+    "failed": "Failed",
+    "fulfilled": "Fulfilled",
+    "healthy": "Healthy",
+    "inactive": "Inactive",
+    "matched": "Matched",
+    "notChecked": "Not checked",
+    "notified": "Notified",
+    "offline": "Offline",
+    "ok": "OK",
+    "pending": "Pending",
+    "provisioning": "Provisioning",
+    "published": "Published",
+    "queued": "Queued",
+    "reserved": "Reserved",
+    "ready": "Ready",
+    "revoked": "Revoked",
+    "running": "Running",
+    "stopped": "Stopped",
+    "stale": "Stale",
+    "success": "Success",
+    "suspended": "Suspended",
+    "visible": "Visible",
+    "unknown": "Unknown"
+  },
+  "validation": {
+    "invalid": "Enter a valid value.",
+    "required": "This field is required.",
+    "exampleError": "Example validation error."
+  },
+  "richText": {
+    "learnMore": "Read <link>the documentation</link> to learn more."
+  }
+}

@@ -1,0 +1,183 @@
+.console-filter-field {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.console-filter-field > .console-filter-label {
+  color: var(--cs-dim, var(--cs-faint));
+  font-size: 9.5px;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+}
+
+.console-filter-select {
+  min-width: 0;
+  position: relative;
+}
+
+.console-filter-select.is-open {
+  z-index: 500;
+}
+
+.console-filter-field > .console-filter-select > .console-filter-trigger {
+  align-items: center;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--cs-line);
+  border-radius: 0;
+  box-sizing: border-box;
+  color: var(--cs-ink);
+  cursor: pointer;
+  display: flex;
+  font: 400 13px/1.35 "Jost", sans-serif;
+  gap: 8px;
+  justify-content: space-between;
+  min-height: 40px;
+  padding: 8px 0;
+  text-align: left;
+  width: 100%;
+}
+
+.console-filter-field > .console-filter-select > .console-filter-trigger:hover,
+.console-filter-field > .console-filter-select > .console-filter-trigger:focus-visible,
+.console-filter-field > .console-filter-select.is-open > .console-filter-trigger {
+  border-bottom-color: var(--cs-ink);
+  outline: none;
+}
+
+.console-filter-field > .console-filter-select > .console-filter-trigger:disabled {
+  cursor: not-allowed;
+  opacity: .5;
+}
+
+.console-filter-field > .console-filter-select > .console-filter-trigger .console-filter-value {
+  color: var(--cs-ink);
+  display: block;
+  font: inherit;
+  letter-spacing: 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.console-filter-field > .console-filter-select > .console-filter-trigger > svg:last-child {
+  flex: 0 0 auto;
+  transition: transform .14s ease;
+}
+
+.console-filter-field > .console-filter-select.is-open > .console-filter-trigger > svg:last-child {
+  transform: rotate(180deg);
+}
+
+.console-filter-options {
+  background: var(--cs-bg);
+  border: 1px solid var(--cs-line);
+  border-radius: 0;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, .18);
+  box-sizing: border-box;
+  left: 0;
+  margin-top: 6px;
+  max-height: min(240px, calc(100vh - 160px));
+  max-width: min(360px, calc(100vw - 32px));
+  min-width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px;
+  position: absolute;
+  scroll-padding-block: 4px;
+  scrollbar-gutter: stable;
+  top: 100%;
+  width: max-content;
+  z-index: 500;
+}
+
+.console-filter-field .console-filter-options > button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  color: var(--cs-ink);
+  cursor: pointer;
+  display: flex;
+  font: 400 13px/1.35 "Jost", sans-serif;
+  gap: 12px;
+  justify-content: space-between;
+  min-height: 36px;
+  outline: none;
+  padding: 8px 10px;
+  text-align: left;
+  width: 100%;
+}
+
+.console-filter-field .console-filter-options > button:hover,
+.console-filter-field .console-filter-options > button:focus-visible,
+.console-filter-field .console-filter-options > button.is-selected {
+  background: var(--cs-hl, var(--cs-soft));
+  font-weight: 500;
+}
+
+.console-filter-field .console-filter-options > button > span {
+  color: inherit;
+  font: inherit;
+  letter-spacing: 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.logos-console-root .console-filter-field .console-filter-options > button > span {
+  color: inherit;
+  font: inherit;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.console-filter-field .console-filter-options > button > svg {
+  flex: 0 0 auto;
+  opacity: 0;
+}
+
+.console-filter-field .console-filter-options > button:disabled {
+  color: var(--cs-faint, var(--cs-dim));
+  cursor: not-allowed;
+  opacity: .55;
+}
+
+.console-filter-field .console-filter-options > button.is-selected > svg {
+  opacity: 1;
+}
+
+.logos-console-root .console-filter-field {
+  min-width: 180px;
+}
+
+.console-filter-field--form,
+.logos-console-root .console-filter-field--form {
+  min-width: 0;
+  width: 100%;
+}
+
+.console-filter-field--form > .console-filter-label {
+  color: var(--cs-faint, rgba(26, 25, 22, .78));
+  font: 500 11px/1.2 "Jost", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: .18em;
+}
+
+.logos-console-root.cs-instances-root .console-filter-field {
+  min-width: 220px;
+}
+
+@media (max-width: 760px) {
+  .logos-console-root .console-filter-field,
+  .logos-console-root.cs-instances-root .console-filter-field {
+    min-width: 0;
+    width: 100%;
+  }
+}

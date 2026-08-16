@@ -1,0 +1,70 @@
+/* DESIGN SHIM — minimal dialog chrome for the LogosDialog shim. The vendored
+   console skin styles the contents; this only provides overlay + placement. */
+.logos-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(6, 8, 10, 0.62);
+  backdrop-filter: blur(2px);
+}
+
+.logos-dialog-content {
+  width: min(480px, 100%);
+  max-height: min(85vh, 720px);
+  overflow: auto;
+  border: 1px solid rgba(127, 127, 127, 0.28);
+  border-radius: 10px;
+  background: var(--lg-surface, #101315);
+  color: inherit;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.4);
+}
+
+.logos-dialog-wide {
+  width: min(680px, 100%);
+}
+
+.logos-dialog-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px 0;
+}
+
+.logos-dialog-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.logos-dialog-subtitle {
+  margin-top: 4px;
+  font-size: 13px;
+  opacity: 0.75;
+}
+
+.logos-dialog-close {
+  display: grid;
+  place-items: center;
+  padding: 6px;
+  border: 1px solid rgba(127, 127, 127, 0.28);
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.logos-dialog-body {
+  padding: 16px 20px;
+}
+
+.logos-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 0 20px 18px;
+}

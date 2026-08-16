@@ -13,8 +13,11 @@
     "index.css",
     "styles/.gitkeep",
     "styles/agent-shell.css",
+    "styles/agent-source.css",
     "styles/console-skin.css",
+    "styles/console-source.css",
     "styles/logos-tokens.css",
+    "styles/marketing-source.css",
     "styles/marketing.css",
     "styles/overlays.css"
   ]

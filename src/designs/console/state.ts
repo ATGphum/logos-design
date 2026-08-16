@@ -78,6 +78,7 @@ export const CS_NAV: NavEntry[] = [
   { item: { label: "/ Instances", panel: "instances", title: "Instances", sub: "Deployment instances across your machines." } },
   { item: { label: "/ API Keys", panel: "api", title: "API Keys", sub: "Create, budget and monitor scoped keys." } },
   { item: { label: "/ Usage", panel: "usage", title: "Usage", sub: "Rollups, provider records and cost windows." } },
+  { item: { label: "/ Recharge", panel: "recharge", title: "Recharge", sub: "View your available USD credit and add more with a one-time payment." } },
   { group: "Operations" },
   { item: { label: "/ Users", panel: "users", title: "Users", sub: "Accounts, roles, balances and sessions." } },
   { item: { label: "/ Machines", panel: "machines", title: "Machines", sub: "Nodes, providers, pools and capacity." } },

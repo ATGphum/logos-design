@@ -13,16 +13,14 @@
  * cs-billing-root). Theme follows the sandbox toggle.
  */
 import { useTheme } from "../../vendor/webui/theme"
-import "../../vendor/infra/styles/logos-tokens.css"
-import "../../vendor/infra/styles/console-skin.css"
-import { BillingPage } from "./upstream/components/billing/BillingPage"
+import AdoptedRechargePage from "./AdoptedRechargePage"
 import "./recharge.css"
 
 export default function RechargeDesign() {
   const { resolvedMode } = useTheme()
   return (
     <div className={`rc-adopted-frame${resolvedMode === "dark" ? " rc-adopted-night" : ""}`}>
-      <BillingPage mode={resolvedMode === "dark" ? "dark" : "light"} buyerEmail="scout@logos.design" />
+      <AdoptedRechargePage night={resolvedMode === "dark"} />
     </div>
   )
 }

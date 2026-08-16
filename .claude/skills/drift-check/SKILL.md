@@ -38,8 +38,9 @@ baseline); everything else is read straight from the gitignored local caches
    If a vendored change breaks the build (`npm run build`), fix the affected
    designs in the same PR and describe the breakage in the PR body.
 
-3. **For each Absorb diff**: run `npm run absorb` (or `-- <design-id>` for
-   one design). It three-way-merges upstream changes into the adapted copies
+3. **For each Absorb diff**: `npm run sync` already absorbs (or run
+   `npm run absorb -- <design-id>` for one design).
+   It three-way-merges upstream changes into the adapted copies
    — local adaptations survive, upstream-added files under adopted paths are
    pulled in, and overlapping edits leave `<<<<<<<` conflict markers (exit
    code 2). Resolve conflicts reading the upstream intent

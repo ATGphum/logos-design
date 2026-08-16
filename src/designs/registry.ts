@@ -37,4 +37,13 @@ export const designs: DesignEntry[] = [
     maps_to: "logos-webui workbench / console surfaces",
     component: lazy(() => import("./console/ConsoleDesign")),
   },
+  {
+    id: "recharge",
+    title: "Recharge (adopted)",
+    description:
+      "The real console Recharge/balance page adopted from logos-infra web-ui, running on design fixtures — balance, quick amounts, TAO checkout, history.",
+    status: "shipped",
+    maps_to: "logos-infra web-ui/src/components/billing (BillingPage)",
+    component: lazy(() => import("./recharge/RechargeDesign")),
+  },
 ]

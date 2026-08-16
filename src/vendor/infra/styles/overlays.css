@@ -1,0 +1,7 @@
+@import './logos-tokens.css';
+
+.logos-agent-root .logos-overlay,
+.logos-marketing-root .logos-overlay,
+.logos-console-root .logos-overlay {
+  color: var(--logos-text-primary);
+}

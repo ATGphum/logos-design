@@ -1,0 +1,82 @@
+@font-face {
+  font-family: 'Anurati';
+  src: url('/logos-ui/fonts/Anurati-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Julius Sans One';
+  src: url('/logos-ui/fonts/JuliusSansOne-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+.logos-ui-theme,
+.logos-marketing-root,
+.logos-agent-root,
+.logos-console-root {
+  --logos-bg: #0e0e0e;
+  --logos-surface: #2a2825;
+  --logos-surface-hover: #2f2d2a;
+  --logos-border: #322f2c;
+  --logos-text-primary: #f4efe3;
+  --logos-text-secondary: #ded9cb;
+  --logos-text-muted: #b9b7ad;
+  --logos-accent: #d4d0c6;
+  --logos-input-bg: #353330;
+  --logos-gold: #e0b53a;
+  --logos-gold-bright: #f2cb55;
+  --logos-gold-soft: rgba(224, 181, 58, 0.16);
+  --logos-cream: #c2b9a3;
+  --logos-cream-dim: rgba(194, 185, 163, 0.5);
+  --logos-font: 'Jost', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --logos-font-mono: 'SF Mono', 'Fira Code', monospace;
+  --logos-sidebar-width: 292px;
+  --logos-radius-sm: 6px;
+  --logos-radius-md: 10px;
+  --logos-radius-lg: 14px;
+  color-scheme: dark;
+}
+
+.logos-ui-theme[data-logos-mode='light'],
+.logos-marketing-root[data-logos-mode='light'],
+.logos-agent-root[data-logos-mode='light'],
+.logos-console-root[data-logos-mode='light'] {
+  --logos-bg: #f6f4ee;
+  --logos-input-bg: #fbfaf5;
+  --logos-text-primary: #21221d;
+  --logos-text-secondary: #565750;
+  --logos-text-muted: #8a8a80;
+  --logos-border: #e0ddd0;
+  --logos-surface: #edebe1;
+  --logos-surface-hover: #e5e3d8;
+  --logos-accent: #8a8980;
+  --logos-gold: #b3923c;
+  --logos-gold-bright: #e6a700;
+  --logos-gold-soft: rgba(26, 25, 22, 0.07);
+  color-scheme: light;
+}
+
+.logos-marketing-root,
+.logos-agent-root,
+.logos-console-root {
+  box-sizing: border-box;
+  font-family: var(--logos-font);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.logos-marketing-root *,
+.logos-marketing-root *::before,
+.logos-marketing-root *::after,
+.logos-agent-root *,
+.logos-agent-root *::before,
+.logos-agent-root *::after,
+.logos-console-root *,
+.logos-console-root *::before,
+.logos-console-root *::after {
+  box-sizing: border-box;
+}

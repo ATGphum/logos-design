@@ -1,0 +1,21 @@
+{
+  "upstream": "https://github.com/angosr/logos-infra.git",
+  "ref": "main",
+  "commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
+  "commitDate": "2026-08-14T17:14:21+08:00",
+  "allowlist": [
+    "web-ui/src/logos-ui/styles",
+    "web-ui/src/hooks/useLogosTheme.ts",
+    "web-ui/src/index.css"
+  ],
+  "files": [
+    "hooks/useLogosTheme.ts",
+    "index.css",
+    "styles/.gitkeep",
+    "styles/agent-shell.css",
+    "styles/console-skin.css",
+    "styles/logos-tokens.css",
+    "styles/marketing.css",
+    "styles/overlays.css"
+  ]
+}

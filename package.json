@@ -12,7 +12,8 @@
     "sync:atoms": "node scripts/sync-from-webui.mjs",
     "adopt": "node scripts/adopt-from-upstream.mjs",
     "absorb": "node scripts/absorb-upstream.mjs",
-    "drift": "node scripts/drift-report.mjs"
+    "drift": "node scripts/drift-report.mjs",
+    "handoff": "node scripts/handoff-report.mjs"
   },
   "dependencies": {
     "@heroui/react": "^3.1.0",

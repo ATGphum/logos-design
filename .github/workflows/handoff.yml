@@ -1,0 +1,41 @@
+name: handoff
+
+# On-demand changelist vs the product source-of-truth repos (logos-webui,
+# logos-infra): what the adopted designs change, as a markdown summary and
+# ready-to-apply .patch artifacts for the frontend dev.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  changelist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Sync against current upstream main
+        run: npm run sync
+
+      - name: Generate handoff changelist
+        run: |
+          node scripts/handoff-report.mjs --patch-dir handoff-patches | tee handoff-report.md
+          cat handoff-report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload changelist + patches
+        uses: actions/upload-artifact@v4
+        with:
+          name: handoff-${{ github.run_number }}
+          path: |
+            handoff-report.md
+            handoff-patches/
+          if-no-files-found: warn

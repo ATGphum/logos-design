@@ -1,0 +1,51 @@
+diff --git a/web-ui/src/components/billing/StripeCheckout.tsx b/web-ui/src/components/billing/StripeCheckout.tsx
+index 1508bc5..da5e1a4 100644
+--- a/web-ui/src/components/billing/StripeCheckout.tsx
++++ b/web-ui/src/components/billing/StripeCheckout.tsx
+@@ -4,7 +4,7 @@ import {
+   ExpressCheckoutElement,
+   PaymentElement,
+   useCheckoutElements,
+-} from '@stripe/react-stripe-js/checkout'
++} from './stripeShim' // DESIGN SHIM (was '@stripe/react-stripe-js/checkout')
+ import {
+   loadStripe,
+   type Stripe,
+@@ -12,7 +12,7 @@ import {
+   type StripeExpressCheckoutElementAvailablePaymentMethodsChangeEvent,
+   type StripeExpressCheckoutElementConfirmEvent,
+   type StripeExpressCheckoutElementReadyEvent,
+-} from '@stripe/stripe-js'
++} from './stripeShim' // DESIGN SHIM (was '@stripe/stripe-js')
+ import type {
+   BillingStripeCheckoutSession,
+   BillingStripePendingReference,
+
+diff --git a/web-ui/src/components/billing/TaoCheckout.tsx b/web-ui/src/components/billing/TaoCheckout.tsx
+index 736a302..522be3f 100644
+--- a/web-ui/src/components/billing/TaoCheckout.tsx
++++ b/web-ui/src/components/billing/TaoCheckout.tsx
+@@ -1,7 +1,7 @@
+ import { useEffect, useId, useMemo, useRef, useState, type FormEvent } from 'react'
+ import { ArrowLeft, Check, ChevronDown, Copy, RefreshCw, ShieldCheck, WalletCards } from 'lucide-react'
+-import QRCode from 'qrcode'
+-import type { QRCodeToDataURLOptions } from 'qrcode'
++import QRCode from './qrcodeShim' // DESIGN SHIM (was 'qrcode')
++import type { QRCodeToDataURLOptions } from './qrcodeShim' // DESIGN SHIM (was 'qrcode')
+ import { api, apiErrorCode, apiErrorMessage, apiErrorStatus } from '../../api'
+ import { formatBillingCreditUSD, type BillingPublicConfig, type BillingTopupProduct } from '../../billingTypes'
+ import {
+
+diff --git a/web-ui/src/components/common/FilterSelect.tsx b/web-ui/src/components/common/FilterSelect.tsx
+index 12a1119..9538572 100644
+--- a/web-ui/src/components/common/FilterSelect.tsx
++++ b/web-ui/src/components/common/FilterSelect.tsx
+@@ -1,7 +1,7 @@
+ import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
+ import type { KeyboardEvent as ReactKeyboardEvent } from 'react'
+ import { Check, ChevronDown } from 'lucide-react'
+-import { useTranslation } from 'react-i18next'
++import { useTranslation } from './useTranslationShim' // DESIGN SHIM (was 'react-i18next')
+ import './FilterSelect.css'
+ 
+ type FilterSelectLabelKey = 'filters.all'

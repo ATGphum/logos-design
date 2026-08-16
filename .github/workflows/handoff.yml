@@ -23,18 +23,21 @@ jobs:
       - name: Install
         run: npm ci
 
-      # The product repos are private — cloning them needs UPSTREAM_REPOS_TOKEN,
-      # a fine-grained PAT with Contents:read on angosr/logos-webui and
-      # angosr/logos-infra (repo Settings → Secrets and variables → Actions).
+      # The product repos are private. If the UPSTREAM_REPOS_TOKEN secret is
+      # set (fine-grained PAT, Contents:read on angosr/logos-webui +
+      # angosr/logos-infra), clones authenticate with it; otherwise fall back
+      # to whatever credentials the environment already has — same behavior
+      # as running the scripts locally, where the machine's git credential
+      # helper signs the clones.
       - name: Authenticate upstream clones
         env:
           UPSTREAM_REPOS_TOKEN: ${{ secrets.UPSTREAM_REPOS_TOKEN }}
         run: |
-          if [ -z "$UPSTREAM_REPOS_TOKEN" ]; then
-            echo "::error::UPSTREAM_REPOS_TOKEN secret is not set — needed to read the private product repos (angosr/logos-webui, angosr/logos-infra)."
-            exit 1
+          if [ -n "$UPSTREAM_REPOS_TOKEN" ]; then
+            git config --global url."https://x-access-token:${UPSTREAM_REPOS_TOKEN}@github.com/angosr/".insteadOf "https://github.com/angosr/"
+          else
+            echo "::warning::UPSTREAM_REPOS_TOKEN is not set — falling back to ambient credentials. On GitHub-hosted runners the private product repos will not clone; run 'npm run handoff' locally instead, or add the secret."
           fi
-          git config --global url."https://x-access-token:${UPSTREAM_REPOS_TOKEN}@github.com/angosr/".insteadOf "https://github.com/angosr/"
 
       - name: Sync against current upstream main
         run: npm run sync

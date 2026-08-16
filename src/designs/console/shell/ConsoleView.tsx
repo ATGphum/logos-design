@@ -3,7 +3,7 @@
  * Ported 1:1 from marketing/llm-interface.html lines 3745-3825 (markup) and
  * 3826-4134 (script). Class names and demo copy preserved verbatim.
  */
-import { Fragment, useEffect, useMemo, useState } from "react"
+import { Fragment, Suspense, lazy, useEffect, useMemo, useState } from "react"
 import { CI_LIST, CI_SIDE_MAX, CS_NAV, type NavItem } from "../state"
 import { useCsBase } from "./BaseComponents"
 import { ComponentsPanel, csRefreshDemo } from "./panels/ComponentsPanel"
@@ -11,6 +11,10 @@ import { InstancesPanel } from "./panels/InstancesPanel"
 import { OverviewPanel } from "./panels/OverviewPanel"
 import { SettingsPanel } from "./panels/SettingsPanel"
 import { ApiPanel, MachinesPanel, PlaceholderPanel, UsagePanel, UsersPanel } from "./panels/SmallPanels"
+/* The Recharge panel is the ADOPTED product page (src/designs/recharge),
+   mounted where the product's own sidebar puts it (navigation.ts →
+   items.recharge). Lazy: it carries the billing page + infra skin. */
+const AdoptedRechargePage = lazy(() => import("../../recharge/AdoptedRechargePage"))
 import githubIco from "../assets/rl-ico-github.webp"
 import discordIco from "../assets/rl-ico-discord.webp"
 
@@ -341,7 +345,8 @@ export function ConsoleView({ displayed, hidden, night, onToggleNight, onEnterAg
           </div>
         </aside>
         <main className="cs-main">
-          <div className="cs-head">
+          {/* Adopted pages (recharge) carry their own page header — hide the console head for them. */}
+          <div className="cs-head" style={{ display: nav.panel === "recharge" ? "none" : undefined }}>
             <div className="cs-headl"></div>
             <div className="cs-headmid">
               <div>
@@ -366,6 +371,13 @@ export function ConsoleView({ displayed, hidden, night, onToggleNight, onEnterAg
           </div>
           <div className="cs-panel" id="cs-panel-usage" style={{ display: nav.panel === "usage" ? "block" : "none" }}>
             <UsagePanel />
+          </div>
+          <div className="cs-panel" id="cs-panel-recharge" style={{ display: nav.panel === "recharge" ? "block" : "none" }}>
+            {nav.panel === "recharge" ? (
+              <Suspense fallback={<div role="status">Loading recharge…</div>}>
+                <AdoptedRechargePage night={night} />
+              </Suspense>
+            ) : null}
           </div>
           <div className="cs-panel" id="cs-panel-users" style={{ display: nav.panel === "users" ? "block" : "none" }}>
             <UsersPanel />

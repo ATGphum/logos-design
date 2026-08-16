@@ -9,6 +9,7 @@ import { useCsBase } from "./BaseComponents"
 import { ComponentsPanel, csRefreshDemo } from "./panels/ComponentsPanel"
 import { InstancesPanel } from "./panels/InstancesPanel"
 import { OverviewPanel } from "./panels/OverviewPanel"
+import { RechargePanel } from "./panels/RechargePanel"
 import { SettingsPanel } from "./panels/SettingsPanel"
 import { ApiPanel, MachinesPanel, PlaceholderPanel, UsagePanel, UsersPanel } from "./panels/SmallPanels"
 import githubIco from "../assets/rl-ico-github.webp"
@@ -366,6 +367,9 @@ export function ConsoleView({ displayed, hidden, night, onToggleNight, onEnterAg
           </div>
           <div className="cs-panel" id="cs-panel-usage" style={{ display: nav.panel === "usage" ? "block" : "none" }}>
             <UsagePanel />
+          </div>
+          <div className="cs-panel" id="cs-panel-recharge" style={{ display: nav.panel === "recharge" ? "block" : "none" }}>
+            <RechargePanel onRefresh={() => csRefreshDemo(api)} />
           </div>
           <div className="cs-panel" id="cs-panel-users" style={{ display: nav.panel === "users" ? "block" : "none" }}>
             <UsersPanel />

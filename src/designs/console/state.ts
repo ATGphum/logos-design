@@ -62,6 +62,58 @@ export const API_KEYS: ApiKeyRow[] = [
   { name: "legacy", key: "sk-logos-31be-••••-0d2f", dot: "err", status: "deleted", budget: "—", tokens: "—", created: "2026-03-28", action: "Restore" },
 ]
 
+/* ===== RECHARGE =====
+   One-time credit top-up. Amounts and limits are server-authoritative in the
+   real product — these are the demo values the design is drawn against. */
+
+/** Quick-pick USD amounts offered above the free-entry field. */
+export const RECHARGE_QUICK = [20, 50, 100]
+
+/** Inclusive bounds the server accepts for a single recharge. */
+export const RECHARGE_LIMITS = { min: 1, max: 10000 }
+
+export interface RechargeMethod {
+  id: string
+  label: string
+  /** short name used inline in button + confirmation copy */
+  short: string
+  desc: string
+  available: boolean
+  /** caveat shown next to the continue button */
+  footnote: string
+}
+
+export const RECHARGE_METHODS: RechargeMethod[] = [
+  {
+    id: "tao",
+    label: "Pay with TAO",
+    short: "TAO",
+    desc: "Browser wallet or manual transfer on Bittensor Mainnet",
+    available: true,
+    footnote: "Connect a supported browser wallet or enter a sender address before the exact quote is created.",
+  },
+  {
+    id: "card",
+    label: "Card",
+    short: "Card",
+    desc: "Stripe one-time payment",
+    available: false,
+    footnote: "Card payments are not enabled for this workspace yet.",
+  },
+]
+
+/** Completed + pending recharges. Empty renders the mock's empty state. */
+export interface RechargeRow {
+  id: string
+  date: string
+  method: string
+  status: string
+  dot: "ok" | "warn" | "err"
+  amount: string
+}
+
+export const RECHARGE_HISTORY: RechargeRow[] = []
+
 /** Console sidebar navigation — item labels + csNav() arguments, verbatim. */
 export interface NavItem {
   label: string
@@ -78,6 +130,7 @@ export const CS_NAV: NavEntry[] = [
   { item: { label: "/ Instances", panel: "instances", title: "Instances", sub: "Deployment instances across your machines." } },
   { item: { label: "/ API Keys", panel: "api", title: "API Keys", sub: "Create, budget and monitor scoped keys." } },
   { item: { label: "/ Usage", panel: "usage", title: "Usage", sub: "Rollups, provider records and cost windows." } },
+  { item: { label: "/ Recharge", panel: "recharge", title: "Recharge", sub: "View your available USD credit and add more with a one-time payment." } },
   { group: "Operations" },
   { item: { label: "/ Users", panel: "users", title: "Users", sub: "Accounts, roles, balances and sessions." } },
   { item: { label: "/ Machines", panel: "machines", title: "Machines", sub: "Nodes, providers, pools and capacity." } },

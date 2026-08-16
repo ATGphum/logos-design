@@ -42,6 +42,7 @@ ConsoleDesign.tsx            root <div class="console-root [light] [sidebar-coll
 │     ├─ InstancesPanel.tsx  filters/toolbar/table (row overflow menus), lifecycle,
 │     │                      workspace, create-instance (scroll + ci-flash target)
 │     ├─ SmallPanels.tsx     API keys, Usage, Users, Machines, Placeholder
+│     ├─ RechargePanel.tsx   credit balance + one-time top-up (NEW — not a port)
 │     ├─ SettingsPanel.tsx   signup / resource / registration / grant / resources forms
 │     └─ ComponentsPanel.tsx wired demos (dialogs, toasts, drawers) + csOpsDrawer etc.
 ├─ state.ts                  CI_LIST + all demo data, verbatim from the prototype
@@ -109,6 +110,45 @@ memory/skills switches, both modals with Esc-priority), terminal drawer toggle, 
 variants evaluated once at load like the prototype (`Ask LOGOS` placeholder, pretty model
 name, straight chat-home arrow, footer new-chat bubble, suggestion labels).
 
+## Recharge panel (new — not in the prototype)
+
+`/ Recharge` is a **new** Workspace page, added after `/ Usage`. It does not exist in
+`marketing/llm-interface.html`, so nothing here is a port — it was built from design mocks
+against the console's existing visual language.
+
+Structure: balance + one-time-credit header pair → *Choose recharge amount* (quick chips,
+free-entry field, payment method, confirmation) → *Recharge history*.
+
+**Token / class mapping**
+
+| Piece | Reuses | New |
+| --- | --- | --- |
+| section headers | — | `.rc-sech` + `.rc-eyebrow` / `.rc-sect` (eyebrow above a `cs-sec-h`-scale title, right-hand badge slot) |
+| balance figure | `.ov-money.disp` (superscript `$`) | `.rc-amount` sizing only |
+| "VERIFIED" / "UNAVAILABLE" | — | `.rc-badge` — **outline** badge; `.cs-tag` is filled and read too loud next to the section titles |
+| buttons | `.cs-btn` | `:disabled` state added (the repo had none) |
+| accent | `#8fc39a` / `rgba(110,190,130,…)`, the existing console green | — |
+| everything else | `--cs-ink/-bg/-line/-soft/-faint/-hl` | — |
+
+All new CSS is `rc-`-prefixed and scoped under `#cs-panel-recharge`, so it cannot leak into
+the other panels. Night mode works through the existing `--cs-*` variables; only two
+explicit `.cs-night` rules were needed (title glow, balance glow), matching the existing
+treatment of `.cs-sec-h .l`.
+
+**Behavior implemented**
+
+Quick chips ($20/$50/$100) write the amount field; typing is sanitized to digits with at
+most two decimals and normalized to two on blur; the chip highlights only on an exact
+match. Validity is checked against `RECHARGE_LIMITS` (1–10,000) — out of range swaps the
+helper text, reddens the field border and disables Continue. Payment method is a
+radio-style group (keyboard operable, `role="radio"` + `aria-checked`); unavailable methods
+are non-selectable. The confirmation callout and the Continue label both track the selected
+method. History renders the empty state whenever `RECHARGE_HISTORY` is empty.
+
+**Deliberately not built** — the payment flow itself. Continue is inert: wallet connection,
+quote creation and Stripe are all product decisions, and the mock's own copy defers the
+final amount to the server.
+
 ## Intentionally static / adapted
 
 - `csBackHome()` / chat-home returned to the **marketing mainpage** (`#mp-view`), which is
@@ -156,3 +196,10 @@ name, straight chat-home arrow, footer new-chat bubble, suggestion labels).
    behavior, or make the ported surface responsive to live viewport changes?
 5. Julius Sans One ships as an embedded data-URI font (from the prototype). Should it be
    added to logos-webui's font pipeline instead?
+6. **Recharge**: the mock says amounts are "server-verified" and the balance is
+   "server-authoritative", but the design hardcodes the quick amounts (20/50/100) and the
+   1–10,000 range. Should those come from an endpoint instead, and is the client allowed to
+   validate at all before checkout, or only echo what the server returns?
+7. **Recharge**: `.rc-badge` is a new outline badge because filled `.cs-tag` overpowered the
+   section titles. Worth promoting to a shared variant (`.cs-tag.outline`) in webui, or keep
+   it recharge-local?

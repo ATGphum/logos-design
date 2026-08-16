@@ -666,3 +666,113 @@
       .console-root .settings-card * { max-width: 100%; overflow-wrap: break-word; }
     }
     .console-root #cs-view.cs-night { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"), radial-gradient(140% 78% at 50% 100%, rgba(255,255,255,0.030) 0%, rgba(255,255,255,0.020) 18%, rgba(255,255,255,0.012) 34%, rgba(255,255,255,0.006) 50%, rgba(255,255,255,0.002) 66%, rgba(255,255,255,0) 80%); background-repeat: repeat, no-repeat; }
+    /* ===== RECHARGE (cs-panel-recharge) — credit balance + one-time top-up ===== */
+    .console-root #cs-panel-recharge .rc-actions { display: flex; justify-content: flex-end; margin-top: 4px; }
+    .console-root #cs-panel-recharge .rc-actions .cs-btn { display: inline-flex; align-items: center; gap: 9px; }
+
+    /* shared type scale */
+    .console-root #cs-panel-recharge .rc-eyebrow { font-size: 9.5px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--cs-dim); opacity: 0.72; }
+    .console-root #cs-panel-recharge .rc-balname { font-size: 19px; font-weight: 400; color: var(--cs-ink); margin-top: 6px; }
+    .console-root #cs-panel-recharge .rc-secsub { font-size: 13px; color: var(--cs-faint); margin-top: 10px; max-width: 62ch; }
+    .console-root #cs-panel-recharge .rc-sect { font-size: 20px; font-weight: 500; letter-spacing: 0.26em; text-transform: uppercase; color: var(--cs-ink); margin-top: 8px; }
+    .console-root #cs-view.cs-night #cs-panel-recharge .rc-sect { text-shadow: 0 0 9px rgba(255,255,255,0.28); }
+
+    /* outline badge — "VERIFIED" / "UNAVAILABLE" */
+    .console-root #cs-panel-recharge .rc-badge { display: inline-block; flex: none; font-size: 10px; font-weight: 500; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--cs-faint); border: 1px solid var(--cs-line); padding: 5px 11px; border-radius: 2px; white-space: nowrap; }
+
+    /* section header with eyebrow + right slot */
+    .console-root #cs-panel-recharge .rc-sech { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px;
+      border-bottom: 1px solid var(--cs-line); padding-bottom: 20px; }
+    .console-root #cs-panel-recharge .rc-sech .rc-secsub { margin-top: 12px; }
+    .console-root #cs-panel-recharge .rc-sechr { padding-top: 4px; }
+
+    /* ---- balance / one-time credit ---- */
+    .console-root #cs-panel-recharge .rc-top { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 0 clamp(32px, 5vw, 76px); margin-top: 34px; }
+    .console-root #cs-panel-recharge .rc-col-r { border-left: 1px solid var(--cs-line); padding-left: clamp(24px, 3.4vw, 52px); }
+    .console-root #cs-panel-recharge .rc-balhead { display: flex; align-items: center; gap: 16px; }
+    .console-root #cs-panel-recharge .rc-balhead > div { flex: 1 1 auto; min-width: 0; }
+    .console-root #cs-panel-recharge .rc-balhead .rc-balname { margin-top: 3px; }
+    .console-root #cs-panel-recharge .rc-balico { flex: none; width: 40px; height: 40px; display: grid; place-items: center;
+      border: 1px solid var(--cs-line); border-radius: 50%; color: var(--cs-ink); }
+    .console-root #cs-panel-recharge .rc-amount { margin-top: 26px; font-size: clamp(46px, 6.4vw, 84px); color: var(--cs-ink); }
+    .console-root #cs-view.cs-night #cs-panel-recharge .rc-amount { text-shadow: 0 0 34px rgba(255,255,255,0.18); }
+    .console-root #cs-panel-recharge .rc-meta { display: flex; flex-wrap: wrap; gap: 12px 32px; margin-top: 26px;
+      border-top: 1px solid var(--cs-line); padding-top: 20px; }
+    .console-root #cs-panel-recharge .rc-meta span { display: inline-flex; align-items: center; gap: 9px; font-size: 10.5px;
+      letter-spacing: 0.16em; text-transform: uppercase; color: var(--cs-faint); }
+
+    /* ---- left-accented callout ---- */
+    .console-root #cs-panel-recharge .rc-callout { display: flex; align-items: flex-start; gap: 13px; margin-top: 26px;
+      border-left: 2px solid var(--cs-line); background: var(--cs-hl); padding: 15px 18px; }
+    .console-root #cs-panel-recharge .rc-callout.ok { border-left-color: #8fc39a; background: transparent; }
+    .console-root #cs-panel-recharge .rc-callout .ci { flex: none; color: var(--cs-ink); margin-top: 2px; }
+    .console-root #cs-panel-recharge .rc-callout.ok .ci { color: #8fc39a; }
+    .console-root #cs-panel-recharge .rc-callout .tt { font-size: 14.5px; font-weight: 500; color: var(--cs-ink); }
+    .console-root #cs-panel-recharge .rc-callout .dd { font-size: 12.5px; color: var(--cs-faint); margin-top: 3px; }
+
+    /* ---- amount entry ---- */
+    .console-root #cs-panel-recharge .rc-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-top: 30px; }
+    .console-root #cs-panel-recharge .rc-row-lab { margin-top: 26px; }
+    .console-root #cs-panel-recharge .rc-paylab { margin-top: 40px; }
+    .console-root #cs-panel-recharge .rc-lab { font-size: 10px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--cs-faint); }
+    .console-root #cs-panel-recharge .rc-unit { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--cs-faint); }
+    .console-root #cs-panel-recharge .rc-quick { display: flex; gap: 2px; }
+    .console-root #cs-panel-recharge .rc-chip { min-width: 74px; background: var(--cs-hl); border: 1px solid var(--cs-line); color: var(--cs-ink);
+      font-family: inherit; font-size: 13px; padding: 12px 18px; cursor: pointer; transition: all .18s; }
+    .console-root #cs-panel-recharge .rc-chip:hover { border-color: var(--cs-ink); }
+    .console-root #cs-panel-recharge .rc-chip.on { background: var(--cs-ink); border-color: var(--cs-ink); color: var(--cs-bg); }
+
+    .console-root #cs-panel-recharge .rc-input { display: flex; align-items: center; gap: 12px; margin-top: 12px;
+      background: var(--cs-hl); border: 1px solid var(--cs-line); padding: 18px 22px; transition: border-color .2s; }
+    .console-root #cs-panel-recharge .rc-input:focus-within { border-color: var(--cs-ink); }
+    .console-root #cs-panel-recharge .rc-input.bad { border-color: rgba(210,110,95,0.6); }
+    .console-root #cs-panel-recharge .rc-input .pre { font-size: 19px; color: var(--cs-faint); }
+    .console-root #cs-panel-recharge .rc-input .suf { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--cs-faint); }
+    .console-root #cs-panel-recharge .rc-input input { flex: 1 1 auto; min-width: 0; background: transparent; border: none; outline: none;
+      color: var(--cs-ink); font-family: inherit; font-weight: 300; font-size: 26px; font-variant-numeric: tabular-nums; padding: 0; }
+    .console-root #cs-panel-recharge .rc-helper { display: flex; justify-content: space-between; gap: 20px; margin-top: 9px;
+      font-size: 10.5px; letter-spacing: 0.05em; color: var(--cs-faint); }
+
+    /* ---- payment method ---- */
+    .console-root #cs-panel-recharge .rc-pay { margin-top: 12px; }
+    .console-root #cs-panel-recharge .rc-payrow { display: flex; align-items: center; gap: 15px; padding: 17px 20px;
+      border-left: 2px solid transparent; cursor: pointer; transition: background .18s, border-color .18s; }
+    .console-root #cs-panel-recharge .rc-payrow + .rc-payrow { margin-top: 2px; }
+    .console-root #cs-panel-recharge .rc-payrow:hover:not(.off) { background: var(--cs-hl); }
+    .console-root #cs-panel-recharge .rc-payrow.on { background: var(--cs-hl); border-left-color: #8fc39a; }
+    .console-root #cs-panel-recharge .rc-payrow.off { cursor: not-allowed; opacity: 0.45; }
+    .console-root #cs-panel-recharge .rc-check { flex: none; width: 19px; height: 19px; display: grid; place-items: center;
+      border: 1px solid var(--cs-line); color: var(--cs-bg); }
+    .console-root #cs-panel-recharge .rc-check.on { background: var(--cs-ink); border-color: var(--cs-ink); }
+    .console-root #cs-panel-recharge .rc-payico { flex: none; width: 32px; height: 32px; display: grid; place-items: center;
+      border: 1px solid var(--cs-line); border-radius: 50%; color: var(--cs-ink); }
+    .console-root #cs-panel-recharge .rc-paytx { flex: 1 1 auto; min-width: 0; }
+    .console-root #cs-panel-recharge .rc-paytx .tt { font-size: 15px; font-weight: 500; color: var(--cs-ink); }
+    .console-root #cs-panel-recharge .rc-paytx .dd { font-size: 12.5px; color: var(--cs-faint); margin-top: 2px; }
+
+    /* ---- continue ---- */
+    .console-root #cs-panel-recharge .rc-foot { display: flex; align-items: center; justify-content: space-between; gap: 28px; flex-wrap: wrap; margin-top: 34px; }
+    .console-root #cs-panel-recharge .rc-foot .cs-btn { padding: 15px 30px; letter-spacing: 0.2em; }
+    .console-root #cs-panel-recharge .rc-foot .cs-btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: var(--cs-line); }
+    .console-root #cs-panel-recharge .rc-footnote { flex: 1 1 300px; max-width: 46ch; text-align: right; font-size: 11.5px; color: var(--cs-faint); margin: 0; }
+
+    /* ---- history empty state ---- */
+    .console-root #cs-panel-recharge .rc-empty { display: flex; flex-direction: column; align-items: center; text-align: center;
+      gap: 4px; padding: 68px 20px; color: var(--cs-faint); border-bottom: 1px solid var(--cs-line); }
+    .console-root #cs-panel-recharge .rc-empty .tt { font-size: 15px; font-weight: 500; color: var(--cs-ink); margin-top: 12px; }
+    .console-root #cs-panel-recharge .rc-empty .dd { font-size: 13px; color: var(--cs-faint); }
+
+    @media (max-width: 900px) {
+      .console-root #cs-panel-recharge .rc-top { grid-template-columns: 1fr; gap: 44px; }
+      .console-root #cs-panel-recharge .rc-col-r { border-left: none; padding-left: 0; border-top: 1px solid var(--cs-line); padding-top: 34px; }
+      .console-root #cs-panel-recharge .rc-footnote { text-align: left; }
+    }
+    @media (max-width: 700px) {
+      .console-root #cs-panel-recharge .rc-sech { flex-direction: column; gap: 14px; }
+      .console-root #cs-panel-recharge .rc-row { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .console-root #cs-panel-recharge .rc-quick { width: 100%; }
+      .console-root #cs-panel-recharge .rc-chip { flex: 1 1 0; min-width: 0; }
+      .console-root #cs-panel-recharge .rc-input input { font-size: 21px; }
+      .console-root #cs-panel-recharge .rc-foot .cs-btn { width: 100%; }
+    }

@@ -1,4 +1,7 @@
 export { StripeCheckout, type StripeCheckoutProps } from './StripeCheckout'
+export { AddCreditsDialog } from './AddCreditsDialog'
+export { CryptoDepositPanel, type CryptoDepositStep } from './CryptoDepositPanel'
+export { RechargeMethodPicker, type RechargeMethodAvailability, type RechargeMethodState } from './RechargeMethodPicker'
 export { BillingPage } from './BillingPage'
 export { BillingHistory } from './BillingHistory'
 export { BillingSettings } from './BillingSettings'

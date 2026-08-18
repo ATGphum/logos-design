@@ -1,4 +1,5 @@
-import { CircleDollarSign, Clock3, ShieldCheck, WalletCards } from 'lucide-react'
+import type { Ref } from 'react'
+import { CircleDollarSign, Clock3, Plus, ShieldCheck, WalletCards } from 'lucide-react'
 import { formatBillingCreditUSD, type BillingRechargeAccount } from '../../billingTypes'
 import { pageText } from '../../i18n/pageText'
 
@@ -7,6 +8,9 @@ type RechargeOverviewProps = {
   available: boolean
   fresh: boolean
   loading: boolean
+  addCreditsDisabled: boolean
+  addCreditsTriggerRef: Ref<HTMLButtonElement>
+  onAddCredits: () => void
   onRetry: () => void
 }
 
@@ -26,7 +30,7 @@ function rechargeAvailability(account: BillingRechargeAccount) {
   return { kind: 'ready', label: pageText('billing.rechargeOverview.readyToRecharge'), detail: pageText('billing.rechargeOverview.serverDefinedRechargeAmountsWillBeShownHere') } as const
 }
 
-export function RechargeOverview({ account, available, fresh, loading, onRetry }: RechargeOverviewProps) {
+export function RechargeOverview({ account, available, fresh, loading, addCreditsDisabled, addCreditsTriggerRef, onAddCredits, onRetry }: RechargeOverviewProps) {
   if (!available || account === null) {
     return (
       <section className="billing-empty cs-sec" aria-busy={loading} aria-live="polite">
@@ -61,7 +65,7 @@ export function RechargeOverview({ account, available, fresh, loading, onRetry }
       <section className="recharge-entry" aria-labelledby="recharge-entry-title">
         <div>
           <small>{pageText('billing.rechargeOverview.oneTimeCredit')}</small>
-          <h2 id="recharge-entry-title">{pageText('billing.rechargeOverview.rechargeBalance')}</h2>
+          <h2 id="recharge-entry-title">{pageText('billing.rechargeOverview.addCredits')}</h2>
           <p>{pageText('billing.rechargeOverview.addUsdCreditWithAOneTimePaymentEach')}</p>
         </div>
         <div className={`recharge-entry__status recharge-entry__status--${availability.kind}`} role="status" aria-live="polite">
@@ -71,6 +75,16 @@ export function RechargeOverview({ account, available, fresh, loading, onRetry }
         {account.topup.activeOrderId !== null ? (
           <div className="recharge-entry__reference"><span>{pageText('billing.rechargeOverview.activePayment')}</span><code>{account.topup.activeOrderId}</code></div>
         ) : null}
+        <button
+          className="recharge-entry__action"
+          type="button"
+          ref={addCreditsTriggerRef}
+          disabled={addCreditsDisabled}
+          onClick={onAddCredits}
+        >
+          <Plus size={17} aria-hidden="true" />
+          {pageText('billing.rechargeOverview.addCredits')}
+        </button>
       </section>
     </div>
   )

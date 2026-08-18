@@ -1,18 +1,15 @@
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
-import { BadgeDollarSign, Check, CreditCard, Orbit, RefreshCw } from 'lucide-react'
-import { formatBillingCreditUSD, type BillingPaymentMethod, type BillingPublicConfig, type BillingTopupProduct } from '../../billingTypes'
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { ArrowLeft, BadgeDollarSign, Check, RefreshCw } from 'lucide-react'
+import { formatBillingCreditUSD, type BillingTopupProduct } from '../../billingTypes'
 import { pageText } from '../../i18n/pageText'
 import { billingTopupProductName } from '../../billingCatalogText'
-
-const TaoCheckout = lazy(async () => {
-  const module = await import('./TaoCheckout')
-  return { default: module.TaoCheckout }
-})
 
 const StripeTopupCheckout = lazy(async () => {
   const module = await import('./StripeCheckout')
   return { default: module.StripeTopupCheckout }
 })
+
+export type RechargeOptionsStep = 'stripe_amount' | 'stripe_checkout'
 
 type RechargeOptionsProps = {
   buyerEmail: string
@@ -23,15 +20,11 @@ type RechargeOptionsProps = {
   error: string
   canCreateCheckout: boolean
   activeOrderId: string | null
-  taoWalletConfig: BillingPublicConfig['tao'] | null
+  onBackToMethods: () => void
+  onStepChange: (step: RechargeOptionsStep) => void
   onRetry: () => void
   onOrderCreated?: (orderID: string) => void
-  onOrderCanceled?: (orderID: string) => void
   onTransactionSubmitted?: (orderID: string) => void
-}
-
-function productPaymentAvailable(product: BillingTopupProduct) {
-  return product.paymentMethods.tao || product.paymentMethods.stripe
 }
 
 function customAmountProduct(product: BillingTopupProduct | null, input: string) {
@@ -45,7 +38,10 @@ function customAmountProduct(product: BillingTopupProduct | null, input: string)
   if (micros < minimum || micros > maximum) {
     return {
       product: null,
-      error: pageText('dynamic.billing.amountRange', { minimum: formatBillingCreditUSD(product.customAmount.minMicros), maximum: formatBillingCreditUSD(product.customAmount.maxMicros) }),
+      error: pageText('dynamic.billing.amountRange', {
+        minimum: formatBillingCreditUSD(product.customAmount.minMicros),
+        maximum: formatBillingCreditUSD(product.customAmount.maxMicros),
+      }),
     }
   }
   const whole = micros / 1_000_000n
@@ -67,21 +63,41 @@ function quickAmountLabel(product: BillingTopupProduct) {
   return formatBillingCreditUSD(product.paidMicros).replace(/\.00$/, '')
 }
 
-export function RechargeOptions({ buyerEmail, products, available, fresh, loading, error, canCreateCheckout, activeOrderId, taoWalletConfig, onRetry, onOrderCreated, onOrderCanceled, onTransactionSubmitted }: RechargeOptionsProps) {
-  const [method, setMethod] = useState<BillingPaymentMethod | null>(null)
+export function RechargeOptions({
+  buyerEmail,
+  products,
+  available,
+  fresh,
+  loading,
+  error,
+  canCreateCheckout,
+  activeOrderId,
+  onBackToMethods,
+  onStepChange,
+  onRetry,
+  onOrderCreated,
+  onTransactionSubmitted,
+}: RechargeOptionsProps) {
   const [checkoutProduct, setCheckoutProduct] = useState<BillingTopupProduct | null>(null)
-  const [checkoutMethod, setCheckoutMethod] = useState<BillingPaymentMethod | null>(null)
   const [checkoutOrderID, setCheckoutOrderID] = useState<string | null>(null)
   const [customAmount, setCustomAmount] = useState('')
   const restoreCheckoutFocus = useRef(false)
   const amountInitialized = useRef(false)
   const checkoutButtonRef = useRef<HTMLButtonElement>(null)
-  const customTemplate = useMemo(() => products.find((product) => product.customAmount.enabled) ?? null, [products])
-  const quickProducts = useMemo(() => products.filter((product) => !product.customAmount.enabled).slice(0, 3), [products])
+  const stripeProducts = useMemo(() => products.filter((product) => product.paymentMethods.stripe), [products])
+  const customTemplate = useMemo(() => stripeProducts.find((product) => product.customAmount.enabled) ?? null, [stripeProducts])
+  const quickProducts = useMemo(() => stripeProducts.filter((product) => !product.customAmount.enabled).slice(0, 3), [stripeProducts])
   const customSelection = useMemo(() => customAmountProduct(customTemplate, customAmount), [customAmount, customTemplate])
   const selectedProduct = customSelection.product
   const selectionEnabled = fresh && canCreateCheckout && activeOrderId === null && checkoutProduct === null
   const amountEnabled = selectionEnabled && customTemplate !== null
+
+  const returnToAmount = useCallback(() => {
+    restoreCheckoutFocus.current = true
+    setCheckoutOrderID(null)
+    setCheckoutProduct(null)
+    onStepChange('stripe_amount')
+  }, [onStepChange])
 
   useEffect(() => {
     if (amountInitialized.current || customTemplate === null) return
@@ -90,18 +106,8 @@ export function RechargeOptions({ buyerEmail, products, available, fresh, loadin
   }, [customTemplate, quickProducts])
 
   useEffect(() => {
-    if (!fresh && checkoutProduct !== null && checkoutOrderID === null) setCheckoutProduct(null)
-  }, [checkoutOrderID, checkoutProduct, fresh])
-
-  useEffect(() => {
-    if (selectedProduct?.paymentMethods.tao) {
-      setMethod('tao')
-    } else if (selectedProduct?.paymentMethods.stripe) {
-      setMethod('stripe')
-    } else {
-      setMethod(null)
-    }
-  }, [selectedProduct])
+    if (!fresh && checkoutProduct !== null && checkoutOrderID === null) returnToAmount()
+  }, [checkoutOrderID, checkoutProduct, fresh, returnToAmount])
 
   useEffect(() => {
     if (checkoutProduct !== null || !restoreCheckoutFocus.current) return
@@ -109,29 +115,66 @@ export function RechargeOptions({ buyerEmail, products, available, fresh, loadin
     checkoutButtonRef.current?.focus()
   }, [checkoutProduct])
 
+  if (checkoutProduct !== null) {
+    return (
+      <section className="recharge-options recharge-options--stripe-checkout cs-sec" aria-label={pageText('billing.rechargeOptions.secureStripeCheckout')}>
+        <div className="recharge-step-toolbar">
+          {checkoutOrderID === null ? (
+            <button className="recharge-step-back" type="button" onClick={returnToAmount}>
+              <ArrowLeft size={17} aria-hidden="true" />
+              {pageText('billing.rechargeOptions.backToAmount')}
+            </button>
+          ) : <span />}
+          <span className="billing-status-pill billing-status-pill--active">{pageText('billing.rechargeOptions.stripe')}</span>
+        </div>
+        <div className="recharge-selection" role="status" aria-live="polite">
+          <Check size={19} aria-hidden="true" />
+          <span>
+            <strong>{billingTopupProductName(checkoutProduct)}</strong>
+            <small>{pageText('billing.rechargeOptions.payAmountWithStripe', { amount: formatBillingCreditUSD(checkoutProduct.paidMicros) })}</small>
+          </span>
+        </div>
+        <Suspense fallback={<div className="billing-loading" role="status">{pageText('billing.rechargeOptions.loadingSecureStripeCheckout')}</div>}>
+          <StripeTopupCheckout
+            buyerEmail={buyerEmail}
+            product={checkoutProduct}
+            onBack={checkoutOrderID === null ? returnToAmount : undefined}
+            onOrderCreated={(orderID) => {
+              setCheckoutOrderID(orderID)
+              onOrderCreated?.(orderID)
+            }}
+            onPendingVerification={(reference) => onTransactionSubmitted?.(reference.orderId)}
+          />
+        </Suspense>
+      </section>
+    )
+  }
+
   if (!available) {
     return (
       <section className="billing-empty recharge-options-empty cs-sec" aria-busy={loading} aria-live="polite">
         {loading ? <RefreshCw className="billing-spin" size={28} aria-hidden="true" /> : <BadgeDollarSign size={28} aria-hidden="true" />}
-        <h2>{loading ? pageText('billing.rechargeOptions.loadingRechargeAmounts') : pageText('billing.rechargeOptions.rechargeAmountsAreUnavailable')}</h2>
+        <h3>{loading ? pageText('billing.rechargeOptions.loadingRechargeAmounts') : pageText('billing.rechargeOptions.rechargeAmountsAreUnavailable')}</h3>
         <p>{loading ? pageText('billing.rechargeOptions.verifyingServerDefinedAmountsAndPaymentAvailability') : error || pageText('billing.rechargeOptions.noPaymentAmountCanBeSelectedUntilTheServer')}</p>
-        {!loading ? <button className="cs-btn" type="button" onClick={onRetry}>{pageText('billing.rechargeOptions.tryAgain')}</button> : null}
+        <div className="recharge-options-empty__actions">
+          <button className="cs-btn" type="button" onClick={onBackToMethods}>{pageText('billing.stripeCheckout.backToPaymentMethods')}</button>
+          {!loading ? <button className="cs-btn" type="button" onClick={onRetry}>{pageText('billing.rechargeOptions.tryAgain')}</button> : null}
+        </div>
       </section>
     )
   }
 
   return (
-    <section className="recharge-options cs-sec" aria-labelledby="recharge-options-title">
-      <div className="recharge-options__header">
-        <div>
-          <small>{pageText('billing.rechargeOptions.serverVerifiedAmounts')}</small>
-          <h2 id="recharge-options-title">{pageText('billing.rechargeOptions.chooseRechargeAmount')}</h2>
-          <p>{pageText('billing.rechargeOptions.enterAUsdAmountOrUseAQuickOption')}</p>
-        </div>
+    <section className="recharge-options cs-sec" aria-label={pageText('billing.rechargeOptions.chooseRechargeAmount')}>
+      <div className="recharge-step-toolbar">
+        <button className="recharge-step-back" type="button" onClick={onBackToMethods}>
+          <ArrowLeft size={17} aria-hidden="true" />
+          {pageText('billing.stripeCheckout.backToPaymentMethods')}
+        </button>
         <span className={`billing-status-pill billing-status-pill--${fresh ? 'active' : 'pending'}`}>{fresh ? pageText('billing.rechargeOptions.verified') : pageText('billing.rechargeOptions.lastVerified')}</span>
       </div>
 
-      {error ? <p className="billing-inline-error" role="alert">{error}  {pageText('billing.rechargeOptions.selectionIsDisabledUntilRefreshSucceeds')}</p> : null}
+      {error ? <p className="billing-inline-error" role="alert">{error} {pageText('billing.rechargeOptions.selectionIsDisabledUntilRefreshSucceeds')}</p> : null}
       <div className="recharge-amount">
         <div className="recharge-amount__quick" aria-label={pageText('billing.rechargeOptions.quickRechargeAmounts')}>
           <span>{pageText('billing.rechargeOptions.quickAmount')}</span>
@@ -168,34 +211,24 @@ export function RechargeOptions({ buyerEmail, products, available, fresh, loadin
           <em>{pageText('billing.rechargeOptions.usd')}</em>
         </div>
         <div className="recharge-amount__meta" id="recharge-amount-help">
-          <small>{selectedProduct ? `You receive ${formatBillingCreditUSD(selectedProduct.creditedMicros)} credit.` : pageText('billing.rechargeOptions.enterTheAmountYouWantToAdd')}</small>
+          <small>{selectedProduct
+            ? pageText('billing.rechargeOptions.youReceiveCredit', { amount: formatBillingCreditUSD(selectedProduct.creditedMicros) })
+            : pageText('billing.rechargeOptions.enterTheAmountYouWantToAdd')}</small>
           {customTemplate ? <small>{pageText('billing.rechargeOptions.allowed')} {formatBillingCreditUSD(customTemplate.customAmount.minMicros)}–{formatBillingCreditUSD(customTemplate.customAmount.maxMicros)}</small> : null}
         </div>
         {customTemplate === null ? <p className="billing-inline-error" role="alert">{pageText('billing.rechargeOptions.customRechargeIsNotAvailableInTheVerifiedServer')}</p> : customSelection.error ? <p className="billing-inline-error" role="alert">{customSelection.error}</p> : null}
       </div>
 
-      <fieldset className="recharge-methods" disabled={!selectionEnabled || selectedProduct === null}>
-        <legend>{pageText('billing.rechargeOptions.paymentMethod')}</legend>
-        <label className={!selectedProduct?.paymentMethods.tao ? 'is-disabled' : ''}>
-          <input className="recharge-method__native" type="radio" name="topup-payment-method" value="tao" checked={method === 'tao'} disabled={!selectedProduct?.paymentMethods.tao} onChange={() => setMethod('tao')} />
-          <span className="recharge-method__check" aria-hidden="true">{method === 'tao' ? <Check size={12} /> : null}</span>
-          <span className="recharge-method__icon" aria-hidden="true"><Orbit size={19} /></span>
-          <span><strong>{pageText('billing.rechargeOptions.payWithTao')}</strong><small>{taoWalletConfig?.walletTransferEnabled ? pageText('billing.rechargeOptions.browserWalletOrManualTransferOnBittensorMainnet') : pageText('billing.rechargeOptions.manualTransferOnBittensorMainnet')}</small></span>
-          {!selectedProduct?.paymentMethods.tao ? <em>{pageText('billing.rechargeOptions.unavailable')}</em> : null}
-        </label>
-        <label className={!selectedProduct?.paymentMethods.stripe ? 'is-disabled' : ''}>
-          <input className="recharge-method__native" type="radio" name="topup-payment-method" value="stripe" checked={method === 'stripe'} disabled={!selectedProduct?.paymentMethods.stripe} onChange={() => setMethod('stripe')} />
-          <span className="recharge-method__check" aria-hidden="true">{method === 'stripe' ? <Check size={12} /> : null}</span>
-          <span className="recharge-method__icon" aria-hidden="true"><CreditCard size={18} /></span>
-          <span><strong>{pageText('billing.rechargeOptions.card')}</strong><small>{pageText('billing.rechargeOptions.stripeOneTimePayment')}</small></span>
-          {!selectedProduct?.paymentMethods.stripe ? <em>{pageText('billing.rechargeOptions.unavailable2')}</em> : null}
-        </label>
-      </fieldset>
-
-      {selectedProduct && method ? (
+      {selectedProduct ? (
         <div className="recharge-selection" role="status" aria-live="polite">
           <Check size={19} aria-hidden="true" />
-          <span><strong>{billingTopupProductName(selectedProduct)}  {pageText('billing.rechargeOptions.selected')}</strong><small>{pageText('billing.rechargeOptions.pay')} {formatBillingCreditUSD(selectedProduct.paidMicros)} {selectedProduct.currency}  {pageText('billing.rechargeOptions.with')} {method === 'tao' ? pageText('billing.rechargeOptions.tao') : pageText('billing.rechargeOptions.card2')}  {pageText('billing.rechargeOptions.andReceive')} {formatBillingCreditUSD(selectedProduct.creditedMicros)}  {pageText('billing.rechargeOptions.credit')}</small></span>
+          <span>
+            <strong>{pageText('billing.rechargeOptions.stripeAmountSelected')}</strong>
+            <small>{pageText('billing.rechargeOptions.payAmountWithStripeAndReceiveCredit', {
+              amount: formatBillingCreditUSD(selectedProduct.paidMicros),
+              credit: formatBillingCreditUSD(selectedProduct.creditedMicros),
+            })}</small>
+          </span>
         </div>
       ) : (
         <div className="recharge-selection recharge-selection--unavailable" role="status">
@@ -204,74 +237,28 @@ export function RechargeOptions({ buyerEmail, products, available, fresh, loadin
             ? pageText('billing.rechargeOptions.finishTheActivePaymentBeforeStartingAnother')
             : customTemplate === null
               ? pageText('billing.rechargeOptions.theVerifiedCatalogDoesNotIncludeCustomRecharge')
-              : !canCreateCheckout || (selectedProduct !== null && !productPaymentAvailable(selectedProduct))
+              : !canCreateCheckout
                 ? pageText('billing.rechargeOptions.securePaymentIsTemporarilyUnavailableAvailabilityIsRefreshedAutomatically')
                 : pageText('billing.rechargeOptions.enterAValidAmountToContinue')}</small></span>
         </div>
       )}
-      {selectedProduct && method === 'tao' && checkoutProduct === null ? (
-        <div className="recharge-checkout-action">
-          <button className="cs-btn pri" ref={checkoutButtonRef} type="button" disabled={!selectionEnabled || !selectedProduct.paymentMethods.tao} onClick={() => {
-            setCheckoutMethod('tao')
+
+      <div className="recharge-checkout-action">
+        <button
+          className="cs-btn pri"
+          ref={checkoutButtonRef}
+          type="button"
+          disabled={!selectionEnabled || selectedProduct === null}
+          onClick={() => {
+            if (selectedProduct === null) return
             setCheckoutProduct(selectedProduct)
-          }}>
-            {pageText('billing.rechargeOptions.continueWithTao')}
-          </button>
-          <small>{taoWalletConfig?.walletTransferEnabled ? pageText('billing.rechargeOptions.connectASupportedBrowserWalletOrEnterASender') : pageText('billing.rechargeOptions.youWillEnterTheSendingWalletAddressBeforeAn')}</small>
-        </div>
-      ) : null}
-      {selectedProduct && method === 'stripe' && checkoutProduct === null ? (
-        <div className="recharge-checkout-action">
-          <button className="cs-btn pri" ref={checkoutButtonRef} type="button" disabled={!selectionEnabled || !selectedProduct.paymentMethods.stripe} onClick={() => {
-            setCheckoutMethod('stripe')
-            setCheckoutProduct(selectedProduct)
-          }}>
-            {pageText('billing.rechargeOptions.continueWithCard')}
-          </button>
-          <small>{pageText('billing.rechargeOptions.cardDetailsAndEligibleExpressMethodsAreCollectedSecurelyByStripe')}</small>
-        </div>
-      ) : null}
-      {checkoutProduct !== null && checkoutMethod === 'tao' ? (
-        <Suspense fallback={<div className="billing-loading" role="status">{pageText('billing.rechargeOptions.loadingSecureTaoCheckout')}</div>}>
-          <TaoCheckout
-            product={checkoutProduct}
-            walletConfig={taoWalletConfig}
-            onBack={checkoutOrderID === null ? () => {
-              restoreCheckoutFocus.current = true
-              setCheckoutProduct(null)
-            } : undefined}
-            onOrderCreated={(orderID) => {
-              setCheckoutOrderID(orderID)
-              onOrderCreated?.(orderID)
-            }}
-            onOrderCanceled={(orderID) => {
-              setCheckoutOrderID((current) => current === orderID ? null : current)
-              setCheckoutMethod(null)
-              setCheckoutProduct(null)
-              onOrderCanceled?.(orderID)
-            }}
-            onTransactionSubmitted={onTransactionSubmitted}
-          />
-        </Suspense>
-      ) : null}
-      {checkoutProduct !== null && checkoutMethod === 'stripe' ? (
-        <Suspense fallback={<div className="billing-loading" role="status">{pageText('billing.rechargeOptions.loadingSecureStripeCheckout')}</div>}>
-          <StripeTopupCheckout
-            buyerEmail={buyerEmail}
-            product={checkoutProduct}
-            onBack={checkoutOrderID === null ? () => {
-              restoreCheckoutFocus.current = true
-              setCheckoutMethod(null)
-              setCheckoutProduct(null)
-            } : undefined}
-            onOrderCreated={(orderID) => {
-              setCheckoutOrderID(orderID)
-              onOrderCreated?.(orderID)
-            }}
-            onPendingVerification={(reference) => onTransactionSubmitted?.(reference.orderId)}
-          />
-        </Suspense>
-      ) : null}
+            onStepChange('stripe_checkout')
+          }}
+        >
+          {pageText('billing.rechargeOptions.continueWithCard')}
+        </button>
+        <small>{pageText('billing.rechargeOptions.cardDetailsAndEligibleExpressMethodsAreCollectedSecurelyByStripe')}</small>
+      </div>
     </section>
   )
 }

@@ -1,8 +1,8 @@
 {
   "upstream": "https://github.com/angosr/logos-infra.git",
   "ref": "main",
-  "commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
-  "commitDate": "2026-08-14T17:14:21+08:00",
+  "commit": "94027b9aec0ac2888d2d4db24f54fcffacbd8503",
+  "commitDate": "2026-08-18T18:54:05+08:00",
   "allowlist": [
     "web-ui/src/logos-ui/styles",
     "web-ui/src/hooks/useLogosTheme.ts",

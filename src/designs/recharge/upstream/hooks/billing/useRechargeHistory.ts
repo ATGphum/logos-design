@@ -22,44 +22,64 @@ const initialState: RechargeHistoryState = {
 
 export function useRechargeHistory(enabled = true) {
   const [state, setState] = useState(initialState)
+  const mounted = useRef(false)
   const generation = useRef(0)
-  const active = useRef<AbortController | null>(null)
+  const active = useRef<Readonly<{ controller: AbortController; promise: Promise<void> }> | null>(null)
 
-  const refresh = useCallback(async () => {
-    if (!enabled) return
-    active.current?.abort()
+  const abort = useCallback(() => {
+    generation.current += 1
+    active.current?.controller.abort()
+    active.current = null
+    if (mounted.current) setState((current) => ({ ...current, loading: false, fresh: false }))
+  }, [])
+
+  const refresh = useCallback((): Promise<void> => {
+    if (!enabled) return Promise.resolve()
+    if (active.current !== null) return active.current.promise
     const controller = new AbortController()
-    active.current = controller
     const requestGeneration = generation.current + 1
     generation.current = requestGeneration
     setState((current) => ({ ...current, loading: true, fresh: false, error: '' }))
-    try {
-      const payload = await api<unknown>('/billing/history', { signal: controller.signal })
-      if (controller.signal.aborted || generation.current !== requestGeneration) return
-      const history = parseBillingTopupHistory(payload)
-      if (history === null) throw new Error(pageText('dynamic.billing.historyRefreshFailed'))
-      setState({ history, available: true, fresh: true, loading: false, error: '' })
-    } catch (error) {
-      if (controller.signal.aborted || generation.current !== requestGeneration) return
-      setState((current) => ({
-        ...current,
-        loading: false,
-        fresh: false,
-        error: apiErrorMessage(error, pageText('dynamic.billing.rechargeHistoryRefreshFailed')),
-      }))
-    }
+    const promise = (async () => {
+      try {
+        const payload = await api<unknown>('/billing/history', { signal: controller.signal })
+        if (!mounted.current || controller.signal.aborted || generation.current !== requestGeneration) return
+        const history = parseBillingTopupHistory(payload)
+        if (history === null) throw new Error(pageText('dynamic.billing.historyRefreshFailed'))
+        setState({ history, available: true, fresh: true, loading: false, error: '' })
+      } catch (error) {
+        if (!mounted.current || controller.signal.aborted || generation.current !== requestGeneration) return
+        setState((current) => ({
+          ...current,
+          loading: false,
+          fresh: false,
+          error: apiErrorMessage(error, pageText('dynamic.billing.rechargeHistoryRefreshFailed')),
+        }))
+      } finally {
+        if (active.current?.controller === controller) active.current = null
+      }
+    })()
+    active.current = Object.freeze({ controller, promise })
+    return promise
   }, [enabled])
 
   useEffect(() => {
+    mounted.current = true
     if (!enabled) {
-      active.current?.abort()
+      active.current?.controller.abort()
+      active.current = null
       generation.current += 1
       setState(initialState)
-      return
+    } else {
+      void refresh()
     }
-    void refresh()
-    return () => active.current?.abort()
+    return () => {
+      mounted.current = false
+      generation.current += 1
+      active.current?.controller.abort()
+      active.current = null
+    }
   }, [enabled, refresh])
 
-  return { ...state, refresh }
+  return { ...state, refresh, abort }
 }

@@ -38,8 +38,17 @@ the same imports.
 - Products: custom amount $1–$10,000 + quick $20/$50/$100, TAO-only
   (card shows Unavailable, like the live console)
 - History: two settled TAO recharges ($50, $20), credited, taostats links
-- All payloads satisfy the strict `billingTypes`/`topupTypes` parsers —
-  edit fixtures with the parsers open, they reject silently
+- Crypto deposit (deposit-v3): one Bittensor network with native TAO,
+  an allocated ss58 address (QR via the qrcode shim), one credited deposit
+  (2.5 TAO → $11.25) and one just-detected deposit (1.2 TAO)
+- All payloads satisfy the strict `billingTypes`/`topupTypes`/`depositTypes`
+  parsers — edit fixtures with the parsers open, they reject silently
+
+Deposit-v3 (absorbed 2026-08-17): recharge options moved behind the
+`Add credits` dialog (method picker → crypto network/asset → personal
+address); history merges recharges + crypto deposits. The upstream sidebar
+item renamed Recharge → Billing — mirrored in the console design's nav
+(the page header itself still says Recharge upstream).
 
 ## Open questions / handoff
 

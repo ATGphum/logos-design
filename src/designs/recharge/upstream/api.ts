@@ -157,11 +157,114 @@ const topupHistory = {
   actions: { canViewStripeReceipts: false },
 }
 
+// ---- crypto deposit (deposit-v3) fixtures ----------------------------------
+// One TAO network with an allocated address, one credited deposit and one
+// just-detected deposit. Shapes satisfy the exhaustive depositTypes parsers
+// (exact key sets, canonical integers, newest-first ordering, and the
+// finalizedAt<=detectedAt / creditedAt window rules).
+const depositWarningCodes = [
+  'correct_network_only',
+  'supported_native_asset_only',
+  'irreversible_transfer',
+  'settled_at_processing_rate',
+  'test_small_amount_first',
+]
+
+const depositCatalog = {
+  schemaVersion: 'crypto-deposit-catalog-v1',
+  networks: [
+    {
+      networkId: 'bittensor',
+      displayName: 'Bittensor Mainnet',
+      addressFormat: 'ss58',
+      explorerOrigin: 'https://taostats.io',
+      isDefault: true,
+      availability: { canReadAddress: true, canAllocateAddress: true, acceptingDeposits: true, reasonCode: null },
+      assets: [
+        {
+          assetId: 'bittensor_tao_v1',
+          displayName: 'TAO',
+          symbol: 'TAO',
+          decimals: 9,
+          native: true,
+          minimumAtomic: '100000000', // 0.1 TAO
+          isDefault: true,
+          estimatedArrivalMinutes: { minimum: 5, maximum: 30 },
+          warningCodes: depositWarningCodes,
+        },
+      ],
+    },
+  ],
+}
+
+const depositAddressValue = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
+
+const depositAddress = {
+  schemaVersion: 'crypto-deposit-address-v1',
+  networkId: 'bittensor',
+  addressFormat: 'ss58',
+  address: depositAddressValue,
+  addressVersion: 1,
+  status: 'active',
+  qrPayload: depositAddressValue,
+  explorerUrl: `https://taostats.io/account/${depositAddressValue}`,
+  allocatedAt: '2026-07-01T09:00:00Z',
+}
+
+const depositActivity = {
+  schemaVersion: 'crypto-deposit-activity-v1',
+  items: [
+    {
+      depositId: 'bdev_20260815002',
+      networkId: 'bittensor',
+      networkName: 'Bittensor Mainnet',
+      assetId: 'bittensor_tao_v1',
+      assetSymbol: 'TAO',
+      assetDecimals: 9,
+      status: 'detected',
+      atomicAmount: '1200000000', // 1.2 TAO
+      minimumAtomic: '100000000',
+      detectedAt: '2026-08-15T10:41:00Z',
+      finalizedAt: null,
+      updatedAt: '2026-08-15T10:41:00Z',
+      creditedMicros: null,
+      creditedAt: null,
+      ledgerEntryId: null,
+      refundEntryId: null,
+      refundedAt: null,
+      transactionUrl: 'https://taostats.io/extrinsic/0xdeadbeef01',
+    },
+    {
+      depositId: 'bdev_20260810001',
+      networkId: 'bittensor',
+      networkName: 'Bittensor Mainnet',
+      assetId: 'bittensor_tao_v1',
+      assetSymbol: 'TAO',
+      assetDecimals: 9,
+      status: 'credited',
+      atomicAmount: '2500000000', // 2.5 TAO
+      minimumAtomic: '100000000',
+      detectedAt: '2026-08-10T08:30:00Z',
+      finalizedAt: '2026-08-10T08:30:00Z',
+      updatedAt: '2026-08-10T08:36:00Z',
+      creditedMicros: '11250000', // $11.25
+      creditedAt: '2026-08-10T08:35:00Z',
+      ledgerEntryId: 'tok_dep_20260810001',
+      refundEntryId: null,
+      refundedAt: null,
+      transactionUrl: 'https://taostats.io/extrinsic/0xdeadbeef02',
+    },
+  ],
+}
+
 const fixtures: Record<string, unknown> = {
   '/billing/me': rechargeAccount,
   '/billing/config': publicConfig,
   '/billing/topup-products': topupProducts,
   '/billing/history': topupHistory,
+  '/billing/deposits/catalog': depositCatalog,
+  '/billing/deposits/bittensor/address': depositAddress,
+  '/billing/deposits/activity': depositActivity,
 }
 
 // ---- api --------------------------------------------------------------------

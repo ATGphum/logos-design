@@ -1,0 +1,379 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { ArrowLeft, Check, Copy, ExternalLink, Globe2, Landmark, QrCode, RefreshCw, ShieldAlert } from 'lucide-react'
+import QRCode from './qrcodeShim' // DESIGN SHIM (was 'qrcode')
+import type { QRCodeToDataURLOptions } from './qrcodeShim' // DESIGN SHIM (was 'qrcode')
+import {
+  formatAtomicAssetAmount,
+  type CryptoDepositAddress,
+  type CryptoDepositAsset,
+  type CryptoDepositFixture,
+  type CryptoDepositNetwork,
+  type CryptoDepositWarningCode,
+} from '../../depositTypes'
+import { pageText } from '../../i18n/pageText'
+
+export type CryptoDepositStep = 'crypto_selector' | 'crypto_address'
+
+type CryptoDepositPanelProps = {
+  fixture: CryptoDepositFixture
+  step: CryptoDepositStep
+  onBackToMethods: () => void
+  onStepChange: (step: CryptoDepositStep) => void
+}
+
+const qrOptions = Object.freeze({
+  errorCorrectionLevel: 'M',
+  margin: 2,
+  width: 196,
+  color: Object.freeze({ dark: '#141310ff', light: '#ffffffff' }),
+} as const satisfies QRCodeToDataURLOptions)
+
+function warningText(code: CryptoDepositWarningCode) {
+  switch (code) {
+    case 'correct_network_only':
+      return pageText('billing.cryptoDepositPanel.warningCorrectNetworkOnly')
+    case 'supported_native_asset_only':
+      return pageText('billing.cryptoDepositPanel.warningSupportedNativeAssetOnly')
+    case 'irreversible_transfer':
+      return pageText('billing.cryptoDepositPanel.warningIrreversibleTransfer')
+    case 'settled_at_processing_rate':
+      return pageText('billing.cryptoDepositPanel.warningSettledAtProcessingRate')
+    case 'test_small_amount_first':
+      return pageText('billing.cryptoDepositPanel.warningTestSmallAmountFirst')
+  }
+}
+
+function addressMatchesFixture(address: CryptoDepositAddress, network: CryptoDepositNetwork) {
+  if (address.networkId !== network.networkId || address.addressFormat !== network.addressFormat || address.status !== 'active') return false
+  if (address.address.trim() !== address.address || address.address.length < 1 || address.address.length > 128 || address.qrPayload !== address.address) return false
+  try {
+    const explorer = new URL(address.explorerUrl)
+    return explorer.protocol === 'https:' && explorer.username === '' && explorer.password === '' && explorer.origin === network.explorerOrigin
+  } catch {
+    return false
+  }
+}
+
+function availabilityText(network: CryptoDepositNetwork) {
+  switch (network.availability.reasonCode) {
+    case 'policy_restricted':
+      return pageText('billing.cryptoDepositPanel.availabilityPolicyRestricted')
+    case 'allocation_unavailable':
+      return pageText('billing.cryptoDepositPanel.availabilityAllocationUnavailable')
+    case 'processing_degraded':
+      return pageText('billing.cryptoDepositPanel.availabilityProcessingDegraded')
+    case 'maintenance':
+      return pageText('billing.cryptoDepositPanel.availabilityMaintenance')
+    case null:
+      return pageText('billing.cryptoDepositPanel.availabilityReady')
+  }
+}
+
+function defaultSelection(fixture: CryptoDepositFixture) {
+  const network = fixture.catalog.networks.find((item) => item.isDefault) ?? fixture.catalog.networks[0] ?? null
+  const asset = network?.assets.find((item) => item.isDefault) ?? network?.assets[0] ?? null
+  return { network, asset }
+}
+
+export function CryptoDepositPanel({ fixture, step, onBackToMethods, onStepChange }: CryptoDepositPanelProps) {
+  const initial = useMemo(() => defaultSelection(fixture), [fixture])
+  const [selectedNetworkID, setSelectedNetworkID] = useState(initial.network?.networkId ?? '')
+  const [selectedAssetID, setSelectedAssetID] = useState(initial.asset?.assetId ?? '')
+  const [addresses, setAddresses] = useState<Readonly<Record<string, CryptoDepositAddress>>>({})
+  const [addressLoading, setAddressLoading] = useState(false)
+  const [addressError, setAddressError] = useState('')
+  const [qrDataURL, setQrDataURL] = useState('')
+  const [qrError, setQrError] = useState(false)
+  const [copyFeedback, setCopyFeedback] = useState('')
+  const requestGeneration = useRef(0)
+  const requestController = useRef<AbortController | null>(null)
+  const copyTimer = useRef<number | null>(null)
+
+  const selectedNetwork = fixture.catalog.networks.find((network) => network.networkId === selectedNetworkID) ?? initial.network
+  const selectedAsset = selectedNetwork?.assets.find((asset) => asset.assetId === selectedAssetID)
+    ?? selectedNetwork?.assets.find((asset) => asset.isDefault)
+    ?? selectedNetwork?.assets[0]
+    ?? null
+  const address = selectedNetwork ? addresses[selectedNetwork.networkId] ?? null : null
+
+  useEffect(() => () => {
+    requestController.current?.abort()
+    if (copyTimer.current !== null) window.clearTimeout(copyTimer.current)
+  }, [])
+
+  useEffect(() => {
+    if (address === null) {
+      setQrDataURL('')
+      setQrError(false)
+      return
+    }
+    let active = true
+    setQrDataURL('')
+    setQrError(false)
+    void QRCode.toDataURL(address.qrPayload, qrOptions).then((value) => {
+      if (active) setQrDataURL(value)
+    }).catch(() => {
+      if (active) setQrError(true)
+    })
+    return () => { active = false }
+  }, [address])
+
+  const selectNetwork = (network: CryptoDepositNetwork) => {
+    requestController.current?.abort()
+    requestGeneration.current += 1
+    setSelectedNetworkID(network.networkId)
+    setSelectedAssetID((network.assets.find((asset) => asset.isDefault) ?? network.assets[0])?.assetId ?? '')
+    setAddressError('')
+    setCopyFeedback('')
+  }
+
+  const selectAsset = (asset: CryptoDepositAsset) => {
+    setSelectedAssetID(asset.assetId)
+    setCopyFeedback('')
+  }
+
+  const loadSelectedAddress = useCallback(async () => {
+    if (selectedNetwork === null || selectedAsset === null || !selectedNetwork.availability.canReadAddress) return
+    onStepChange('crypto_address')
+    if (addresses[selectedNetwork.networkId]) {
+      setAddressError('')
+      return
+    }
+    requestController.current?.abort()
+    const controller = new AbortController()
+    const generation = requestGeneration.current + 1
+    requestGeneration.current = generation
+    requestController.current = controller
+    setAddressLoading(true)
+    setAddressError('')
+    try {
+      const nextAddress = await fixture.loadAddress(selectedNetwork.networkId, { signal: controller.signal })
+      if (controller.signal.aborted || requestGeneration.current !== generation) return
+      if (!addressMatchesFixture(nextAddress, selectedNetwork)) throw new Error('fixture_address_mismatch')
+      setAddresses((current) => Object.freeze({ ...current, [selectedNetwork.networkId]: nextAddress }))
+    } catch {
+      if (!controller.signal.aborted && requestGeneration.current === generation) {
+        setAddressError(pageText('billing.cryptoDepositPanel.addressUnavailable'))
+      }
+    } finally {
+      if (requestGeneration.current === generation) {
+        setAddressLoading(false)
+        requestController.current = null
+      }
+    }
+  }, [addresses, fixture, onStepChange, selectedAsset, selectedNetwork])
+
+  const copyAddress = async () => {
+    if (address === null || selectedNetwork?.availability.acceptingDeposits !== true) return
+    if (copyTimer.current !== null) window.clearTimeout(copyTimer.current)
+    try {
+      await navigator.clipboard.writeText(address.address)
+      setCopyFeedback(pageText('billing.cryptoDepositPanel.addressCopied'))
+    } catch {
+      setCopyFeedback(pageText('billing.cryptoDepositPanel.copyFailed'))
+    }
+    copyTimer.current = window.setTimeout(() => setCopyFeedback(''), 4_000)
+  }
+
+  const returnToSelector = () => {
+    requestController.current?.abort()
+    requestController.current = null
+    requestGeneration.current += 1
+    setAddressLoading(false)
+    setAddressError('')
+    setCopyFeedback('')
+    onStepChange('crypto_selector')
+  }
+
+  if (selectedNetwork === null || selectedAsset === null) {
+    return (
+      <section className="crypto-deposit-panel crypto-deposit-panel--empty" role="alert">
+        <Landmark size={28} aria-hidden="true" />
+        <strong>{pageText('billing.cryptoDepositPanel.catalogUnavailable')}</strong>
+        <button className="recharge-step-back" type="button" onClick={onBackToMethods}>
+          <ArrowLeft size={17} aria-hidden="true" />
+          {pageText('billing.stripeCheckout.backToPaymentMethods')}
+        </button>
+      </section>
+    )
+  }
+
+  if (step === 'crypto_selector') {
+    return (
+      <section className="crypto-deposit-panel crypto-deposit-selector" aria-label={pageText('billing.cryptoDepositPanel.cryptoNetworkAndAsset')}>
+        <div className="recharge-step-toolbar">
+          <button className="recharge-step-back" type="button" onClick={onBackToMethods}>
+            <ArrowLeft size={17} aria-hidden="true" />
+            {pageText('billing.stripeCheckout.backToPaymentMethods')}
+          </button>
+          <span className="billing-status-pill billing-status-pill--active">{pageText('billing.cryptoDepositPanel.personalAddress')}</span>
+        </div>
+
+        <fieldset className="crypto-deposit-choice">
+          <legend>{pageText('billing.cryptoDepositPanel.network')}</legend>
+          <div className="crypto-deposit-choice__grid">
+            {fixture.catalog.networks.map((network) => (
+              <label key={network.networkId} className={network.networkId === selectedNetwork.networkId ? 'is-selected' : ''}>
+                <input
+                  type="radio"
+                  name="crypto-deposit-network"
+                  value={network.networkId}
+                  checked={network.networkId === selectedNetwork.networkId}
+                  onChange={() => selectNetwork(network)}
+                />
+                <Globe2 size={18} aria-hidden="true" />
+                <span><strong>{network.displayName}</strong><small>{availabilityText(network)}</small></span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <fieldset className="crypto-deposit-choice">
+          <legend>{pageText('billing.cryptoDepositPanel.asset')}</legend>
+          <div className="crypto-deposit-choice__grid">
+            {selectedNetwork.assets.map((asset) => (
+              <label key={asset.assetId} className={asset.assetId === selectedAsset.assetId ? 'is-selected' : ''}>
+                <input
+                  type="radio"
+                  name="crypto-deposit-asset"
+                  value={asset.assetId}
+                  checked={asset.assetId === selectedAsset.assetId}
+                  onChange={() => selectAsset(asset)}
+                />
+                <Landmark size={18} aria-hidden="true" />
+                <span><strong>{asset.displayName}</strong><small>{pageText('billing.cryptoDepositPanel.nativeAsset', { symbol: asset.symbol })}</small></span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        {selectedNetwork.availability.reasonCode ? (
+          <div className="crypto-deposit-availability" role="status">
+            <ShieldAlert size={18} aria-hidden="true" />
+            <span><strong>{availabilityText(selectedNetwork)}</strong><small>{pageText('billing.cryptoDepositPanel.addressRemainsIndependent')}</small></span>
+          </div>
+        ) : null}
+
+        <div className="crypto-deposit-action">
+          <button
+            className="cs-btn pri"
+            type="button"
+            disabled={!selectedNetwork.availability.canReadAddress}
+            onClick={() => void loadSelectedAddress()}
+          >
+            {pageText('billing.cryptoDepositPanel.showMyDepositAddress')}
+          </button>
+          <small>{pageText('billing.cryptoDepositPanel.noAmountOrWalletRequired')}</small>
+        </div>
+      </section>
+    )
+  }
+
+  if (addressLoading) {
+    return (
+      <section className="crypto-deposit-panel crypto-deposit-loading" role="status" aria-busy="true">
+        <button className="recharge-step-back" type="button" onClick={returnToSelector}>
+          <ArrowLeft size={17} aria-hidden="true" />
+          {pageText('billing.cryptoDepositPanel.backToNetworkAndAsset')}
+        </button>
+        <RefreshCw className="billing-spin" size={28} aria-hidden="true" />
+        <strong>{pageText('billing.cryptoDepositPanel.loadingPersonalAddress')}</strong>
+        <small>{pageText('billing.cryptoDepositPanel.addressBelongsToNetwork')}</small>
+      </section>
+    )
+  }
+
+  if (address === null) {
+    return (
+      <section className="crypto-deposit-panel crypto-deposit-panel--empty" role="alert">
+        <ShieldAlert size={28} aria-hidden="true" />
+        <strong>{addressError || pageText('billing.cryptoDepositPanel.addressUnavailable')}</strong>
+        <p>{pageText('billing.cryptoDepositPanel.noAddressWasReplacedOrCanceled')}</p>
+        <div className="crypto-deposit-empty-actions">
+          <button className="recharge-step-back" type="button" onClick={returnToSelector}>
+            <ArrowLeft size={17} aria-hidden="true" />
+            {pageText('billing.cryptoDepositPanel.backToNetworkAndAsset')}
+          </button>
+          <button className="cs-btn" type="button" onClick={() => void loadSelectedAddress()}>{pageText('billing.cryptoDepositPanel.retryAddress')}</button>
+        </div>
+      </section>
+    )
+  }
+
+  const acceptingDeposits = selectedNetwork.availability.acceptingDeposits
+  const minimum = formatAtomicAssetAmount(selectedAsset.minimumAtomic, selectedAsset.decimals)
+
+  return (
+    <section className="crypto-deposit-panel crypto-deposit-address" aria-label={pageText('billing.cryptoDepositPanel.yourCryptoDepositAddress')}>
+      <div className="recharge-step-toolbar">
+        <button className="recharge-step-back" type="button" onClick={returnToSelector}>
+          <ArrowLeft size={17} aria-hidden="true" />
+          {pageText('billing.cryptoDepositPanel.backToNetworkAndAsset')}
+        </button>
+        <span className={`billing-status-pill billing-status-pill--${acceptingDeposits ? 'active' : 'pending'}`}>
+          {acceptingDeposits ? pageText('billing.cryptoDepositPanel.readyToReceive') : pageText('billing.cryptoDepositPanel.doNotTransfer')}
+        </span>
+      </div>
+
+      {!acceptingDeposits ? (
+        <div className="crypto-deposit-stop" role="alert">
+          <ShieldAlert size={20} aria-hidden="true" />
+          <span><strong>{pageText('billing.cryptoDepositPanel.doNotTransferNow')}</strong><small>{availabilityText(selectedNetwork)} {pageText('billing.cryptoDepositPanel.addressRemainsVisible')}</small></span>
+        </div>
+      ) : selectedNetwork.availability.reasonCode === 'processing_degraded' ? (
+        <div className="crypto-deposit-availability" role="status">
+          <ShieldAlert size={18} aria-hidden="true" />
+          <span><strong>{availabilityText(selectedNetwork)}</strong><small>{pageText('billing.cryptoDepositPanel.processingMayTakeLonger')}</small></span>
+        </div>
+      ) : null}
+
+      <div className="crypto-deposit-address__identity">
+        <span><small>{pageText('billing.cryptoDepositPanel.network')}</small><strong>{selectedNetwork.displayName}</strong></span>
+        <span><small>{pageText('billing.cryptoDepositPanel.asset')}</small><strong>{selectedAsset.displayName}</strong></span>
+      </div>
+
+      <div className="crypto-deposit-address__main">
+        <div className="crypto-deposit-qr">
+          {qrDataURL ? (
+            <img src={qrDataURL} width="196" height="196" alt={pageText('billing.cryptoDepositPanel.qrCodeAlt', { network: selectedNetwork.displayName, asset: selectedAsset.displayName })} />
+          ) : qrError ? (
+            <div className="crypto-deposit-qr__fallback"><QrCode size={28} aria-hidden="true" /><span>{pageText('billing.cryptoDepositPanel.qrUnavailable')}</span></div>
+          ) : (
+            <div className="crypto-deposit-qr__fallback" role="status"><RefreshCw className="billing-spin" size={28} aria-hidden="true" /><span>{pageText('billing.cryptoDepositPanel.generatingQr')}</span></div>
+          )}
+        </div>
+        <div className="crypto-deposit-address__copy">
+          <small>{pageText('billing.cryptoDepositPanel.yourPersonalAddress')}</small>
+          <code>{address.address}</code>
+          <div>
+            <button type="button" disabled={!acceptingDeposits} onClick={() => void copyAddress()}>
+              {copyFeedback === pageText('billing.cryptoDepositPanel.addressCopied') ? <Check size={17} aria-hidden="true" /> : <Copy size={17} aria-hidden="true" />}
+              {pageText('billing.cryptoDepositPanel.copyAddress')}
+            </button>
+            <a
+              href={address.explorerUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={pageText('billing.cryptoDepositPanel.viewOnExplorerAccessible', { network: selectedNetwork.displayName, asset: selectedAsset.displayName })}
+            >
+              <ExternalLink size={17} aria-hidden="true" />
+              {pageText('billing.cryptoDepositPanel.viewOnExplorer')}
+            </a>
+          </div>
+          <output className="crypto-deposit-copy-status" aria-live="polite">{copyFeedback}</output>
+        </div>
+      </div>
+
+      <dl className="crypto-deposit-facts">
+        <div><dt>{pageText('billing.cryptoDepositPanel.minimumDeposit')}</dt><dd>{minimum} {selectedAsset.symbol}</dd></div>
+        <div><dt>{pageText('billing.cryptoDepositPanel.estimatedArrival')}</dt><dd>{pageText('billing.cryptoDepositPanel.arrivalMinutes', { minimum: selectedAsset.estimatedArrivalMinutes.minimum, maximum: selectedAsset.estimatedArrivalMinutes.maximum })}</dd></div>
+        <div><dt>{pageText('billing.cryptoDepositPanel.creditValue')}</dt><dd>{pageText('billing.cryptoDepositPanel.settlementRate')}</dd></div>
+      </dl>
+
+      <div className="crypto-deposit-risks">
+        <div><ShieldAlert size={19} aria-hidden="true" /><strong>{pageText('billing.cryptoDepositPanel.beforeYouTransfer')}</strong></div>
+        <ul>{selectedAsset.warningCodes.map((code) => <li key={code}>{warningText(code)}</li>)}</ul>
+      </div>
+    </section>
+  )
+}

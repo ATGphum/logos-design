@@ -1,26 +1,26 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { api, apiErrorMessage } from '../../api'
-import { parseBillingRechargeAccount, type BillingRechargeAccount } from '../../billingTypes'
+import { parseCryptoDepositCatalog, type CryptoDepositCatalog } from '../../depositTypes'
 import { pageText } from '../../i18n/pageText'
 
-type RechargeAccountState = {
-  account: BillingRechargeAccount | null
+type CryptoDepositCatalogState = Readonly<{
+  catalog: CryptoDepositCatalog | null
   available: boolean
   fresh: boolean
   loading: boolean
   error: string
-}
+}>
 
-const initialState: RechargeAccountState = {
-  account: null,
+const initialState: CryptoDepositCatalogState = Object.freeze({
+  catalog: null,
   available: false,
   fresh: false,
-  loading: true,
+  loading: false,
   error: '',
-}
+})
 
-export function useRechargeAccount() {
-  const [state, setState] = useState(initialState)
+export function useCryptoDepositCatalog(enabled = true) {
+  const [state, setState] = useState<CryptoDepositCatalogState>(() => ({ ...initialState, loading: enabled }))
   const mounted = useRef(false)
   const generation = useRef(0)
   const active = useRef<Readonly<{ controller: AbortController; promise: Promise<void> }> | null>(null)
@@ -33,6 +33,7 @@ export function useRechargeAccount() {
   }, [])
 
   const refresh = useCallback((): Promise<void> => {
+    if (!enabled) return Promise.resolve()
     if (active.current !== null) return active.current.promise
     const controller = new AbortController()
     const requestGeneration = generation.current + 1
@@ -40,18 +41,19 @@ export function useRechargeAccount() {
     setState((current) => ({ ...current, loading: true, fresh: false, error: '' }))
     const promise = (async () => {
       try {
-        const payload = await api<unknown>('/billing/me', { signal: controller.signal })
+        const payload = await api<unknown>('/billing/deposits/catalog', { signal: controller.signal })
+        const catalog = parseCryptoDepositCatalog(payload)
+        if (catalog === null) throw new Error(pageText('billing.cryptoDepositPanel.catalogUnavailable'))
         if (!mounted.current || controller.signal.aborted || generation.current !== requestGeneration) return
-        const account = parseBillingRechargeAccount(payload)
-        if (account === null) throw new Error(pageText('dynamic.billing.accountRefreshFailed'))
-        setState({ account, available: true, fresh: true, loading: false, error: '' })
+        setState({ catalog, available: true, fresh: true, loading: false, error: '' })
       } catch (error) {
         if (!mounted.current || controller.signal.aborted || generation.current !== requestGeneration) return
         setState((current) => ({
           ...current,
-          loading: false,
+          available: current.catalog !== null,
           fresh: false,
-          error: apiErrorMessage(error, pageText('dynamic.billing.currentCreditRefreshFailed')),
+          loading: false,
+          error: apiErrorMessage(error, pageText('billing.cryptoDepositPanel.catalogUnavailable')),
         }))
       } finally {
         if (active.current?.controller === controller) active.current = null
@@ -59,18 +61,19 @@ export function useRechargeAccount() {
     })()
     active.current = Object.freeze({ controller, promise })
     return promise
-  }, [])
+  }, [enabled])
 
   useEffect(() => {
     mounted.current = true
-    void refresh()
+    if (enabled) void refresh()
+    else setState(initialState)
     return () => {
       mounted.current = false
       generation.current += 1
       active.current?.controller.abort()
       active.current = null
     }
-  }, [refresh])
+  }, [enabled, refresh])
 
   return { ...state, refresh, abort }
 }

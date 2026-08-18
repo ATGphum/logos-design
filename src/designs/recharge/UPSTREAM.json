@@ -3,110 +3,134 @@
     {
       "source": "infra",
       "path": "components/billing",
-      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
-      "adopted_at": "2026-08-16T15:40:49.262Z"
+      "adopted_commit": "94027b9aec0ac2888d2d4db24f54fcffacbd8503",
+      "adopted_at": "2026-08-16T15:40:49.262Z",
+      "absorbed_at": "2026-08-18T15:33:13.187Z"
     },
     {
       "source": "infra",
       "path": "billingTypes.ts",
-      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
-      "adopted_at": "2026-08-16T15:43:46.676Z"
+      "adopted_commit": "94027b9aec0ac2888d2d4db24f54fcffacbd8503",
+      "adopted_at": "2026-08-16T15:43:46.676Z",
+      "absorbed_at": "2026-08-18T15:33:13.226Z"
     },
     {
       "source": "infra",
       "path": "billingCatalogText.ts",
-      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
-      "adopted_at": "2026-08-16T15:43:46.843Z"
+      "adopted_commit": "94027b9aec0ac2888d2d4db24f54fcffacbd8503",
+      "adopted_at": "2026-08-16T15:43:46.843Z",
+      "absorbed_at": "2026-08-18T15:33:13.266Z"
     },
     {
       "source": "infra",
       "path": "topupTypes.ts",
-      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
-      "adopted_at": "2026-08-16T15:43:47.007Z"
+      "adopted_commit": "94027b9aec0ac2888d2d4db24f54fcffacbd8503",
+      "adopted_at": "2026-08-16T15:43:47.007Z",
+      "absorbed_at": "2026-08-18T15:33:13.304Z"
     },
     {
       "source": "infra",
       "path": "billingSuccessPresentation.ts",
-      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
-      "adopted_at": "2026-08-16T15:43:47.176Z"
+      "adopted_commit": "94027b9aec0ac2888d2d4db24f54fcffacbd8503",
+      "adopted_at": "2026-08-16T15:43:47.176Z",
+      "absorbed_at": "2026-08-18T15:33:13.342Z"
     },
     {
       "source": "infra",
       "path": "billingPaymentMethods.ts",
-      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
-      "adopted_at": "2026-08-16T15:43:47.345Z"
+      "adopted_commit": "94027b9aec0ac2888d2d4db24f54fcffacbd8503",
+      "adopted_at": "2026-08-16T15:43:47.345Z",
+      "absorbed_at": "2026-08-18T15:33:13.383Z"
     },
     {
       "source": "infra",
       "path": "billingSettingsPresentation.ts",
-      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
-      "adopted_at": "2026-08-16T15:43:47.509Z"
+      "adopted_commit": "94027b9aec0ac2888d2d4db24f54fcffacbd8503",
+      "adopted_at": "2026-08-16T15:43:47.509Z",
+      "absorbed_at": "2026-08-18T15:33:13.421Z"
     },
     {
       "source": "infra",
       "path": "billingRecovery.ts",
-      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
-      "adopted_at": "2026-08-16T15:43:47.659Z"
+      "adopted_commit": "94027b9aec0ac2888d2d4db24f54fcffacbd8503",
+      "adopted_at": "2026-08-16T15:43:47.659Z",
+      "absorbed_at": "2026-08-18T15:33:13.465Z"
     },
     {
       "source": "infra",
       "path": "billingPricing.ts",
-      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
-      "adopted_at": "2026-08-16T15:43:47.819Z"
+      "adopted_commit": "94027b9aec0ac2888d2d4db24f54fcffacbd8503",
+      "adopted_at": "2026-08-16T15:43:47.819Z",
+      "absorbed_at": "2026-08-18T15:33:13.516Z"
     },
     {
       "source": "infra",
       "path": "billingHistoryPresentation.ts",
-      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
-      "adopted_at": "2026-08-16T15:43:47.978Z"
+      "adopted_commit": "94027b9aec0ac2888d2d4db24f54fcffacbd8503",
+      "adopted_at": "2026-08-16T15:43:47.978Z",
+      "absorbed_at": "2026-08-18T15:33:13.556Z"
     },
     {
       "source": "infra",
       "path": "billingCancellation.ts",
-      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
-      "adopted_at": "2026-08-16T15:43:48.142Z"
+      "adopted_commit": "94027b9aec0ac2888d2d4db24f54fcffacbd8503",
+      "adopted_at": "2026-08-16T15:43:48.142Z",
+      "absorbed_at": "2026-08-18T15:33:13.595Z"
     },
     {
       "source": "infra",
       "path": "utils/format.ts",
-      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
-      "adopted_at": "2026-08-16T15:43:48.302Z"
+      "adopted_commit": "94027b9aec0ac2888d2d4db24f54fcffacbd8503",
+      "adopted_at": "2026-08-16T15:43:48.302Z",
+      "absorbed_at": "2026-08-18T15:33:13.635Z"
     },
     {
       "source": "infra",
       "path": "i18n/locale.ts",
-      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
-      "adopted_at": "2026-08-16T15:43:48.467Z"
+      "adopted_commit": "94027b9aec0ac2888d2d4db24f54fcffacbd8503",
+      "adopted_at": "2026-08-16T15:43:48.467Z",
+      "absorbed_at": "2026-08-18T15:33:13.676Z"
     },
     {
       "source": "infra",
       "path": "i18n/locales/en/pages.json",
-      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
-      "adopted_at": "2026-08-16T15:43:48.632Z"
+      "adopted_commit": "94027b9aec0ac2888d2d4db24f54fcffacbd8503",
+      "adopted_at": "2026-08-16T15:43:48.632Z",
+      "absorbed_at": "2026-08-18T15:33:13.719Z"
     },
     {
       "source": "infra",
       "path": "i18n/locales/en/common.json",
-      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
-      "adopted_at": "2026-08-16T15:43:48.790Z"
+      "adopted_commit": "94027b9aec0ac2888d2d4db24f54fcffacbd8503",
+      "adopted_at": "2026-08-16T15:43:48.790Z",
+      "absorbed_at": "2026-08-18T15:33:13.758Z"
     },
     {
       "source": "infra",
       "path": "hooks/billing",
-      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
-      "adopted_at": "2026-08-16T15:43:49.173Z"
+      "adopted_commit": "94027b9aec0ac2888d2d4db24f54fcffacbd8503",
+      "adopted_at": "2026-08-16T15:43:49.173Z",
+      "absorbed_at": "2026-08-18T15:33:14.269Z"
     },
     {
       "source": "infra",
       "path": "components/common/FilterSelect.tsx",
-      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
-      "adopted_at": "2026-08-16T15:43:49.495Z"
+      "adopted_commit": "94027b9aec0ac2888d2d4db24f54fcffacbd8503",
+      "adopted_at": "2026-08-16T15:43:49.495Z",
+      "absorbed_at": "2026-08-18T15:33:14.307Z"
     },
     {
       "source": "infra",
       "path": "components/common/FilterSelect.css",
-      "adopted_commit": "60673fc3dc852a3fbea0c704e20b5a9d8340477b",
-      "adopted_at": "2026-08-16T15:43:49.659Z"
+      "adopted_commit": "94027b9aec0ac2888d2d4db24f54fcffacbd8503",
+      "adopted_at": "2026-08-16T15:43:49.659Z",
+      "absorbed_at": "2026-08-18T15:33:14.345Z"
+    },
+    {
+      "source": "infra",
+      "path": "depositTypes.ts",
+      "adopted_commit": "94027b9aec0ac2888d2d4db24f54fcffacbd8503",
+      "adopted_at": "2026-08-18T15:33:32.467Z"
     }
   ]
 }

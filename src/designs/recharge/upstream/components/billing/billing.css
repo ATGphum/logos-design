@@ -41,7 +41,72 @@ body[data-logos-mode='dark'] .billing-page, body[data-logos-mode='dark'] .billin
 .recharge-entry__reference { border-top: 1px solid var(--cs-line); display: grid; gap: 7px; padding-top: 17px; }
 .recharge-entry__reference span { color: var(--cs-faint); font-size: .72rem; text-transform: uppercase; }
 .recharge-entry__reference code { overflow-wrap: anywhere; }
+.recharge-entry__action { align-items: center; align-self: end; background: var(--cs-ink); border: 1px solid var(--cs-ink); border-radius: 999px; color: var(--cs-bg); cursor: pointer; display: inline-flex; font-weight: 750; gap: 8px; justify-content: center; min-height: 44px; padding: 0 18px; width: 100%; }
+.recharge-method-picker { display: grid; gap: 20px; min-width: 0; }
+.recharge-method-picker__intro { color: var(--cs-faint); line-height: 1.55; margin: 0; }
+.recharge-method-picker__cards { display: grid; gap: 12px; }
+.recharge-method-card { align-items: center; background: transparent; border: 1px solid var(--cs-line); border-radius: 16px; color: inherit; cursor: pointer; display: grid; gap: 14px; grid-template-columns: auto minmax(0, 1fr) auto auto; min-height: 96px; padding: 18px; text-align: left; transition: background .16s ease, border-color .16s ease, transform .16s ease; width: 100%; }
+.recharge-method-card:hover:not(:disabled) { background: var(--cs-hl); border-color: color-mix(in srgb, var(--cs-ink) 45%, var(--cs-line)); transform: translateY(-1px); }
+.recharge-method-card:focus-visible { box-shadow: 0 0 0 3px color-mix(in srgb, var(--cs-ink) 22%, transparent); outline: 2px solid var(--cs-ink); outline-offset: 2px; }
+.billing-dialog .recharge-method-card:disabled { background: var(--cs-soft); cursor: not-allowed; opacity: 1; }
+.recharge-method-card__icon { align-items: center; background: var(--cs-ink); color: var(--cs-bg); display: inline-flex; height: 48px; justify-content: center; width: 48px; }
+.recharge-method-card:disabled .recharge-method-card__icon { background: color-mix(in srgb, var(--cs-ink) 18%, var(--cs-bg)); color: var(--cs-ink); }
+.recharge-method-card__copy { display: grid; gap: 4px; min-width: 0; }
+.recharge-method-card__copy strong { font-size: 1rem; }
+.recharge-method-card__copy small { color: var(--cs-faint); line-height: 1.4; }
+.recharge-method-card__copy em { color: var(--cs-faint); font-size: .74rem; font-style: normal; line-height: 1.4; }
+.recharge-method-card__status { border: 1px solid var(--cs-line); font-size: .68rem; font-weight: 750; letter-spacing: .08em; padding: 6px 8px; text-transform: uppercase; white-space: nowrap; }
+.recharge-method-card__status--available { background: rgba(64, 142, 92, .13); }
+.recharge-method-card__status--degraded, .recharge-method-card__status--loading { background: rgba(214, 147, 48, .12); }
+.recharge-method-card__arrow { flex: none; }
+.crypto-deposit-panel { display: grid; gap: 20px; min-width: 0; }
+.crypto-deposit-selector, .crypto-deposit-address { background: color-mix(in srgb, var(--cs-bg) 90%, var(--cs-ink) 10%); border: 1px solid var(--cs-line); border-radius: 20px; padding: 24px; }
+.crypto-deposit-choice { border: 0; display: grid; gap: 10px; margin: 0; min-width: 0; padding: 0; }
+.crypto-deposit-choice legend { font-size: .82rem; font-weight: 800; margin-bottom: 7px; text-transform: uppercase; }
+.crypto-deposit-choice__grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.crypto-deposit-choice label { align-items: center; background: transparent; border: 1px solid var(--cs-line); border-radius: 14px; cursor: pointer; display: grid; gap: 11px; grid-template-columns: auto auto minmax(0, 1fr); min-height: 66px; padding: 12px 14px; }
+.crypto-deposit-choice label.is-selected { border-color: var(--cs-ink); box-shadow: inset 0 0 0 1px var(--cs-ink); }
+.crypto-deposit-choice label:has(input:focus-visible) { outline: 2px solid var(--cs-ink); outline-offset: 2px; }
+.crypto-deposit-choice input { height: 18px; margin: 0; width: 18px; }
+.crypto-deposit-choice label > span { display: grid; gap: 3px; min-width: 0; }
+.crypto-deposit-choice label small { color: var(--cs-faint); line-height: 1.4; }
+.crypto-deposit-availability, .crypto-deposit-stop { align-items: flex-start; background: rgba(214, 147, 48, .12); border: 1px solid var(--cs-line); border-radius: 13px; display: grid; gap: 10px; grid-template-columns: auto minmax(0, 1fr); padding: 14px; }
+.crypto-deposit-stop { background: rgba(177, 74, 66, .13); border-color: color-mix(in srgb, var(--billing-danger) 45%, var(--cs-line)); }
+.crypto-deposit-availability span, .crypto-deposit-stop span { display: grid; gap: 4px; }
+.crypto-deposit-availability small, .crypto-deposit-stop small { color: var(--cs-faint); line-height: 1.45; }
+.crypto-deposit-action { align-items: center; border-top: 1px solid var(--cs-line); display: flex; gap: 16px; justify-content: space-between; padding-top: 20px; }
+.crypto-deposit-action button { align-items: center; background: var(--cs-ink); border: 1px solid var(--cs-ink); border-radius: 999px; color: var(--cs-bg); cursor: pointer; display: inline-flex; font-weight: 750; justify-content: center; min-height: 46px; padding: 0 20px; }
+.crypto-deposit-action small { color: var(--cs-faint); line-height: 1.45; max-width: 440px; }
+.crypto-deposit-loading, .crypto-deposit-panel--empty { align-items: center; justify-items: center; min-height: 260px; padding: 32px; text-align: center; }
+.crypto-deposit-loading small, .crypto-deposit-panel--empty p { color: var(--cs-faint); line-height: 1.5; margin: 0; }
+.crypto-deposit-empty-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.crypto-deposit-empty-actions .cs-btn { background: transparent; border: 1px solid var(--cs-line); border-radius: 999px; color: inherit; cursor: pointer; min-height: 44px; padding: 0 16px; }
+.crypto-deposit-address__identity { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.crypto-deposit-address__identity > span { background: var(--cs-soft); border-radius: 12px; display: grid; gap: 4px; padding: 13px 15px; }
+.crypto-deposit-address__identity small, .crypto-deposit-address__copy > small { color: var(--cs-faint); font-size: .7rem; font-weight: 750; letter-spacing: .06em; text-transform: uppercase; }
+.crypto-deposit-address__main { align-items: center; display: grid; gap: 24px; grid-template-columns: 220px minmax(0, 1fr); }
+.crypto-deposit-qr { align-items: center; background: #fff; border: 1px solid var(--cs-line); border-radius: 18px; display: flex; height: 220px; justify-content: center; padding: 12px; width: 220px; }
+.crypto-deposit-qr img { display: block; height: 196px; max-width: 100%; width: 196px; }
+.crypto-deposit-qr__fallback { align-items: center; color: #1a1916; display: grid; gap: 9px; justify-items: center; text-align: center; }
+.crypto-deposit-address__copy { display: grid; gap: 11px; min-width: 0; }
+.crypto-deposit-address__copy code { background: var(--cs-soft); border: 1px solid var(--cs-line); border-radius: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .88rem; line-height: 1.55; min-width: 0; overflow-wrap: anywhere; padding: 15px; user-select: all; }
+.crypto-deposit-address__copy > div { display: flex; flex-wrap: wrap; gap: 10px; }
+.crypto-deposit-address__copy button, .crypto-deposit-address__copy a { align-items: center; background: transparent; border: 1px solid var(--cs-line); border-radius: 999px; color: inherit; cursor: pointer; display: inline-flex; font-weight: 700; gap: 7px; justify-content: center; min-height: 44px; padding: 0 15px; text-decoration: none; }
+.crypto-deposit-address__copy button:first-child { background: var(--cs-ink); border-color: var(--cs-ink); color: var(--cs-bg); }
+.crypto-deposit-address__copy button:focus-visible, .crypto-deposit-address__copy a:focus-visible { outline: 2px solid var(--cs-ink); outline-offset: 3px; }
+.crypto-deposit-copy-status { color: var(--cs-faint); display: block; font-size: .76rem; min-height: 1.2em; }
+.crypto-deposit-facts { display: grid; gap: 10px; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; }
+.crypto-deposit-facts > div { border: 1px solid var(--cs-line); border-radius: 12px; display: grid; gap: 6px; padding: 13px; }
+.crypto-deposit-facts dt { color: var(--cs-faint); font-size: .7rem; font-weight: 750; text-transform: uppercase; }
+.crypto-deposit-facts dd { font-size: .84rem; line-height: 1.45; margin: 0; }
+.crypto-deposit-risks { background: var(--cs-soft); border-radius: 14px; display: grid; gap: 11px; padding: 16px; }
+.crypto-deposit-risks > div { align-items: center; display: flex; gap: 8px; }
+.crypto-deposit-risks ul { display: grid; gap: 7px; margin: 0; padding-left: 20px; }
+.crypto-deposit-risks li { color: var(--cs-faint); line-height: 1.45; }
 .recharge-options { background: color-mix(in srgb, var(--cs-bg) 90%, var(--cs-ink) 10%); border: 1px solid var(--cs-line); border-radius: 20px; display: grid; gap: 22px; padding: 24px; }
+.recharge-step-toolbar { align-items: center; display: flex; gap: 14px; justify-content: space-between; }
+.recharge-step-back { align-items: center; background: transparent; border: 0; color: inherit; cursor: pointer; display: inline-flex; font-weight: 700; gap: 7px; min-height: 44px; padding: 0 4px; }
+.recharge-step-back:focus-visible { outline: 2px solid var(--cs-ink); outline-offset: 3px; }
 .recharge-options__header { align-items: flex-start; display: flex; gap: 18px; justify-content: space-between; }
 .recharge-options__header > div { display: grid; gap: 5px; }
 .recharge-options__header small { color: var(--cs-faint); font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; }
@@ -93,6 +158,7 @@ body[data-logos-mode='dark'] .billing-page, body[data-logos-mode='dark'] .billin
 .recharge-tao-submission span { display: grid; gap: 4px; }
 .recharge-tao-submission small { color: var(--cs-faint); line-height: 1.45; }
 .recharge-options-empty { min-height: 240px; }
+.recharge-options-empty__actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .billing-settings { display: grid; gap: 16px; grid-template-columns: minmax(0, 1.1fr) minmax(320px, .9fr); }
 .billing-current-plan, .billing-actions-panel, .billing-empty, .billing-recovery, .billing-history-wrap, .billing-status, .billing-tao {
   background: color-mix(in srgb, var(--cs-bg) 90%, var(--cs-ink) 10%); border: 1px solid var(--cs-line); border-radius: 20px;
@@ -174,16 +240,155 @@ body[data-logos-mode='dark'] .billing-page, body[data-logos-mode='dark'] .billin
 .billing-inline-error { color: var(--billing-danger); margin: 0; padding: 12px 20px; }
 .billing-visually-hidden { clip: rect(0 0 0 0); clip-path: inset(50%); height: 1px; overflow: hidden; position: absolute; white-space: nowrap; width: 1px; }
 .billing-provider, .billing-state { border: 1px solid var(--cs-line); border-radius: 999px; display: inline-flex; font-size: .75rem; padding: 5px 8px; text-transform: capitalize; }
-.billing-state--paid { background: rgba(64, 142, 92, .13); }
+.billing-state--paid, .billing-state--credited { background: rgba(64, 142, 92, .13); }
 .billing-state--refunded, .billing-state--finalized, .billing-state--succeeded { background: rgba(64, 142, 92, .13); }
 .billing-state--failed, .billing-state--manual_review, .billing-state--underpaid, .billing-state--overpaid,
-.billing-state--reverted, .billing-state--invalid_recipient, .billing-state--invalid_amount, .billing-state--invalid_sender { background: rgba(177, 74, 66, .12); }
+.billing-state--reverted, .billing-state--invalid_recipient, .billing-state--invalid_amount, .billing-state--invalid_sender,
+.billing-state--below_minimum { background: rgba(177, 74, 66, .12); }
 .billing-state--pending_payment, .billing-state--submitted, .billing-state--confirming, .billing-state--processing,
-.billing-state--in_block { background: rgba(214, 147, 48, .12); }
+.billing-state--in_block, .billing-state--detected, .billing-state--pending_price { background: rgba(214, 147, 48, .12); }
 .billing-muted { color: var(--cs-faint); }
 
 .billing-dialog { max-width: min(1080px, calc(100vw - 32px)); }
 .billing-dialog .logos-icon-button { flex: 0 0 44px; height: 44px; margin: -5px; width: 44px; }
+.add-credits-dialog {
+  --cs-bg: #f6f4ee;
+  --cs-ink: #1a1916;
+  --cs-line: rgba(26,25,22,0.14);
+  --cs-soft: rgba(26,25,22,0.08);
+  --cs-dim: #1a1916;
+  --cs-faint: rgba(26,25,22,0.8);
+  --cs-hl: rgba(26,25,22,0.045);
+  background: var(--cs-bg);
+  width: min(900px, calc(100vw - 32px));
+}
+body[data-logos-mode='dark'] .add-credits-dialog {
+  --cs-bg: #0e0e0e;
+  --cs-ink: #ffffff;
+  --cs-line: rgba(244,242,236,0.14);
+  --cs-soft: rgba(244,242,236,0.07);
+  --cs-dim: #ffffff;
+  --cs-faint: rgba(255,255,255,0.88);
+  --cs-hl: rgba(244,242,236,0.05);
+}
+.logos-dialog-overlay[data-state='closed'],
+.add-credits-dialog[data-state='closed'] { pointer-events: none !important; }
+.add-credits-dialog .logos-dialog-header { padding: 20px 22px; }
+.add-credits-dialog .logos-dialog-title { font-family: "Jost", "Inter", -apple-system, BlinkMacSystemFont, sans-serif; font-size: 17px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; }
+.add-credits-dialog .logos-dialog-subtitle { color: var(--cs-faint); font-size: 12px; letter-spacing: .04em; line-height: 1.45; }
+.add-credits-dialog .logos-dialog-body { padding: 22px; }
+.add-credits-dialog__shell { display: grid; gap: 22px; min-width: 0; }
+.add-credits-dialog__steps { border-bottom: 1px solid var(--cs-line); display: grid; gap: 0; grid-template-columns: repeat(3, minmax(0, 1fr)); list-style: none; margin: 0; padding: 0; }
+.add-credits-dialog__steps li { border-bottom: 2px solid transparent; color: var(--cs-faint); display: grid; gap: 3px; min-width: 0; padding: 0 10px 12px 0; }
+.add-credits-dialog__steps li.is-complete { color: color-mix(in srgb, var(--billing-success) 76%, var(--cs-ink)); }
+.add-credits-dialog__steps li.is-current { border-bottom-color: var(--cs-ink); color: var(--cs-ink); }
+.add-credits-dialog__steps span { font-size: 9.5px; letter-spacing: .24em; line-height: 1.2; }
+.add-credits-dialog__steps strong { font-size: 11px; font-weight: 500; letter-spacing: .18em; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
+.add-credits-dialog__content { min-width: 0; }
+.add-credits-dialog .recharge-amount__input input:focus-visible { box-shadow: none; outline: none; }
+.add-credits-dialog .recharge-amount__input:focus-within { border-color: var(--cs-ink); box-shadow: none; }
+.add-credits-dialog .recharge-options.cs-sec,
+.add-credits-dialog .billing-empty.cs-sec { margin: 0; }
+.add-credits-dialog .recharge-options,
+.add-credits-dialog .crypto-deposit-selector,
+.add-credits-dialog .crypto-deposit-address {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+}
+.add-credits-dialog .billing-status-pill { border-radius: 2px; font-size: 10.5px; letter-spacing: .14em; padding: 5px 9px; text-transform: uppercase; }
+.add-credits-dialog .recharge-step-toolbar { border-bottom: 1px solid var(--cs-line); padding-bottom: 12px; }
+.add-credits-dialog .recharge-step-back { font-size: 10.5px; font-weight: 500; letter-spacing: .18em; min-height: 38px; padding: 0; text-transform: uppercase; }
+.add-credits-dialog .recharge-method-picker__intro { border-bottom: 1px solid var(--cs-line); color: var(--cs-faint); font-size: 12px; letter-spacing: .04em; margin: 0; padding-bottom: 14px; }
+.add-credits-dialog .recharge-method-picker__cards { border-top: 0; gap: 0; }
+.add-credits-dialog .recharge-method-card {
+  border: 0;
+  border-bottom: 1px solid var(--cs-line);
+  border-radius: 0;
+  gap: 16px;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  min-height: 88px;
+  padding: 16px 4px;
+  transform: none;
+}
+.add-credits-dialog .recharge-method-card:hover:not(:disabled) { background: var(--cs-hl); border-color: var(--cs-line); transform: none; }
+.add-credits-dialog .recharge-method-card__icon { background: transparent; border: 1px solid var(--cs-line); border-radius: 0; color: var(--cs-ink); height: 42px; width: 42px; }
+.add-credits-dialog .recharge-method-card:disabled .recharge-method-card__icon { background: transparent; color: var(--cs-faint); }
+.add-credits-dialog .recharge-method-card__copy strong { font-size: 14px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; }
+.add-credits-dialog .recharge-method-card__copy small,
+.add-credits-dialog .recharge-method-card__copy em { font-size: 12px; letter-spacing: .04em; }
+.add-credits-dialog .recharge-method-card__status { border-radius: 2px; font-size: 10px; letter-spacing: .14em; padding: 5px 8px; }
+.add-credits-dialog .recharge-amount { max-width: none; }
+.add-credits-dialog .recharge-amount__quick { border-bottom: 1px solid var(--cs-line); padding-bottom: 14px; }
+.add-credits-dialog .recharge-amount__quick > span,
+.add-credits-dialog .recharge-amount > label strong,
+.add-credits-dialog .recharge-amount > label small,
+.add-credits-dialog .crypto-deposit-choice legend,
+.add-credits-dialog .crypto-deposit-address__identity small,
+.add-credits-dialog .crypto-deposit-address__copy > small,
+.add-credits-dialog .crypto-deposit-facts dt {
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+.add-credits-dialog .recharge-amount__quick button,
+.add-credits-dialog .recharge-checkout-action button,
+.add-credits-dialog .crypto-deposit-action button,
+.add-credits-dialog .crypto-deposit-empty-actions .cs-btn {
+  border-radius: 2px;
+  font-size: 10.5px;
+  letter-spacing: .18em;
+  min-height: 44px;
+  text-transform: uppercase;
+}
+.add-credits-dialog .recharge-amount__input { border-radius: 0; min-height: 58px; }
+.add-credits-dialog .recharge-amount__input input { font-size: 24px; letter-spacing: .04em; }
+.add-credits-dialog .recharge-selection,
+.add-credits-dialog .crypto-deposit-availability,
+.add-credits-dialog .crypto-deposit-stop {
+  border-left: 3px solid var(--cs-line);
+  border-radius: 0;
+}
+.add-credits-dialog .recharge-checkout-action,
+.add-credits-dialog .crypto-deposit-action { padding-top: 16px; }
+.add-credits-dialog .crypto-deposit-choice__grid { gap: 0 28px; }
+.add-credits-dialog .crypto-deposit-choice label {
+  border: 0;
+  border-bottom: 1px solid var(--cs-line);
+  border-radius: 0;
+  min-height: 64px;
+  padding: 13px 4px;
+}
+.add-credits-dialog .crypto-deposit-choice label.is-selected { border-color: var(--cs-ink); box-shadow: inset 0 -1px 0 var(--cs-ink); }
+.add-credits-dialog .crypto-deposit-choice input { accent-color: var(--cs-ink); }
+.add-credits-dialog .crypto-deposit-choice label strong { font-size: 13px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; }
+.add-credits-dialog .crypto-deposit-choice label small { font-size: 12px; letter-spacing: .04em; }
+.add-credits-dialog .crypto-deposit-address__identity { gap: 18px; }
+.add-credits-dialog .crypto-deposit-address__identity > span {
+  background: transparent;
+  border-bottom: 1px solid var(--cs-line);
+  border-radius: 0;
+  padding: 0 0 12px;
+}
+.add-credits-dialog .crypto-deposit-address__identity strong { font-size: 14px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; }
+.add-credits-dialog .crypto-deposit-address__main { align-items: start; gap: 26px; grid-template-columns: 212px minmax(0, 1fr); }
+.add-credits-dialog .crypto-deposit-qr { border-radius: 0; height: 212px; padding: 8px; width: 212px; }
+.add-credits-dialog .crypto-deposit-address__copy code { border-radius: 0; font-size: 12px; letter-spacing: .04em; line-height: 1.65; padding: 13px; }
+.add-credits-dialog .crypto-deposit-address__copy button,
+.add-credits-dialog .crypto-deposit-address__copy a {
+  border-radius: 2px;
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: .16em;
+  min-height: 44px;
+  text-transform: uppercase;
+}
+.add-credits-dialog .crypto-deposit-facts { gap: 0; }
+.add-credits-dialog .crypto-deposit-facts > div { border: 0; border-top: 1px solid var(--cs-line); border-radius: 0; padding: 12px 10px 0 0; }
+.add-credits-dialog .crypto-deposit-risks { background: transparent; border: 1px solid var(--cs-line); border-left: 3px solid color-mix(in srgb, var(--billing-danger) 45%, var(--cs-line)); border-radius: 0; padding: 14px; }
+.add-credits-dialog .crypto-deposit-risks li { font-size: 12px; letter-spacing: .03em; }
 .billing-upgrade, .billing-checkout-shell { display: grid; gap: 20px; }
 .billing-upgrade__hero { align-items: center; background: var(--cs-soft); border-radius: 15px; display: flex; gap: 12px; padding: 14px 16px; }
 .billing-upgrade__hero span { display: grid; gap: 3px; }
@@ -398,6 +603,8 @@ body[data-logos-mode='dark'] .billing-page, body[data-logos-mode='dark'] .billin
 .recharge-history > header p { color: var(--cs-faint); font-size: .8rem; margin-top: 4px; }
 .recharge-history__filters { align-items: end; border-bottom: 1px solid var(--cs-line); border-top: 1px solid var(--cs-line); display: grid; gap: 12px; grid-template-columns: repeat(3, minmax(0, 1fr)) auto; padding: 14px 0; }
 .recharge-history__results { color: var(--cs-faint); font-size: .72rem; margin: -6px 0 0; }
+.recharge-history__source-recovery { display: grid; gap: 7px; justify-items: start; }
+.recharge-history__source-recovery p { margin: 0; }
 .recharge-history__empty { align-items: center; background: var(--cs-soft); border-radius: 14px; color: var(--cs-faint); display: flex; flex-direction: column; gap: 5px; padding: 28px; text-align: center; }
 .recharge-history__empty strong { color: var(--cs-ink); }
 .recharge-history__list { display: grid; gap: 11px; }
@@ -502,6 +709,53 @@ body[data-logos-mode='dark'] .billing-page, body[data-logos-mode='dark'] .billin
   .recharge-history__filters { grid-template-columns: 1fr; }
   .recharge-history__filters .cs-btn { width: 100%; }
   .recharge-history__list dl { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .add-credits-dialog.logos-dialog-content {
+    border-bottom: 0;
+    bottom: 0;
+    box-sizing: border-box;
+    left: 0;
+    max-height: calc(100vh - env(safe-area-inset-top));
+    max-height: calc(100dvh - env(safe-area-inset-top));
+    max-width: 100vw;
+    right: 0;
+    top: auto;
+    transform: none;
+    width: 100vw;
+  }
+  .add-credits-dialog .logos-dialog-header { padding: 18px 18px 16px; }
+  .add-credits-dialog .logos-dialog-body { padding: 18px 18px calc(18px + env(safe-area-inset-bottom)); }
+  .add-credits-dialog__shell { gap: 18px; }
+  .add-credits-dialog__steps { grid-template-columns: 1fr; }
+  .add-credits-dialog__steps li { align-items: center; border-bottom: 1px solid var(--cs-line); display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; padding: 9px 0; }
+  .add-credits-dialog__steps li.is-current { border-bottom-color: var(--cs-ink); }
+  .add-credits-dialog__steps strong { white-space: normal; }
+  .recharge-method-card { gap: 11px; grid-template-columns: auto minmax(0, 1fr) auto; padding: 15px; }
+  .add-credits-dialog .recharge-method-card { gap: 12px; grid-template-columns: auto minmax(0, 1fr) auto; padding: 15px 0; }
+  .recharge-method-card__icon { grid-row: 1 / span 2; height: 44px; width: 44px; }
+  .add-credits-dialog .recharge-method-card__icon { height: 40px; width: 40px; }
+  .recharge-method-card__status { grid-column: 2; justify-self: start; }
+  .recharge-method-card__arrow { grid-column: 3; grid-row: 1 / span 2; }
+  .recharge-step-toolbar { align-items: flex-start; }
+  .add-credits-dialog .recharge-step-toolbar { align-items: flex-start; flex-direction: column; gap: 10px; }
+  .crypto-deposit-selector, .crypto-deposit-address { border-radius: 16px; padding: 18px; }
+  .crypto-deposit-choice__grid, .crypto-deposit-address__identity, .crypto-deposit-facts { grid-template-columns: 1fr; }
+  .add-credits-dialog .crypto-deposit-choice__grid,
+  .add-credits-dialog .crypto-deposit-address__identity,
+  .add-credits-dialog .crypto-deposit-facts { grid-template-columns: 1fr; }
+  .crypto-deposit-action { align-items: stretch; flex-direction: column; }
+  .crypto-deposit-action button { width: 100%; }
+  .crypto-deposit-address__main { grid-template-columns: 1fr; }
+  .add-credits-dialog .crypto-deposit-address__main { gap: 18px; grid-template-columns: 1fr; }
+  .crypto-deposit-qr { height: min(220px, calc(100vw - 72px)); justify-self: center; max-width: 220px; width: min(220px, calc(100vw - 72px)); }
+  .add-credits-dialog .crypto-deposit-qr { height: min(212px, calc(100vw - 72px)); justify-self: center; max-width: 212px; width: min(212px, calc(100vw - 72px)); }
+  .crypto-deposit-address__copy > div { align-items: stretch; flex-direction: column; }
+  .crypto-deposit-address__copy button, .crypto-deposit-address__copy a { width: 100%; }
+  .add-credits-dialog .crypto-deposit-address__copy button,
+  .add-credits-dialog .crypto-deposit-address__copy a,
+  .add-credits-dialog .recharge-checkout-action button,
+  .add-credits-dialog .crypto-deposit-action button { width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) {
   .billing-page *, .billing-dialog * { scroll-behavior: auto !important; transition-duration: .01ms !important; }

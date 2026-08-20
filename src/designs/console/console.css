@@ -1412,3 +1412,40 @@
        because user view starts from a larger glyph */
     .console-root #cs-view.cs-collapsed .cs-side { --cs-lbdx: -21px; }
     .console-root #cs-view.cs-collapsed .cs-side.as-user { --cs-lbdx: -16px; }
+
+    /* ===== MAINPAGE / SETTINGS labels clear out first ===== */
+    /* Their glyphs have by far the longest journey, so the type gets out of the way
+       early and leaves the eye something single to follow. */
+    .console-root #cs-view.cs-collapsed .cs-bottom .cs-item-lb,
+    .console-root #cs-view.cs-collapsed .cs-item-tail .cs-item-lb {
+      transition: opacity .05s ease, transform var(--cs-fold);
+    }
+
+    /* ===== Glyphs scale as vectors, not as re-laid-out boxes ===== */
+    /* The size used to animate as the SVG's own width/height, so the browser re-rasterised
+       the vector at a new size every frame — stroke weight and cap positions resolving
+       slightly differently each time, which is the shimmer that made the morph look
+       flimsy. Now the layout box is a constant 26px and the size is a transform, so it is
+       rasterised once and scaled on the compositor: continuous, sub-pixel, on rails.
+       Negative right margins keep the advance equal to the *visual* width, so the label
+       still sits exactly where it did and nothing else in the row shifts. */
+    .console-root .cs-side .cs-item .cs-navico {
+      width: 26px; height: 26px;
+      transform-origin: left center;
+      transform: scale(0.4615);      /* 12 / 26 */
+      margin-left: -2.84px; margin-right: -10px;  /* advance = 12 + 4 gap */
+      transition: transform var(--cs-fold),
+        margin-left var(--cs-fold), margin-right var(--cs-fold),
+        opacity var(--cs-foldfade),
+        background-color .18s ease, box-shadow .18s ease;
+    }
+    .console-root .cs-side.as-user .cs-item .cs-navico {
+      width: 26px; height: 26px;
+      transform: scale(0.5769);      /* 15 / 26 */
+      margin-left: -3px; margin-right: -5px;      /* advance = 15 + 6 gap */
+    }
+    .console-root #cs-view.cs-collapsed .cs-side .cs-item .cs-navico {
+      width: 26px; height: 26px;
+      transform: scale(1);
+      margin-left: 0; margin-right: 0;
+    }

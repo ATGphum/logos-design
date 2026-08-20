@@ -1319,37 +1319,26 @@
         opacity var(--cs-foldfade);
     }
 
-    /* ===== Travelling glow on the access button ===== */
-    /* A bright arc runs the rim continuously so the primary action reads as live
-       rather than as one more chip. Registering the angle as a typed custom property
-       is what makes it interpolate — a plain --var would step from 0 to 360. */
-    @property --cs-accang { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
-    @keyframes cs-accsweep { to { --cs-accang: 360deg; } }
-
-    .console-root #cs-view { --cs-accglow: rgba(26,25,22,0.55); }
-    .console-root #cs-view.cs-night { --cs-accglow: rgba(255,255,255,0.95); }
-
-    /* the halo sits behind the button's own background, so only the part spilling past
-       the edge is visible — an outer bloom that follows the arc. */
-    .console-root .cs-sideacc .cs-acc-btn::before,
-    .console-root .cs-sideacc .cs-acc-btn::after {
-      content: ""; position: absolute; border-radius: inherit; pointer-events: none;
-      background: conic-gradient(from var(--cs-accang),
-        transparent 0deg, var(--cs-accglow) 26deg, transparent 62deg, transparent 360deg);
-      animation: cs-accsweep 3.6s linear infinite;
+    /* ===== Static edge glow on the access button ===== */
+    /* A steady bloom off the rim, enough to lift the primary action off the column
+       without pulling the eye the way a moving arc did. Two stops: a tight one that
+       reads as the edge itself, and a wider, fainter one for the falloff. */
+    .console-root #cs-view.cs-night .cs-sideacc .cs-acc-btn {
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.22),
+                  0 0 18px -4px rgba(255,255,255,0.42),
+                  0 0 40px -10px rgba(255,255,255,0.28);
     }
-    .console-root .cs-sideacc .cs-acc-btn::before {
-      inset: -6px; z-index: -1; filter: blur(7px); opacity: 0.9;
+    .console-root #cs-view:not(.cs-night) .cs-sideacc .cs-acc-btn {
+      box-shadow: 0 0 0 1px rgba(26,25,22,0.14),
+                  0 3px 14px -6px rgba(26,25,22,0.40),
+                  0 6px 30px -12px rgba(26,25,22,0.26);
     }
-    /* and the crisp 1.5px rim itself: the padding-box / content-box mask pair cancels
-       everything but the border ring. */
-    .console-root .cs-sideacc .cs-acc-btn::after {
-      inset: -1.5px; padding: 1.5px;
-      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      -webkit-mask-composite: xor; mask-composite: exclude;
+    /* hover still has to read as a step up from that base */
+    .console-root #cs-view.cs-night .cs-sideacc .cs-acc-btn:hover {
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.4),
+                  0 0 30px -6px rgba(255,255,255,0.7);
     }
-    @media (prefers-reduced-motion: reduce) {
-      .console-root .cs-sideacc .cs-acc-btn::before,
-      .console-root .cs-sideacc .cs-acc-btn::after { animation: none; }
+    .console-root #cs-view:not(.cs-night) .cs-sideacc .cs-acc-btn:hover {
+      box-shadow: 0 0 0 1px rgba(26,25,22,0.28),
+                  0 6px 22px -8px rgba(26,25,22,0.6);
     }

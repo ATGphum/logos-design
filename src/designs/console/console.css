@@ -1342,3 +1342,17 @@
       box-shadow: 0 0 0 1px rgba(26,25,22,0.28),
                   0 6px 22px -8px rgba(26,25,22,0.6);
     }
+
+    /* ===== The rail is the rail, whichever view you're in ===== */
+    /* User view deliberately runs bigger, further-apart rows in the open column — it has
+       three nav entries where admin has eleven, and looked adrift at admin's density.
+       None of that applies once it is 96px of icons: there the two views should be
+       identical. Two things made user view sit ~45px lower —
+       1. as-user pins .cs-item-tail's margin-bottom to 0, dropping the column from three
+          auto margins to two. Free space then splits two ways instead of three, so the
+          cluster's leading auto grows from 98px to 141px.
+       2. the 18px row font makes each row 44.8px instead of 42px.
+       Both are undone here, collapsed only, so the open column keeps its own proportions. */
+    .console-root #cs-view.cs-collapsed .cs-side.as-user > .cs-item-tail { margin-bottom: auto; }
+    .console-root #cs-view.cs-collapsed .cs-side.as-user .cs-item { font-size: 15px; }
+    .console-root #cs-view.cs-collapsed .cs-side.as-user .cs-group { font-size: 12.5px; }

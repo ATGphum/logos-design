@@ -527,7 +527,13 @@
        Fade shares the same duration and curve — giving opacity its own shorter clock puts
        the height changes it drives out of step with the layout, and the column jumps. */
     .console-root { --cs-rail: 96px;
-      --cs-fold: .26s cubic-bezier(.32,.74,.22,1); --cs-foldfade: .26s cubic-bezier(.32,.74,.22,1); }
+      /* Less front-loaded than it was. The old curve put ~65% of the travel into the
+         first third, which is fine for the glyph's 16px of slide but reads as a lurch on
+         the bottom pair's much longer vertical journey. Peak-to-average velocity there
+         drops 3.08x -> 2.16x. Everything shares this one curve on purpose — measuring
+         showed that giving the collapsing blocks their own makes the two fight and adds
+         a reversal. */
+      --cs-fold: .28s cubic-bezier(.33,.45,.25,1); --cs-foldfade: .26s cubic-bezier(.32,.74,.22,1); }
     .console-root .cs-wrap { transition: grid-template-columns var(--cs-fold);
       will-change: grid-template-columns; }
     /* Every frame of the fold relayouts the column and repaints it. Containing layout as
@@ -1418,7 +1424,16 @@
        early and leaves the eye something single to follow. */
     .console-root #cs-view.cs-collapsed .cs-bottom .cs-item-lb,
     .console-root #cs-view.cs-collapsed .cs-item-tail .cs-item-lb {
-      transition: opacity .05s ease, transform var(--cs-fold);
+      transition: opacity .03s ease, transform var(--cs-fold);
+    }
+    /* Opening, these two labels wait for the travel instead of racing it. The counter-
+       translate only cancels the horizontal push; the bottom pair also rides the column's
+       vertical reshuffle, so a label that appears at 31ms then gets dragged ~29px reads as
+       the type being thrown around. Held back until the row has all but landed, it simply
+       appears in place. */
+    .console-root .cs-side .cs-bottom .cs-item-lb,
+    .console-root .cs-side .cs-item-tail .cs-item-lb {
+      transition: opacity .08s ease .19s, transform var(--cs-fold);
     }
 
     /* ===== Glyphs scale as vectors, not as re-laid-out boxes ===== */

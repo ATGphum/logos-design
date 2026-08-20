@@ -119,7 +119,10 @@
       transition: opacity .2s, padding var(--cs-fold), gap var(--cs-fold); }
     .console-root .cs-brand:hover { opacity: 0.82; }
     .console-root .cs-brand img { width: 42px; height: 42px; object-fit: contain; }
-    .console-root #cs-view.cs-night .cs-brand img { filter: invert(1) brightness(1.55) drop-shadow(0 0 4px rgba(255,255,255,0.5)) drop-shadow(0 0 11px rgba(255,255,255,0.3)); }
+    /* two wide white drop-shadows put a halo around a 50px mark, which reads as the mark
+       itself being soft. One tight, low-opacity glow keeps it lifted off the black without
+       eating the edge. */
+    .console-root #cs-view.cs-night .cs-brand img { filter: invert(1) brightness(1.32) drop-shadow(0 0 2px rgba(255,255,255,0.3)); }
     .console-root .cs-brand span { font-family: "Julius Sans One", sans-serif; font-size: 21px; letter-spacing: 0.17em;
       display: inline-block; white-space: nowrap; overflow: hidden; max-width: 240px;
       /* trailing letter-space belongs inside the box, or overflow:hidden shaves the last glyph */
@@ -1385,7 +1388,9 @@
     .console-root .cs-side .cs-item.cs-on::before {
       content: ""; position: absolute; z-index: 0;
       top: 0; right: 0; bottom: 0; left: 0;
-      border-radius: 0; background: var(--cs-ink);
+      /* same rounded-square as the rail chip, so the shape reads as one thing that
+         shrinks rather than a bar that also rounds off on the way */
+      border-radius: 12px; background: var(--cs-ink);
       transition: top var(--cs-fold), right var(--cs-fold), bottom var(--cs-fold),
         left var(--cs-fold), border-radius var(--cs-fold);
     }
@@ -1583,4 +1588,37 @@
     .console-root #cs-view.cs-collapsed .cs-acc-li {
       transition: transform .16s var(--cs-lpath) .13s;
       transform: translateY(calc((var(--i) - 2) * var(--cs-acc-step)));
+    }
+
+    /* ===== Wordmark: blur past, don't collide ===== */
+    /* Travelling the letters through each other looked like a mash at the crossing point.
+       The two forms are separate now and only one is ever legible: on the way in the flat
+       mark blurs out while the capsule narrows, and the stack resolves once it has grown;
+       on the way out the order reverses. Same L phases as the capsule. */
+    .console-root .cs-sideacc .cs-acc-stack {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-family: "Julius Sans One", sans-serif; font-weight: 400;
+      font-size: 15px; letter-spacing: 0.06em; line-height: 1.18;
+      pointer-events: none;
+    }
+    .console-root .cs-sideacc .cs-acc-l { display: block; }
+
+    /* expanded is the resting state for the flat mark, so the stack leaves first */
+    .console-root .cs-sideacc .cs-acc-stack {
+      opacity: 0; filter: blur(5px);
+      transition: opacity .12s ease, filter .12s ease;
+    }
+    .console-root .cs-sideacc .cs-acc-btn .lb {
+      opacity: 1; filter: blur(0);
+      transition: opacity .13s ease .16s, filter .13s ease .16s;
+    }
+    /* folding in, the roles swap */
+    .console-root #cs-view.cs-collapsed .cs-sideacc .cs-acc-btn .lb {
+      opacity: 0; filter: blur(5px);
+      transition: opacity .12s ease, filter .12s ease;
+    }
+    .console-root #cs-view.cs-collapsed .cs-sideacc .cs-acc-stack {
+      opacity: 1; filter: blur(0);
+      transition: opacity .13s ease .16s, filter .13s ease .16s;
     }

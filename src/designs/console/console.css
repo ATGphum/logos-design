@@ -1637,3 +1637,13 @@
     .console-root #cs-view.cs-collapsed .cs-sideacc .cs-acc-btn .lb {
       transition: opacity .09s ease, filter .09s ease;
     }
+
+    /* ===== The version block doesn't fade, it's just not there ===== */
+    /* It was on a 500ms fade against a 280ms fold, so "Version 0.0.0 De…" sat there
+       half-dissolved well after the column had finished closing. It carries no meaning
+       mid-transition — it either fits the column or it doesn't — so it switches rather
+       than fades, in both directions. */
+    .console-root #cs-view.cs-collapsed .cs-side > .cs-vers {
+      opacity: 0; pointer-events: none; transition: none;
+    }
+    .console-root .cs-side > .cs-vers { transition: none; }

@@ -1305,7 +1305,7 @@
        stays on the fold clock, so the row still closes in step with the column and the
        icon slides the whole way. */
     .console-root #cs-view.cs-collapsed .cs-item-lb {
-      transition: opacity .1s ease, max-width var(--cs-fold);
+      transition: opacity .1s ease, transform var(--cs-fold);
     }
 
     /* ===== The glyph itself has to travel, not pop ===== */
@@ -1356,3 +1356,59 @@
     .console-root #cs-view.cs-collapsed .cs-side.as-user > .cs-item-tail { margin-bottom: auto; }
     .console-root #cs-view.cs-collapsed .cs-side.as-user .cs-item { font-size: 15px; }
     .console-root #cs-view.cs-collapsed .cs-side.as-user .cs-group { font-size: 12.5px; }
+
+    /* ===== The active row's highlight morphs into the rail chip ===== */
+    /* One shape, not two cross-faded ones: the filled bar shrinks continuously into the
+       40px chip and rounds off as it goes. It has to be its own layer to do that — as
+       the row's own background it could only fade, since a background box is stuck to
+       the box it paints.
+       The insets are what make it track: the left edge sits ~8px clear of the glyph when
+       open and ~7px clear when closed, so shrinking both edges on the fold clock keeps
+       the glyph inside the shape the whole way instead of the box sliding off it. */
+    .console-root .cs-side .cs-item { position: relative; }
+    .console-root .cs-side .cs-item > * { position: relative; z-index: 1; }
+    /* the fill moves off the row itself, or we would paint the bar twice */
+    .console-root .cs-side .cs-item.cs-on { background: transparent; }
+    .console-root .cs-side .cs-item.cs-on::before {
+      content: ""; position: absolute; z-index: 0;
+      top: 0; right: 0; bottom: 0; left: 0;
+      border-radius: 0; background: var(--cs-ink);
+      transition: top var(--cs-fold), right var(--cs-fold), bottom var(--cs-fold),
+        left var(--cs-fold), border-radius var(--cs-fold);
+    }
+    /* (96 - (26px glyph + 14)) / 2 — the later rail-icon rules supersede the smaller
+       sizes above them, so 26px is the only one that ever applies. */
+    .console-root #cs-view.cs-collapsed { --cs-chipin: 28px; }
+    .console-root #cs-view.cs-collapsed .cs-side .cs-item.cs-on::before {
+      top: 1px; bottom: 1px;
+      left: var(--cs-chipin); right: var(--cs-chipin);
+      border-radius: 12px;
+    }
+    /* the row keeps the inverted glyph/label colour through the whole morph, so nothing
+       flips part-way — only the shape changes. */
+    .console-root #cs-view.cs-collapsed .cs-side > .cs-item.cs-on {
+      color: var(--cs-bg);
+      transition: color .18s ease,
+        opacity var(--cs-foldfade), width var(--cs-fold),
+        max-height var(--cs-fold), padding var(--cs-fold), margin var(--cs-fold);
+    }
+    .console-root #cs-view.cs-night .cs-side .cs-item.cs-on { color: #0e0e0e; }
+
+    /* ===== Labels fade where they stand ===== */
+    /* They used to animate max-width to 0 as well, so the type was squeezed and clipped
+       from the right at the same time as the growing glyph and the row's padding pushed
+       it ~21px to the right — a lot of movement for something that is only on screen for
+       another 100ms. Now the width simply stops mattering (the row clips it) and a
+       counter-translate cancels the push, so the label holds its position and fades.
+       The glyph still travels its full 18px into the rail. */
+    .console-root .cs-item-lb {
+      transition: opacity .1s ease, transform var(--cs-fold);
+    }
+    .console-root #cs-view.cs-collapsed .cs-item-lb {
+      opacity: 0; max-width: none;
+      transform: translateX(var(--cs-lbdx));
+    }
+    /* the push is icon growth + padding growth, which differ between the two views
+       because user view starts from a larger glyph */
+    .console-root #cs-view.cs-collapsed .cs-side { --cs-lbdx: -21px; }
+    .console-root #cs-view.cs-collapsed .cs-side.as-user { --cs-lbdx: -16px; }

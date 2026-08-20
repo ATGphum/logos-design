@@ -96,3 +96,56 @@ a.gal-card:hover {
   white-space: pre-wrap;
   opacity: 0.7;
 }
+
+/* Sandbox chrome: the back button and the view-as switch, bottom-right.
+   Sandbox affordances only — none of this belongs to a design. */
+.gal-chrome {
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.gal-chrome .gal-back {
+  position: static;
+  width: 40px;
+  height: 40px;
+}
+.gal-viewas {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 17px;
+  border-radius: 999px;
+  border: 1px solid #999a;
+  background: #111d;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 2px 14px #0007;
+  color: inherit;
+  font: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.gal-viewas:hover {
+  border-color: #888c;
+}
+.gal-viewas-lb {
+  opacity: 0.55;
+  letter-spacing: 0.08em;
+}
+.gal-viewas-val {
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 1;
+}
+.gal-viewas-val:not(.is-admin) {
+  color: #e6b673;
+}
+.gal-viewas-val.is-admin {
+  color: #9dc27a;
+}

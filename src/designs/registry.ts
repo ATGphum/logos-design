@@ -46,4 +46,13 @@ export const designs: DesignEntry[] = [
     maps_to: "logos-infra web-ui/src/components/billing (BillingPage)",
     component: lazy(() => import("./recharge/RechargeDesign")),
   },
+  {
+    id: "components",
+    title: "Framework components",
+    description:
+      "Base components — dialogs, drawers, toasts. A build-time reference, not a page LOGOS customers see; lives here rather than in the console sidebar.",
+    status: "exploration",
+    maps_to: "logos-webui shared component primitives",
+    component: lazy(() => import("./components/ComponentsDesign")),
+  },
 ]

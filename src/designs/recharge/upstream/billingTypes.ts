@@ -130,7 +130,15 @@ export function billingCreditMicrosValid(value: unknown): value is string {
 }
 
 export function formatBillingCreditUSD(value: string): string {
-  return formatCurrencyMicrosExact(value, 'USD')
+  // DESIGN SHIM (was formatCurrencyMicrosExact(value, 'USD')) — design shows 2 decimals.
+  // Upstream renders full micro precision so the figure is never rounded away from the
+  // ledger; this rounds for legibility. See NOTES.md before adopting upstream.
+  // 'en-US' is pinned deliberately: the ambient locale renders this as "60,94 $" on a
+  // German browser, which does not match the $-prefixed figures used across the design.
+  const micros = Number(BigInt(value)) / 1e6
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2,
+  }).format(micros)
 }
 
 export function parseBillingRechargeAccount(value: unknown): BillingRechargeAccount | null {

@@ -68,33 +68,23 @@ export function CryptoDepositActivityCard({ presentation }: {
     : pageText('billing.rechargeHistory.viewCryptoTransactionWithoutAsset', {
       network: item.networkName,
     })
+  /* DESIGN SHIM: one table row per deposit — date / amount / status / link.
+     Upstream renders a card with a labelled 4-column <dl>, a note line and a full-text
+     explorer link (~5 lines each). Network, asset, ledger id and the note are dropped
+     here; the status pill already carries the outcome. */
   return (
-    <article
+    <div
+      className="rc-txrow"
       data-history-source={presentation.source}
       data-history-id={presentation.sourceID}
       data-deposit-status={item.status}
     >
-      <header>
-        <div>
-          <strong>{amountLabel}</strong>
-          <small>{item.depositId}</small>
-        </div>
-        <span className={`billing-state billing-state--${item.status}`}>{statusLabel(item)}</span>
-      </header>
-      <dl>
-        <div><dt>{pageText('billing.rechargeHistory.network')}</dt><dd>{item.networkName}</dd></div>
-        <div><dt>{pageText('billing.rechargeHistory.asset')}</dt><dd>{assetLabel}</dd></div>
-        <div><dt>{pageText('billing.rechargeHistory.event')}</dt><dd><time dateTime={eventAt}>{formatDateTime(eventAt)}</time></dd></div>
-        <div><dt>{pageText('billing.rechargeHistory.ledger')}</dt><dd>{ledgerID === null ? pageText('billing.rechargeHistory.pending') : <code>{ledgerID}</code>}</dd></div>
-      </dl>
-      {item.status === 'refunded' && item.ledgerEntryId !== null ? (
-        <p className="billing-inline-note">
-          {note} {pageText('billing.rechargeHistory.originalCreditLedger')} <code>{item.ledgerEntryId}</code>
-        </p>
-      ) : note === null ? null : <p className="billing-inline-note">{note}</p>}
-      <a href={item.transactionUrl} target="_blank" rel="noopener noreferrer" aria-label={explorerLabel}>
-        {explorerLabel}<ExternalLink size={13} aria-hidden="true" />
+      <time className="rc-txrow__date" dateTime={eventAt}>{formatDateTime(eventAt)}</time>
+      <span className="rc-txrow__amount">{amountLabel}</span>
+      <span className={`rc-txrow__status billing-state billing-state--${item.status}`}>{statusLabel(item)}</span>
+      <a className="rc-txrow__action" href={item.transactionUrl} target="_blank" rel="noopener noreferrer" aria-label={explorerLabel}>
+        View
       </a>
-    </article>
+    </div>
   )
 }

@@ -52,40 +52,40 @@ export function RechargeOverview({ account, available, fresh, loading, addCredit
             <small>{pageText('billing.rechargeOverview.availableUsdCredit')}</small>
             <h2 id="recharge-balance-title">{pageText('billing.rechargeOverview.currentBalance')}</h2>
           </div>
-          <em className={`billing-status-pill billing-status-pill--${fresh ? 'active' : 'pending'}`}>{fresh ? pageText('billing.rechargeOverview.verified') : pageText('billing.rechargeOverview.lastVerified')}</em>
+          {/* DESIGN SHIM: VERIFIED pill removed. */}
         </div>
-        <div className="recharge-balance__value" aria-live="polite">{formatBillingCreditUSD(account.balanceMicros)}</div>
+        {/* DESIGN SHIM: the figure and the action share one row. Upstream puts them in
+            separate grid columns, whose differing internal stacks meant no CSS offset
+            aligned them in both the gallery and the console panel. */}
+        <div className="rc-balance-row">
+          <div className="recharge-balance__value" aria-live="polite">{formatBillingCreditUSD(account.balanceMicros)}</div>
+          <button
+            className="recharge-entry__action rc-balance-row__action"
+            type="button"
+            ref={addCreditsTriggerRef}
+            disabled={addCreditsDisabled}
+            onClick={onAddCredits}
+          >
+            <Plus size={17} aria-hidden="true" />
+            {pageText('billing.rechargeOverview.addCredits')}
+          </button>
+        </div>
         <p>{pageText('billing.rechargeOverview.creditIsConsumedByServiceUsageRechargeDoesNot')}</p>
-        <div className="recharge-balance__facts" aria-label={pageText('billing.rechargeOverview.creditProperties')}>
-          <span><ShieldCheck size={16} aria-hidden="true" />{pageText('billing.rechargeOverview.serverAuthoritativeBalance')}</span>
-          <span><Clock3 size={16} aria-hidden="true" />{pageText('billing.rechargeOverview.creditDoesNotExpire')}</span>
-        </div>
+        {/* DESIGN SHIM: credit-properties row removed. */}
       </section>
 
-      <section className="recharge-entry" aria-labelledby="recharge-entry-title">
-        <div>
-          <small>{pageText('billing.rechargeOverview.oneTimeCredit')}</small>
-          <h2 id="recharge-entry-title">{pageText('billing.rechargeOverview.addCredits')}</h2>
-          <p>{pageText('billing.rechargeOverview.addUsdCreditWithAOneTimePaymentEach')}</p>
-        </div>
-        <div className={`recharge-entry__status recharge-entry__status--${availability.kind}`} role="status" aria-live="polite">
-          <WalletCards size={20} aria-hidden="true" />
-          <span><strong>{availability.label}</strong><small>{availability.detail}</small></span>
-        </div>
-        {account.topup.activeOrderId !== null ? (
-          <div className="recharge-entry__reference"><span>{pageText('billing.rechargeOverview.activePayment')}</span><code>{account.topup.activeOrderId}</code></div>
-        ) : null}
-        <button
-          className="recharge-entry__action"
-          type="button"
-          ref={addCreditsTriggerRef}
-          disabled={addCreditsDisabled}
-          onClick={onAddCredits}
-        >
-          <Plus size={17} aria-hidden="true" />
-          {pageText('billing.rechargeOverview.addCredits')}
-        </button>
-      </section>
+      {availability.kind === 'ready' ? null : (
+        <section className="recharge-entry" aria-labelledby="recharge-entry-title">
+          <h2 id="recharge-entry-title" className="sr-only">{pageText('billing.rechargeOverview.addCredits')}</h2>
+          <div className={`recharge-entry__status recharge-entry__status--${availability.kind}`} role="status" aria-live="polite">
+            <WalletCards size={20} aria-hidden="true" />
+            <span><strong>{availability.label}</strong><small>{availability.detail}</small></span>
+          </div>
+          {account.topup.activeOrderId !== null ? (
+            <div className="recharge-entry__reference"><span>{pageText('billing.rechargeOverview.activePayment')}</span><code>{account.topup.activeOrderId}</code></div>
+          ) : null}
+        </section>
+      )}
     </div>
   )
 }

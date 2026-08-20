@@ -4,15 +4,16 @@
     .console-root #cs-view { --cs-bg: #f6f4ee; --cs-ink: #1a1916; --cs-line: rgba(26,25,22,0.14); --cs-soft: rgba(26,25,22,0.08); --cs-dim: #1a1916; --cs-faint: rgba(26,25,22,0.8); --cs-hl: rgba(26,25,22,0.045); position: fixed; inset: 0; z-index: 450; overflow: hidden; background: var(--cs-bg); color: var(--cs-ink); font-family: var(--app-font-sans); font-weight: 300; font-size: 15.5px; line-height: 1.6; -webkit-font-smoothing: antialiased; transition: opacity .6s ease; }
     .console-root #cs-view.cs-night { color-scheme: dark; --cs-bg: #0e0e0e; --cs-ink: #ffffff; --cs-line: rgba(244,242,236,0.14); --cs-soft: rgba(244,242,236,0.07); --cs-dim: #ffffff; --cs-faint: rgba(255,255,255,0.97); --cs-hl: rgba(244,242,236,0.05); }
     .console-root #cs-view.cs-hidden { opacity: 0; pointer-events: none; }
+    .console-root #cs-view.cs-night .cs-topbar { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"), radial-gradient(140% 78% at 50% 100%, rgba(255,255,255,0.030) 0%, rgba(255,255,255,0.020) 18%, rgba(255,255,255,0.012) 34%, rgba(255,255,255,0.006) 50%, rgba(255,255,255,0.002) 66%, rgba(255,255,255,0) 80%); background-repeat: repeat, no-repeat; background-attachment: fixed, fixed; }
     .console-root #cs-view ::selection { background: var(--cs-ink); color: var(--cs-bg); }
     .console-root .cs-wrap { display: grid; grid-template-columns: 268px 1fr; height: 100%; }
     .console-root .cs-topline { display: none; }
     .console-root .cs-topbar { position: absolute; top: 0; left: 268px; right: 0; height: 100px; z-index: 60; display: flex;
       align-items: center; justify-content: space-between; gap: 24px; padding: 0 clamp(28px, 4.5vw, 72px);
-      background: var(--cs-bg); border-bottom: 1px solid var(--cs-line); pointer-events: auto; }
+      background: var(--cs-bg); pointer-events: auto; }
 
     .console-root .cs-tmold { display: flex; align-items: center; border: 1px solid var(--cs-line); border-radius: 999px;
-      background: var(--cs-hl); padding: 11px 22px; width: min(340px, 26vw); flex: none; transition: border-color .25s, background .25s; }
+      background: var(--cs-hl); padding: 11px 22px; width: min(340px, 26vw); flex: 0 1 auto; min-width: 46px; transition: border-color .25s, background .25s; }
     .console-root .cs-tmold:focus-within { border-color: var(--cs-ink); background: transparent; }
     .console-root .cs-tsearch { display: flex; align-items: center; gap: 13px; color: var(--cs-ink); width: 100%; }
     .console-root .cs-tsearch svg { width: 17px; height: 17px; flex: none; opacity: 0.8; }
@@ -103,11 +104,51 @@
     .console-root #cs-view ::-webkit-scrollbar-track { background: transparent; }
     .console-root #cs-view ::-webkit-scrollbar-thumb { background: var(--cs-line); border-radius: 8px; }
     /* --- sidebar --- */
-    .console-root .cs-side { border-right: 1px solid var(--cs-soft); padding: 17px 16px 20px; display: flex; flex-direction: column; overflow-y: auto; }
-    .console-root .cs-brand { display: flex; align-items: center; gap: 9px; padding: 0 0 16px; }
-    .console-root .cs-brand img { width: 40px; height: 40px; object-fit: contain; }
+    /* No divider: the column and the panel share one surface, so folding reads as the
+       content itself moving rather than a separate pane sliding away. */
+    .console-root .cs-side { border-right: none; padding: 17px 16px 20px; display: flex; flex-direction: column; overflow-y: auto;
+      transition: padding var(--cs-fold); }
+    /* 5px down so the lockup centres on the fold button (both land at y=42);
+       the same 5px comes off the bottom so the sidebar height is unchanged. */
+    /* padding puts the lockup centre on y=50, the same line as search / icons / profile */
+    /* position:relative always (the arrow is absolute inside it), one justify mode, and the
+       enso placed by padding — switching justify-content mid-fold cannot animate, which is
+       what made the lockup jump back and forth. */
+    .console-root .cs-brand { position: relative; display: flex; align-items: center; justify-content: flex-start;
+      gap: 9px; padding: 6px 32px 14px 0; cursor: pointer;
+      transition: opacity .2s, padding var(--cs-fold), gap var(--cs-fold); }
+    .console-root .cs-brand:hover { opacity: 0.82; }
+    .console-root .cs-brand img { width: 42px; height: 42px; object-fit: contain; }
     .console-root #cs-view.cs-night .cs-brand img { filter: invert(1) brightness(1.55) drop-shadow(0 0 4px rgba(255,255,255,0.5)) drop-shadow(0 0 11px rgba(255,255,255,0.3)); }
-    .console-root .cs-brand span { font-family: "Julius Sans One", sans-serif; font-size: 21px; letter-spacing: 0.42em; }
+    .console-root .cs-brand span { font-family: "Julius Sans One", sans-serif; font-size: 21px; letter-spacing: 0.17em;
+      display: inline-block; white-space: nowrap; overflow: hidden; max-width: 240px;
+      /* trailing letter-space belongs inside the box, or overflow:hidden shaves the last glyph */
+      padding-right: 0.26em; margin-right: 6px;
+      transition: opacity var(--cs-foldfade), max-width var(--cs-fold),
+        margin var(--cs-fold), padding var(--cs-fold); }
+    /* The account now lives in the topbar on desktop; the sidebar copy exists only for
+       the ≤900px bar, where the topbar is display:none. Exactly one shows at a time. */
+    @media (min-width: 901px) { .console-root .cs-side .cs-user2 { display: none; } }
+    /* Profile block: rounded-square avatar, name over a quiet "Profile" label —
+       sits last in the row, after the icon buttons. */
+    /* refresh + light/dark are a pair — the topbar's space-between was spreading them
+       across the row, so they get their own cluster pinned to the right. */
+    /* gap matches .cs-topbar's own 24px gap so refresh > theme > profile step evenly */
+    .console-root .cs-tacts { display: flex; align-items: center; gap: 24px; flex: none; margin-left: auto; }
+    .console-root .cs-tuser { display: flex; align-items: center; gap: 13px; flex: none; cursor: pointer; }
+    .console-root .cs-tuser .cs-ava { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px;
+      border: 1.5px solid var(--cs-ink); border-radius: 13px; flex: none; transition: background .2s; }
+    .console-root .cs-tuser:hover .cs-ava { background: var(--cs-hl); }
+    .console-root .cs-tuser .cs-ava svg { width: 21px; height: 21px; }
+    .console-root .cs-tuser .cs-uid { display: flex; flex-direction: column; line-height: 1.15; white-space: nowrap; }
+    .console-root .cs-tuser .cs-uid b { font-family: var(--app-font-sans); font-weight: 400; font-size: 19px; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--cs-ink); }
+    .console-root .cs-tuser .cs-uid i { font-style: normal; font-family: var(--app-font-sans); font-size: 12.5px; font-weight: 300;
+      letter-spacing: 0.02em; color: var(--cs-faint); opacity: 0.7; margin-top: 2px; }
+    @media (max-width: 1080px) { .console-root .cs-tuser .cs-uid { display: none; } }
+    @media (max-width: 1240px) { .console-root .cs-tuser { margin-left: 8px; }
+      .console-root .cs-tuser .cs-ava { width: 36px; height: 36px; border-radius: 11px; } }
+
     .console-root #cs-view.cs-night .cs-brand span { color: #ffffff; text-shadow: 0 0 12px rgba(255,255,255,0.75), 0 0 30px rgba(255,255,255,0.5), 0 0 56px rgba(255,255,255,0.3); }
     .console-root .cs-user { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--cs-line); padding: 8px 6px 12px; font-size: 14.5px; cursor: pointer; }
     .console-root .cs-user span:last-child { color: var(--cs-faint); }
@@ -116,26 +157,46 @@
     .console-root .cs-balance-k u { text-decoration: none; border-bottom: 1px solid var(--cs-line); cursor: pointer; letter-spacing: 0.22em; }
     .console-root .cs-balance-k u:hover { border-color: var(--cs-ink); color: var(--cs-ink); }
     .console-root .cs-balance-v { font-family: "Julius Sans One", sans-serif; font-size: 22px; margin-top: 5px; }
-    .console-root .cs-group { font-size: 11.5px; letter-spacing: 0.34em; text-transform: uppercase; color: var(--cs-ink); opacity: 1; font-weight: 500; margin: 26px 6px 9px; }
+    .console-root .cs-group { font-size: 11.5px; letter-spacing: 0.34em; text-transform: uppercase; color: var(--cs-ink); opacity: 1; font-weight: 500; margin: 11px 6px 5px; }
     .console-root #cs-view.cs-night .cs-group { text-shadow: 0 0 8px rgba(255,255,255,0.3); }
-    .console-root .cs-item { padding: 11px 11px; font-size: 16px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--cs-ink); opacity: 1; cursor: pointer; transition: background .2s, color .2s, opacity .2s; }
+    /* flex row: the glyph and its label share a centre line instead of being nudged with
+       vertical-align, which left the icons sitting ~7px low against the type. */
+    .console-root .cs-item { display: flex; align-items: center; max-height: 72px; overflow: hidden;
+      transition: background .2s, color .2s, opacity var(--cs-foldfade), width var(--cs-fold),
+        max-height var(--cs-fold), padding var(--cs-fold), margin var(--cs-fold);
+      padding: 4px 11px; font-size: 15px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--cs-ink); opacity: 1; cursor: pointer; transition: background .2s, color .2s, opacity .2s; }
     .console-root #cs-view.cs-night .cs-item { color: #ffffff; }
     .console-root #cs-view.cs-night .cs-item.cs-on { color: #0e0e0e; }
     .console-root .cs-item:hover { opacity: 1; }
     .console-root .cs-item:hover { background: var(--cs-hl); color: var(--cs-ink); }
     .console-root .cs-item.cs-on { background: var(--cs-ink); color: var(--cs-bg); }
-    .console-root .cs-bottom { margin-top: auto; }
+    .console-root .cs-bottom { margin-top: 0; }
+    /* Sandbox user preview: with Operations hidden the bottom rail stranded itself at
+       the foot of an empty column, so it follows the nav and the version block takes
+       over the slack instead. Admin view is unchanged. */
+    .console-root .cs-side.as-user .cs-bottom { margin-top: 0; }
+    .console-root .cs-side.as-user .cs-vers { margin-top: auto; }
+    /* Mainpage/Settings lead with a glyph instead of the "/" prefix. */
+    /* icon advance is matched to the "/ " prefix (13.16px at this font/letter-spacing)
+       so every nav label starts on the same x, glyph-led or slash-led. */
+    /* Total advance must equal the "/ " prefix (13.16px at this font/letter-spacing) so
+       every label starts on the same x. A 12px glyph plus a readable 4px gap overshoots,
+       so the difference comes off the left — the icon sits ~3px into the row padding. */
+    .console-root .cs-item .cs-navico { width: 12px; height: 13px; flex: none;
+      margin-left: -2.84px; margin-right: 4px; display: block; opacity: 0.85; }
+    .console-root .cs-item.cs-on .cs-navico { opacity: 1; }
     .console-root .cs-back { margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 10px 10px; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--cs-dim); cursor: pointer; transition: background .2s, color .2s; }
     .console-root .cs-back:hover { background: var(--cs-hl); color: var(--cs-ink); }
     .console-root .cs-back svg { width: 20px; height: 11px; }
     .console-root .cs-backrow { display: flex; align-items: center; gap: 10px; padding: 12px 12px; margin-top: 10px; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cs-dim); cursor: pointer; transition: background .2s, color .2s; }
     .console-root .cs-backrow:hover { background: var(--cs-hl); color: var(--cs-ink); }
     .console-root .cs-backrow svg { width: 19px; height: 11px; }
-    .console-root .cs-vers { margin-top: 0; padding: 16px 6px 10px; font-size: 10.5px; letter-spacing: 0.12em; color: var(--cs-faint); line-height: 1.7; }
+    .console-root .cs-vers { margin-top: auto; padding: 14px 6px 10px; font-size: 10px; letter-spacing: 0.06em;
+      color: var(--cs-faint); line-height: 1.4; display: flex; justify-content: space-between; gap: 10px; white-space: nowrap; }
     .console-root .cs-side-foot { padding: 0 6px; display: flex; gap: 18px; }
-    .console-root .cs-side-foot img { width: 15px; height: 15px; filter: invert(1); opacity: 0.75; transition: opacity .2s; }
-    .console-root #cs-view.cs-night .cs-side-foot img { filter: none; opacity: 0.9; }
-    .console-root .cs-side-foot a:hover img { opacity: 1; }
+    .console-root .cs-side-foot svg { width: 15px; height: 15px; opacity: 0.6; transition: opacity .2s; }
+    .console-root .cs-side-foot a { display: flex; color: var(--cs-ink); }
+    .console-root .cs-side-foot a:hover svg { opacity: 1; }
     /* --- main --- */
     .console-root .cs-main { overflow-y: auto; padding: 116px clamp(28px, 4.5vw, 72px) 36px; display: flex; flex-direction: column; }
     .console-root .cs-head { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 24px; }
@@ -150,7 +211,9 @@
     .console-root .cs-uid b { font-family: "Julius Sans One", sans-serif; font-weight: 400; font-size: 18px; letter-spacing: 0.13em; text-transform: uppercase; line-height: 1.25; color: var(--cs-ink); -webkit-text-stroke: 0.5px currentColor; white-space: nowrap; }
     .console-root #cs-view.cs-night .cs-uid b { color: #ffffff; }
     .console-root .cs-uid i { font-style: normal; font-size: 10.5px; letter-spacing: 0.05em; color: var(--cs-dim); line-height: 1.5; white-space: nowrap; }
-    .console-root .cs-fold { flex: none; margin-left: auto; width: 15px; height: 15px; opacity: 0.85; }
+    /* Collapse/expand is a single control now — .cs-expand, pinned to the sidebar edge.
+       The old in-sidebar chevron is retired so folding in and out are the same button. */
+    .console-root .cs-fold { display: none; }
         .console-root .cs-headr { gap: 26px; }
     .console-root .cs-headmid { text-align: left; justify-self: start; }
     .console-root .cs-headl { display: none; }
@@ -159,6 +222,49 @@
     .console-root .cs-sideaccess::before { content: ">"; display: inline-block; margin-right: 0.55em; opacity: 1; }
     .console-root .cs-sideaccess:hover { background: var(--cs-hl); }
     .console-root #cs-view.cs-night .cs-sideaccess { color: #ffffff; text-shadow: 0 0 6px rgba(255,255,255,0.18); }
+
+    /* ===== Access band, sidebar edition =====
+       This is the one button that moves you out of the console and into the product, so
+       it is the only filled element in a UI made entirely of outlines and text — that
+       alone makes it the loudest thing on screen without introducing a colour.
+       The instance picker is a separate, quiet line underneath: one control, one job. */
+    /* The band now sits between the nav groups and the bottom rail; margin-top:auto
+       takes the slack so it always separates the two, with matched space either side. */
+    /* nav > band > bottom rail stay a tight cluster on fixed, matched 30px gaps, and the
+       cluster is centred by pushing the slack to the outer ends instead (auto above the
+       first group, auto above the version block). Auto gaps *around* the band would
+       recentre it correctly but blow the spacing out whenever the nav list is short. */
+    .console-root .cs-sideacc { margin: 24px 0; padding: 0; }
+    .console-root .cs-side > .cs-group-lead { margin-top: auto; }
+    .console-root .cs-sideacc .cs-acc-wrap { display: flex; flex-direction: column; align-items: stretch; width: 100%; }
+    .console-root .cs-sideacc .cs-acc-btn { width: 100%; height: 46px; border: none; border-radius: 999px;
+      background: var(--cs-ink); color: var(--cs-bg); justify-content: center; padding: 0;
+      transition: transform .18s cubic-bezier(.4,0,.2,1), box-shadow .25s, opacity .2s; }
+    .console-root .cs-sideacc .cs-acc-btn .lb { font-size: 12px; font-weight: 700; letter-spacing: 0.2em; white-space: nowrap; }
+    .console-root .cs-sideacc .cs-acc-btn:hover { background: var(--cs-ink); color: var(--cs-bg); transform: translateY(-1px); }
+    .console-root #cs-view.cs-night .cs-sideacc .cs-acc-btn:hover { box-shadow: 0 0 30px -6px rgba(255,255,255,0.55); }
+    .console-root #cs-view:not(.cs-night) .cs-sideacc .cs-acc-btn:hover { box-shadow: 0 6px 20px -8px rgba(26,25,22,0.55); }
+    .console-root #cs-view.cs-night .cs-sideacc .cs-acc-btn .lb { text-shadow: none; }
+
+    /* the picker is subordinate: no box, dim, sized like a caption */
+    .console-root .cs-sideacc .cs-acc-pick { width: auto; align-self: flex-start; border: none; background: transparent;
+      border-radius: 6px; height: 26px; margin: 9px 0 0 4px; padding: 0 7px; gap: 5px; color: var(--cs-faint); }
+    .console-root .cs-sideacc .cs-acc-pick:hover,
+    .console-root .cs-sideacc .cs-acc-wrap.on .cs-acc-pick { background: var(--cs-hl); color: var(--cs-ink); box-shadow: none; }
+    .console-root .cs-sideacc .cs-acc-pick::before { display: none; }
+    .console-root .cs-sideacc .cs-acc-pick .sb { font-size: 11.5px; font-weight: 400; letter-spacing: 0.02em;
+      text-transform: none; opacity: 0.8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .console-root .cs-sideacc .cs-acc-pick svg { width: 11px; height: 11px; opacity: 0.6; }
+    .console-root .cs-sideacc .cs-acc-wrap.on .cs-acc-pick svg { transform: rotate(180deg); }
+    .console-root .cs-sideacc .cs-acc-menu { left: 0; right: auto; transform: none; width: max(100%, 236px); min-width: 0;
+      top: calc(100% + 8px); }
+    @media (max-width: 900px) { .console-root .cs-sideacc { display: none; } }
+    /* the sidebar no longer scrolls, so let the dropdown escape its box */
+    /* visible only once settled — mid-animation the children are wider than the column */
+    @media (min-width: 901px) {
+      .console-root #cs-view.cs-settled:not(.cs-collapsed) .cs-side { overflow: visible; }
+      .console-root #cs-view:not(.cs-settled) .cs-side { overflow: hidden; }
+    }
     .console-root .cs-mode { background: none; border: none; cursor: pointer; color: currentColor; opacity: 0.85; padding: 0; transition: opacity .25s; }
     .console-root .cs-mode:hover { opacity: 1; }
     .console-root .cs-mode svg { width: 19px; height: 19px; display: block; }
@@ -176,7 +282,7 @@
     .console-root .cs-stat .a { margin-top: 12px; }
     .console-root .cs-stat .v { font-family: "Julius Sans One", sans-serif; font-size: clamp(20px, 2.3vw, 29px); letter-spacing: 0.04em; margin-top: 4px; color: var(--cs-ink); -webkit-text-stroke: 0.55px currentColor; }
     .console-root .cs-stat .t { font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cs-faint); margin-top: 3px; }
-    .console-root #cs-panel-overview .cs-stats { grid-template-columns: repeat(3, 1fr); row-gap: 64px; margin-bottom: 28px; }
+    .console-root #cs-panel-overview .cs-stats { grid-template-columns: repeat(2, 1fr); row-gap: 64px; margin-bottom: 28px; }
     .console-root #cs-panel-overview .cs-stat:nth-child(n+4) { padding-bottom: 4px; }
     /* status */
     .console-root .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 8px; background: var(--cs-faint); vertical-align: 1px; }
@@ -213,6 +319,10 @@
     .console-root #cs-panel-overview .cs-sec-h, .console-root #cs-panel-instances .cs-sec-h { padding-bottom: 20px; }
     .console-root #cs-panel-overview .cs-sec, .console-root #cs-panel-instances .cs-sec { margin-top: 86px; }
     .console-root #cs-panel-overview .cs-btn, .console-root #cs-panel-instances .cs-btn { font-size: 12px; letter-spacing: 0.2em; padding: 13px 26px; }
+    /* Instances has no permanent sidebar branch — this row is its way in, so it
+       sits on its own line under the stats rather than crowding a stat tile. */
+    .console-root #cs-panel-overview .ov-manage-row { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--cs-soft); display: flex; align-items: center; gap: 16px; }
+    .console-root #cs-panel-overview .ov-manage-row .hint { font-size: 12px; color: var(--cs-dim); letter-spacing: 0.02em; }
     .console-root #cs-panel-overview .chip, .console-root #cs-panel-instances .chip { font-size: 13px; padding: 7px 16px; letter-spacing: 0.09em; }
     .console-root #cs-panel-overview .cs-stat .k { font-size: 15px; padding-bottom: 14px; }
     .console-root #cs-panel-overview .cs-stat .v, .console-root #cs-panel-instances .cs-stat .v { font-family: var(--app-font-sans);
@@ -234,45 +344,63 @@
     .console-root .ov-bd .n { font-size: 13.5px; color: var(--cs-faint); letter-spacing: 0.04em; }
     .console-root .ov-bd .a { font-size: 14.5px; font-variant-numeric: tabular-nums; }
     /* ===== BUDGET HERO ===== */
-    .console-root #cs-panel-overview .cs-sec-h.ov-sech { display: flex; align-items: flex-end;
-      justify-content: space-between; gap: 30px 40px; flex-wrap: wrap; }
-    .console-root #cs-panel-overview .cs-sec-h.ov-sech > div:first-child { flex: 1 1 320px; }
-    .console-root .ov-sech .acts { display: flex; gap: 12px; flex-shrink: 0; padding-bottom: 2px; }
+    /* Budget header removed — the actions now ride in the .ov-btop row, bottom-aligned
+       with the figures beside them. */
+    .console-root .ov-btop .acts { display: flex; gap: clamp(7px, 1vw, 12px); flex: 0 1 auto;
+      min-width: 0; align-self: flex-end; }
+    .console-root .ov-btop .acts .cs-btn { white-space: nowrap; flex: 0 1 auto; min-width: 0;
+      padding: clamp(9px, 1.2vw, 13px) clamp(11px, 1.9vw, 26px);
+      font-size: clamp(9.5px, 1.05vw, 12px); letter-spacing: clamp(0.08em, 0.2vw, 0.2em); }
+    .console-root .ov-bmain { min-width: 0; }
     .console-root .ov-money { font-family: var(--app-font-sans); font-weight: 300; font-variant-numeric: tabular-nums;
       letter-spacing: -0.005em; line-height: 1; }
     .console-root .ov-money .cur { font-size: 0.9em; font-weight: 400; opacity: 0.55; margin-right: 0.06em; }
     .console-root .ov-money.disp .cur { font-size: 0.42em; margin-right: 0.16em; vertical-align: 0.62em; opacity: 0.45; }
-    .console-root .ov-btop { display: flex; align-items: flex-end; justify-content: space-between; gap: 40px;
-      flex-wrap: wrap; margin-top: 52px; }
-    .console-root .ov-bmain .lab, .console-root .ov-bpct .lab { font-size: 13px; letter-spacing: 0.24em; text-transform: uppercase;
+    /* nowrap: while the sidebar animates, the panel narrows every frame — wrapping made the
+       actions jump to their own row mid-fold. They shrink with the row instead. */
+    .console-root .ov-btop { display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 24px clamp(16px, 3vw, 40px); flex-wrap: nowrap; margin-top: 8px; }
+    .console-root .ov-bmain .lab { font-size: 13px; letter-spacing: 0.24em; text-transform: uppercase;
       color: var(--cs-faint); }
     .console-root .ov-bmain .amt { font-size: clamp(46px, 6vw, 78px); margin-top: 20px; }
     .console-root #cs-view.cs-night .ov-bmain .amt { text-shadow: 0 0 30px rgba(255,255,255,0.16); }
-    .console-root .ov-bpct { text-align: right; }
-    .console-root .ov-bpct .big { font-size: clamp(30px, 3.4vw, 44px); margin-top: 20px; }
+    /* Single figure under the bar replaces the used/remaining/total legend —
+       the bar already shows the proportion, the number just names it. */
+    .console-root .ov-bused { margin-top: 14px; font-family: var(--app-font-sans); font-size: 13px;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--cs-faint); font-variant-numeric: tabular-nums; }
+    /* Spend sits beside the "remaining budget" label, so the headline figure stays a
+       single clean number and the rate reads as context on the same line as its caption.
+       Absolute sizes here, not em — it is scaled against the label, not the figure. */
+    /* one line, always: the actions bottom-align to this block, so if the caption wraps
+       at some widths the buttons shift row between folded and unfolded states. */
+    .console-root .ov-bmain .lab { display: flex; align-items: baseline; flex-wrap: nowrap;
+      gap: 0 10px; min-width: 0; overflow: hidden;
+      /* the caption text is an anonymous flex item and wrapped internally even with
+         flex-wrap: nowrap — that height change is what moved the buttons. */
+      white-space: nowrap; }
+    .console-root .ov-bmain .lab > .ov-spent { flex: 0 1 auto; min-width: 0; overflow: hidden; }
+    .console-root .ov-spent { display: inline-flex; align-items: baseline; gap: 7px;
+      font-size: 13px; letter-spacing: 0.02em; text-transform: none; white-space: nowrap; }
+    .console-root .ov-spent .sl { opacity: 0.3; }
+    .console-root .ov-spent .fig { color: var(--cs-ink); font-size: 15px; font-variant-numeric: tabular-nums; }
+    .console-root .ov-spent .fig .cur { font-size: 0.74em; opacity: 0.55; margin-right: 0.1em; vertical-align: 0.08em; }
+    .console-root .ov-spent .tok { color: var(--cs-faint); opacity: 0.72; }
+    .console-root .ov-spent .per { color: var(--cs-faint); opacity: 0.5; text-transform: uppercase;
+      letter-spacing: 0.16em; font-size: 10.5px; }
+    @media (max-width: 640px) { .console-root .ov-spent .sl { display: none; } }
     .console-root .ov-bar { position: relative; height: 20px; border-radius: 999px; background: var(--cs-line);
-      overflow: hidden; margin: 44px 0 0; }
+      overflow: hidden; margin: 32px 0 0; }
     .console-root .ov-bar .fill { display: block; height: 100%; border-radius: 999px;
       background: linear-gradient(90deg, #6f9f74, #9dc27a); transition: width .7s cubic-bezier(.3,.7,.3,1); }
     .console-root .ov-bar.warn .fill { background: linear-gradient(90deg, #c69a52, #d9b169); }
     .console-root .ov-bar.over .fill { background: linear-gradient(90deg, #c26a6a, #d98a8a); }
     .console-root #cs-view.cs-night .ov-bar .fill { box-shadow: 0 0 20px -4px rgba(157,194,122,0.65); }
-    .console-root .ov-blegend { display: flex; align-items: center; gap: 30px; flex-wrap: wrap; margin-top: 26px; }
-    .console-root .ov-blegend .grp { display: flex; gap: 52px; flex-wrap: wrap; }
-    .console-root .ov-blegend .li { display: flex; align-items: center; gap: 12px; font-size: 16px; letter-spacing: 0.02em; }
-    .console-root .ov-blegend .li .sw { width: 12px; height: 12px; border-radius: 3px; flex: none; }
-    .console-root .ov-blegend .li .sw.used { background: #9dc27a; }
-    .console-root .ov-blegend .li .sw.left { background: var(--cs-line); }
-    .console-root .ov-blegend .li b { font-weight: 400; font-variant-numeric: tabular-nums; }
-    .console-root .ov-blegend .li i { font-style: normal; color: var(--cs-faint); }
     .console-root .ov-status { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
     .console-root .ov-status .note { font-size: 15px; color: var(--cs-faint); }
     @media (max-width: 760px) {
       .console-root .ov-btop { margin-top: 38px; gap: 26px; }
-      .console-root .ov-bpct { text-align: left; }
       .console-root .ov-bar { height: 16px; margin-top: 34px; }
-      .console-root .ov-blegend .grp { gap: 26px; }
-      .console-root .ov-sech .acts { width: 100%; }
+
     }
     .console-root .cs-prog { margin: 18px 0 6px; }
     .console-root .cs-prog .pk { display: flex; justify-content: space-between; font-size: 14.5px; color: var(--cs-ink); letter-spacing: 0.08em; margin-bottom: 7px; }
@@ -391,22 +519,151 @@
     .console-root .cs-main-foot a { font-size: 10.5px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--cs-faint); transition: color .2s; }
     .console-root .cs-main-foot a:hover { color: var(--cs-ink); }
     /* ===== CONSOLE: sidebar collapse ===== */
-    .console-root .cs-wrap { transition: grid-template-columns .5s cubic-bezier(.4,0,.2,1); }
+    /* One clock for every part of the fold. Mixed durations made it read as a sequence of
+       steps rather than a single movement. The curve front-loads the travel and settles,
+       The curve leaves immediately rather than easing in — an ease-in start holds everything
+       still for the first ~20% of the duration, so the icons appeared to hang and then chop
+       into motion. This departs on frame one and decelerates into place: one swing.
+       Fade shares the same duration and curve — giving opacity its own shorter clock puts
+       the height changes it drives out of step with the layout, and the column jumps. */
+    .console-root { --cs-fold: .34s cubic-bezier(.32,.72,.24,1); --cs-foldfade: .34s cubic-bezier(.32,.72,.24,1); }
+    .console-root .cs-wrap { transition: grid-template-columns var(--cs-fold);
+      will-change: grid-template-columns; }
+    /* the column repaints on every frame of the fold — keep that work inside it */
+    .console-root .cs-side { contain: paint; }
+    .console-root #cs-view.cs-settled .cs-side { contain: none; }
     .console-root .cs-side { min-width: 0; overflow-x: hidden; }
-    @media (min-width: 901px) { .console-root .cs-side > * { width: 204px; flex: none; transition: opacity .3s; } }
-    .console-root #cs-view.cs-collapsed .cs-wrap { grid-template-columns: 0px 1fr; }
-    .console-root #cs-view.cs-collapsed .cs-side { overflow: hidden; border-right-color: transparent; }
-    .console-root #cs-view.cs-collapsed .cs-side > * { opacity: 0; }
+    /* Opacity resolves early — well before the 500ms column does — so most of the motion
+       is solid content displacing the panel beside it, rather than the column edge
+       uncovering something. Symmetric in both directions so it reads the same closing. */
+    @media (min-width: 901px) { .console-root .cs-side > * { width: 204px; flex: none;
+      transition: opacity .34s cubic-bezier(.4,0,.2,1); } }
+    /* Collapsed is a 68px icon rail, not nothing — the enso stays put as the way back. */
+    .console-root #cs-view.cs-collapsed .cs-wrap { grid-template-columns: 96px 1fr; }
+    .console-root #cs-view.cs-collapsed .cs-side { overflow: hidden; }
+    /* Folding in, the fade runs the column's full 500ms on the same curve, so the
+       content thins out *as* the column closes instead of vanishing first and
+       leaving an empty column to collapse. Opening keeps the quick 200ms fade —
+       there the content should read as solid and pushing straight away. */
+    /* Only the text-bearing blocks fade; the rail's icons stay. */
+    .console-root #cs-view.cs-collapsed .cs-side > .cs-vers { opacity: 0; pointer-events: none;
+      transition: opacity .5s cubic-bezier(.4,0,.2,1); }
+    .console-root #cs-view.cs-collapsed .cs-side > .cs-group:not(.cs-group-lead) { margin-top: 0; }
+    /* the headings are pure labels with nowhere to go in the rail — they read as tacky
+       being carried across the whole fold, so they drop out early and let the space close
+       behind them on the normal clock. */
+    .console-root #cs-view.cs-collapsed .cs-side > .cs-group { opacity: 0; pointer-events: none;
+      max-height: 0; margin-bottom: 0; overflow: hidden;
+      transition: opacity .1s ease, max-height var(--cs-fold), margin var(--cs-fold); }
+    .console-root .cs-group { max-height: 40px; overflow: hidden;
+      transition: opacity var(--cs-foldfade), max-height var(--cs-fold), margin var(--cs-fold); }
+
+    /* Access stays in the rail as a vertical capsule — taller than it is wide so it still
+       reads as the primary action rather than a fifth icon. */
+    .console-root #cs-view.cs-collapsed .cs-sideacc { margin: 24px 0; display: flex; justify-content: flex-start; }
+    .console-root .cs-sideacc { transition: margin var(--cs-fold), opacity var(--cs-foldfade); }
+    /* align-items cannot interpolate either: switching flex-start -> center threw the
+       capsule to the middle of a still-wide row and the fold dragged it back, which is the
+       bounce from the left. Padding places it and animates. 31px + 34px capsule = x=48. */
+    .console-root #cs-view.cs-collapsed .cs-sideacc .cs-acc-wrap { width: 96px; align-items: flex-start;
+      padding-left: 31px; }
+    .console-root .cs-sideacc .cs-acc-wrap { transition: padding var(--cs-fold); }
+    .console-root .cs-sideacc .cs-acc-btn { transition: width var(--cs-fold), height var(--cs-fold),
+      margin var(--cs-fold), padding var(--cs-fold), border-radius var(--cs-fold),
+      background .26s, color .26s, box-shadow .25s; }
+    .console-root #cs-view.cs-collapsed .cs-sideacc .cs-acc-btn { width: 34px; height: 74px; margin-left: 0;
+      border-radius: 999px; padding: 0; }
+    .console-root #cs-view.cs-collapsed .cs-sideacc .cs-acc-btn .lb { display: none; }
+    .console-root #cs-view.cs-collapsed .cs-sideacc .cs-acc-pick { display: none; }
+    .console-root .cs-acc-ico { display: none; }
+    .console-root #cs-view.cs-collapsed .cs-acc-ico { display: block;
+      writing-mode: vertical-rl; text-orientation: upright;
+      font-family: var(--app-font-sans); font-size: 10.5px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase; line-height: 1; }
+
+    /* rail geometry: children shrink to the rail and centre */
+    /* flex-start, not center: centring puts the 68px rows in the middle of whatever the
+       column currently measures, so they drift left as it closes. Anchored left they
+       are already in their final position when the fold starts. */
+    /* rail geometry: full-width rows, each centring its own glyph on x=48. The lockup row
+       is relative so the fold control can sit beside the enso without shifting it. */
+    .console-root #cs-view.cs-collapsed .cs-side { padding-left: 0; padding-right: 0; align-items: stretch; }
+    /* Children snap to the rail width instead of animating it. Two widths easing at
+       once (column 268>68 and children 204>68) read as a fold inside a fold, and
+       made the rail contents appear to scale. Only the column moves now; the icons
+       are already at their final position when it starts closing. */
+    /* Everything that changes shape does so on the column's own duration and curve, so
+       the rail resolves as one continuous motion rather than a set of snaps. Safe now
+       that rows are anchored left — the earlier double-fold came from them being centred
+       and drifting, not from the width easing itself. */
+    .console-root .cs-side > *,
+    .console-root #cs-view.cs-collapsed .cs-side > * {
+      transition: opacity var(--cs-foldfade), width var(--cs-fold), margin var(--cs-fold),
+        padding var(--cs-fold), border-radius var(--cs-fold),
+        background-color var(--cs-fold), border-color var(--cs-fold); }
+    .console-root #cs-view.cs-collapsed .cs-side > * { width: 96px; margin-left: 0; margin-right: 0; }
+    .console-root #cs-view.cs-collapsed .cs-brand { padding: 6px 0 0 31px; gap: 0; }
+    .console-root #cs-view.cs-collapsed .cs-brand img { width: 34px; height: 34px; }
+    .console-root .cs-brand img { transition: width var(--cs-fold), height var(--cs-fold); }
+    /* zero the wordmark's own margin/padding too — at max-width 0 they still took
+       ~7px of the row and pushed the enso left of the rail's centre line. */
+    .console-root #cs-view.cs-collapsed .cs-brand span { opacity: 0; max-width: 0;
+      margin-right: 0; padding-right: 0; }
+
+    /* nav rows: icon-bearing ones survive as square buttons, the rest collapse away */
+    /* Same justify-content trap as the lockup: switching flex-start -> center cannot
+       interpolate, so the glyph snapped to the middle of a still-wide row and was dragged
+       back, which reads as a bounce from the left. One alignment mode throughout; the
+       glyph is placed with padding-left, which animates on the fold clock.
+       39px + the icon's -2.84px pull puts its centre on the rail's x=48. */
+    .console-root #cs-view.cs-collapsed .cs-side > .cs-item {
+      display: flex; align-items: center; justify-content: flex-start; padding: 8px 0 8px 39px; }
+    /* the label is its own element so it can fade while the glyph stays put — font-size: 0
+       cut the type instantly instead of fading it, which is what read as choppy. */
+    .console-root .cs-item-lb { display: inline-block; white-space: nowrap; overflow: hidden;
+      max-width: 240px;
+      transition: opacity var(--cs-foldfade), max-width var(--cs-fold); }
+    /* max-width, not width: auto -> 0 cannot animate, so `width: 0` snapped the label out
+       on the first frame and the fade underneath it was never visible. Combined with
+       nowrap the label is clipped as it narrows, never re-laid-out. */
+    .console-root #cs-view.cs-collapsed .cs-item-lb { opacity: 0; max-width: 0; }
+    .console-root #cs-view.cs-collapsed .cs-side > .cs-item:not(:has(.cs-navico)) { opacity: 0;
+      max-height: 0; padding-top: 0; padding-bottom: 0; pointer-events: none;
+      transition: opacity var(--cs-foldfade), max-height var(--cs-fold), padding var(--cs-fold); }
+    .console-root #cs-view.cs-collapsed .cs-item .cs-navico { width: 18px; height: 18px; margin: 0; opacity: 0.8; }
+    /* The active row's highlight is a solid white bar; carrying it through the fold means
+       animating a large filled block down to nothing, which dominates the movement. It
+       drops out fast and lets the rest of the fold happen unencumbered. */
+    .console-root #cs-view.cs-collapsed .cs-side > .cs-item.cs-on {
+      background: transparent; color: var(--cs-ink);
+      transition: background .1s ease, color .1s ease,
+        opacity var(--cs-foldfade), width var(--cs-fold),
+        max-height var(--cs-fold), padding var(--cs-fold), margin var(--cs-fold); }
+    .console-root #cs-view.cs-collapsed .cs-item.cs-on .cs-navico { opacity: 1; }
+    .console-root #cs-view.cs-collapsed .cs-item:hover .cs-navico { opacity: 1; }
+    .console-root #cs-view.cs-collapsed .cs-side-foot { justify-content: center; gap: 9px; }
+    .console-root #cs-view.cs-collapsed .cs-expand { right: 4px; width: 24px; height: 24px; }
+    /* Same arrangement as expanded: fixed 30px either side of the band so the page icons
+       sit right above it and the bottom pair right below, with the slack pushed to the
+       outer ends. Auto gaps around the band pinned it mid-column and left the icons
+       stranded at the top. */
+    .console-root #cs-view.cs-collapsed .cs-side > .cs-sideacc { margin: 30px 0; }
+    .console-root #cs-view.cs-collapsed .cs-side > .cs-bottom { margin-top: 0; }
+    .console-root #cs-view.cs-collapsed .cs-side > .cs-vers { margin-top: auto; }
+    .console-root #cs-view.cs-collapsed .cs-expand svg { transform: rotate(0deg); }
+    .console-root .cs-expand svg { width: 15px; height: 15px; }
 
     .console-root .cs-topbar { transition: padding .5s cubic-bezier(.4,0,.2,1), left .5s cubic-bezier(.4,0,.2,1); }
     
-    .console-root #cs-view.cs-collapsed .cs-topbar { left: 0; padding-left: 96px; }
+    .console-root #cs-view.cs-collapsed .cs-topbar { left: 68px; padding-left: clamp(28px, 4.5vw, 72px); }
     .console-root .cs-fold { cursor: pointer; transition: opacity .2s, transform .2s; }
     .console-root .cs-fold:hover { opacity: 1; transform: translateX(-2px); }
-    .console-root .cs-expand { position: absolute; top: 21px; left: 18px; z-index: 40; width: 41px; height: 41px; border-radius: 10px; border: 1.5px solid var(--cs-ink); background: var(--cs-bg); color: var(--cs-ink); cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transform: translateX(-8px); transition: opacity .3s, transform .3s, background .2s; }
+    .console-root .cs-expand { position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 26px; height: 26px; flex: none; border-radius: 8px; border: none; background: transparent; color: var(--cs-faint); cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 1; pointer-events: auto; transition: margin var(--cs-fold), background .2s; }
     .console-root .cs-expand svg { width: 16px; height: 16px; }
-    .console-root .cs-expand:hover { background: var(--cs-hl); }
-    .console-root #cs-view.cs-collapsed .cs-expand { opacity: 1; pointer-events: auto; transform: none; transition-delay: .25s; }
+    .console-root .cs-expand:hover { background: var(--cs-hl); color: var(--cs-ink); }
+    /* chevron points the way it will move the panel */
+    .console-root .cs-expand svg { transition: transform var(--cs-fold); transform: rotate(180deg); }
+    .console-root #cs-view.cs-collapsed .cs-expand svg { transform: rotate(0deg); }
     /* ===== CONSOLE: base components — scrim / dialog / drawer / notifications ===== */
     .console-root .cs-scrim { position: absolute; inset: 0; z-index: 80; background: rgba(26,25,22,0.38); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); opacity: 0; pointer-events: none; transition: opacity .35s; }
     .console-root #cs-view.cs-night .cs-scrim { background: rgba(0,0,0,0.55); }
@@ -462,7 +719,13 @@
       /* mobile bar: hamburger left · access agent dead-center · account right */
       .console-root .cs-side { position: relative; }
       .console-root .cs-mburger { display: flex; order: 0; }
-      .console-root .cs-maccess { display: block; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); margin: 0; font-family: var(--app-font-sans); font-size: 11.5px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--cs-ink); cursor: pointer; white-space: nowrap; padding: 6px 4px; }
+      /* Match the desktop .cs-acc-btn pill so the access-agent control reads as the same
+         design at every width — it was plain text here, which looked like another design. */
+      .console-root .cs-maccess { display: block; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+        margin: 0; font-family: var(--app-font-sans); font-size: 11.5px; font-weight: 600; letter-spacing: 0.22em;
+        text-transform: uppercase; color: var(--cs-ink); cursor: pointer; white-space: nowrap;
+        background: var(--cs-hl); border: 1px solid var(--cs-ink); border-radius: 999px; padding: 9px 22px;
+        transition: background .26s, color .26s, box-shadow .26s; }
       .console-root #cs-view.cs-night .cs-maccess { color: #ffffff; text-shadow: 0 0 6px rgba(255,255,255,0.18); }
       .console-root .cs-user2 { margin: 0 0 0 auto; order: 2; }
       .console-root .cs-user2 .cs-uid i { display: none; }
@@ -473,6 +736,10 @@
       .console-root #cs-panel-overview .cs-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 40px; }
     }
     @media (max-width: 520px) {
+      /* The pill is centre-absolute, so on narrow screens it has to shrink and the
+         account wordmark has to go, or they overlap. */
+      .console-root .cs-maccess { font-size: 10px; letter-spacing: 0.16em; padding: 7px 14px; }
+      .console-root .cs-user2 .cs-uid { display: none; }
       /* mobile: two KPI cards per row — use the horizontal space */
       /* nav drawer: buttery slide — no backdrop blur to recompute mid-animation */
       .console-root .cs-scrim { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; background: rgba(12,12,11,0.5) !important; }
@@ -665,4 +932,179 @@
       .console-root .seg-opt { padding: 7px 14px !important; font-size: 12px !important; min-width: 0 !important; }
       .console-root .settings-card * { max-width: 100%; overflow-wrap: break-word; }
     }
-    .console-root #cs-view.cs-night { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"), radial-gradient(140% 78% at 50% 100%, rgba(255,255,255,0.030) 0%, rgba(255,255,255,0.020) 18%, rgba(255,255,255,0.012) 34%, rgba(255,255,255,0.006) 50%, rgba(255,255,255,0.002) 66%, rgba(255,255,255,0) 80%); background-repeat: repeat, no-repeat; }
+    .console-root #cs-view.cs-night { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"), radial-gradient(140% 78% at 50% 100%, rgba(255,255,255,0.030) 0%, rgba(255,255,255,0.020) 18%, rgba(255,255,255,0.012) 34%, rgba(255,255,255,0.006) 50%, rgba(255,255,255,0.002) 66%, rgba(255,255,255,0) 80%); background-repeat: repeat, no-repeat; background-attachment: fixed, fixed; }
+
+    /* ===== Title in the topbar, search in the sidebar ===== */
+    /* The page title takes the topbar's left slot the search used to hold; the in-panel
+       page head is hidden, so panel content starts ~100px higher. */
+    .console-root .cs-ttitle { font-family: var(--app-font-sans); font-size: clamp(28px, 2.9vw, 38px);
+      font-weight: 300; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cs-ink);
+      margin: 0; white-space: nowrap; flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+    .console-root #cs-view.cs-night .cs-ttitle { text-shadow: 0 0 14px rgba(255,255,255,0.18); }
+    /* the in-panel head is gone, but the topbar is absolute over the panel, so content
+       still has to clear its 100px — this just removes the head's own height. */
+    .console-root .cs-main { padding-top: 118px; }
+
+    /* search sits under the lockup, sized to the column */
+    .console-root .cs-side .cs-tmold { width: 100%; margin: 0 0 4px; padding: 9px 13px;
+      border-radius: 999px; flex: none; }
+    .console-root .cs-side .cs-tsearch { gap: 9px; }
+    .console-root .cs-side .cs-tsearch svg { width: 15px; height: 15px; }
+    .console-root .cs-side .cs-tsearch input { font-size: 13px; letter-spacing: 0.04em; }
+    @media (max-width: 900px) { .console-root .cs-side .cs-tmold { display: none; } }
+    /* hidden in the rail along with the other text-bearing blocks */
+    /* search keeps only its magnifier — no pill around it — and clears the fold arrow */
+    .console-root #cs-view.cs-collapsed .cs-side > .cs-tmold { box-sizing: border-box;
+      width: 96px; min-width: 96px; max-width: 96px; height: 34px;
+      margin: 26px 0 0; padding: 0; justify-content: center;
+      background: transparent; border-color: transparent; border-radius: 999px; }
+    .console-root #cs-view.cs-collapsed .cs-side .cs-tsearch { justify-content: flex-start; gap: 0; width: 100%;
+      padding-left: 39px; }
+    .console-root .cs-side .cs-tsearch { transition: padding var(--cs-fold); }
+    .console-root #cs-view.cs-collapsed .cs-side > .cs-tmold { display: flex; align-items: center;
+      justify-content: flex-start; }
+    .console-root #cs-view.cs-collapsed .cs-side .cs-tsearch input { display: none; }
+    .console-root #cs-view.cs-collapsed .cs-side .cs-tsearch svg { width: 16px; height: 16px; opacity: 0.85; }
+
+    /* ===== Fold: clip text, never re-lay it out =====
+       While the column animates, every text-bearing row is re-measured each frame if the
+       type is allowed to wrap or ellipsize — that reflow is the choppiness. Instead the
+       labels keep their layout, get clipped by the shrinking row, and fade. Layout work
+       per frame drops to the box itself. */
+    .console-root .cs-side .cs-item,
+    .console-root .cs-side .cs-group,
+    .console-root .cs-brand span,
+    .console-root .cs-sideacc .lb,
+    .console-root .cs-sideacc .sb {
+      white-space: nowrap;
+      text-overflow: clip;
+      word-break: normal;
+      overflow-wrap: normal;
+      hyphens: none;
+    }
+    /* the access label fades with everything else rather than being switched off */
+    .console-root #cs-view.cs-collapsed .cs-sideacc .cs-acc-btn .lb { display: block; opacity: 0; max-width: 0; }
+    .console-root .cs-sideacc .cs-acc-btn .lb { display: block; overflow: hidden; max-width: 240px;
+      transition: opacity var(--cs-foldfade), max-width var(--cs-fold); }
+    /* promote the moving parts so the fade composites instead of repainting each frame */
+    .console-root .cs-side .cs-item,
+    .console-root .cs-side .cs-group,
+    .console-root .cs-brand span,
+    .console-root .cs-sideacc {
+      will-change: opacity;
+      backface-visibility: hidden;
+    }
+    .console-root #cs-view.cs-settled .cs-side .cs-item,
+    .console-root #cs-view.cs-settled .cs-side .cs-group,
+    .console-root #cs-view.cs-settled .cs-brand span,
+    .console-root #cs-view.cs-settled .cs-sideacc {
+      will-change: auto;
+    }
+
+    /* Light mode: the search field sat near-white on a cream ground and disappeared.
+       Inverting it gives the one input on the page a clear edge. */
+    .console-root #cs-view:not(.cs-night) .cs-side .cs-tmold {
+      background: rgba(26,25,22,0.88);
+      border-color: transparent;
+    }
+    .console-root #cs-view:not(.cs-night) .cs-side .cs-tsearch,
+    .console-root #cs-view:not(.cs-night) .cs-side .cs-tsearch svg,
+    .console-root #cs-view:not(.cs-night) .cs-side .cs-tsearch input {
+      color: #f4f2ec;
+    }
+    .console-root #cs-view:not(.cs-night) .cs-side .cs-tsearch input::placeholder {
+      color: rgba(244,242,236,0.72);
+    }
+    .console-root #cs-view:not(.cs-night) .cs-side .cs-tmold:focus-within {
+      background: rgba(26,25,22,0.96);
+    }
+
+    /* auto above the search and auto above the first group: the free space splits either
+       side of it, so it sits midway between the lockup and WORKSPACE instead of tucked
+       under the lockup with all the slack below. */
+    .console-root .cs-side > .cs-tmold { margin-top: auto; margin-bottom: 0; }
+    /* the fold arrow aligns to the enso itself, not to the lockup row's box — the row's
+       6/14px padding put its centre below the mark. */
+    .console-root .cs-brand .cs-expand { top: 14px; transform: none; }
+    .console-root #cs-view.cs-collapsed .cs-brand .cs-expand { top: 23px; transform: none; }
+
+    /* ===== Profile drawer ===== */
+    .console-root .cs-prof { display: flex; flex-direction: column; gap: 22px; }
+    .console-root .cs-prof-id { display: flex; flex-direction: column; align-items: center; gap: 9px; text-align: center; }
+    .console-root .cs-prof-ava { display: flex; align-items: center; justify-content: center;
+      width: 54px; height: 54px; border-radius: 6px; background: var(--cs-ink); color: var(--cs-bg);
+      font-family: var(--app-font-sans); font-size: 20px; font-weight: 600; }
+    .console-root .cs-prof-id b { font-family: var(--app-font-sans); font-size: 19px; font-weight: 500; letter-spacing: 0.02em; }
+    .console-root .cs-prof-key { display: flex; align-items: center; gap: 10px; }
+    .console-root .cs-prof-key code { font-size: 12px; color: var(--cs-faint); }
+    .console-root .cs-prof-key .cs-btn { padding: 7px 12px; font-size: 10px; }
+    .console-root .cs-prof-org { font-size: 12.5px; color: var(--cs-faint); }
+    .console-root .cs-prof-card { border: 1px solid var(--cs-line); border-radius: 10px; padding: 16px 18px; margin: 0; }
+    .console-root .cs-prof-card p { font-size: 13px; color: var(--cs-faint); margin: 6px 0 16px; }
+    .console-root .cs-prof-card p:last-child { margin-bottom: 0; }
+    .console-root .cs-prof-amt { font-size: 30px; margin-top: 12px; }
+    .console-root .cs-prof-wide { width: 100%; justify-content: center; }
+
+    /* the drawer already slides on its own curve; match the fold's easing and deepen the
+       scrim blur so the page behind reads as pushed back rather than merely dimmed */
+    .console-root .cs-drawer { transition: transform var(--cs-fold); }
+    .console-root .cs-scrim { backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      transition: opacity var(--cs-fold); }
+    .console-root .cs-tuser { cursor: pointer; }
+
+    /* Dashboard on one screen: the section gaps and the budget block's internal rhythm
+       were tuned when the page had fewer blocks on it. */
+    .console-root #cs-panel-overview .cs-sec + .cs-sec { margin-top: 26px; }
+    .console-root .ov-bar { margin-top: 20px; }
+    .console-root .ov-bused { margin-top: 10px; }
+    .console-root .ov-manage-row { margin-top: 16px; padding-top: 16px; }
+    .console-root #cs-panel-overview .cs-mods { gap: 8px; }
+    .console-root .cs-main { padding-bottom: 20px; }
+
+    /* the first section after the manage row is not a .cs-sec sibling, so it kept the old
+       86px gap while the others tightened */
+    .console-root #cs-panel-overview .ov-manage-row + .cs-sec { margin-top: 26px; }
+    .console-root #cs-panel-overview .cs-sec-h { margin-bottom: 10px; }
+    .console-root #cs-panel-overview .cs-mod { padding-top: 10px; padding-bottom: 10px; }
+
+    /* last 31px: the budget block's own breathing room, which is the largest single
+       reserve left on the page */
+    .console-root #cs-panel-overview .ov-btop { margin-top: 2px; }
+    .console-root #cs-panel-overview .ov-bar { margin-top: 16px; }
+    .console-root #cs-panel-overview .ov-manage-row { margin-top: 12px; padding-top: 12px; }
+    .console-root #cs-panel-overview .ov-manage-row + .cs-sec { margin-top: 22px; }
+
+    /* it is a button in the rail, so it should say so */
+    .console-root #cs-view.cs-collapsed .cs-side > .cs-tmold { cursor: pointer; }
+    .console-root #cs-view.cs-collapsed .cs-side > .cs-tmold:hover .cs-tsearch svg { opacity: 1; }
+
+    /* WORKSPACE / OPERATIONS were already pure white at full opacity — they read dim only
+       because 11.5px at 0.34em tracking leaves thin, widely-spread strokes next to 15px nav
+       rows. Weight and size do the work; tracking comes in slightly so the letters hold
+       together as a word. */
+    .console-root .cs-side > .cs-group {
+      font-size: 12.5px;
+      font-weight: 700;
+      letter-spacing: 0.26em;
+    }
+    .console-root #cs-view.cs-night .cs-side > .cs-group {
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.45);
+    }
+    .console-root #cs-view:not(.cs-night) .cs-side > .cs-group {
+      color: #1a1916;
+      text-shadow: none;
+    }
+
+    /* Four auto margins instead of three. With autos only above search, above WORKSPACE and
+       above the version block, two thirds of the slack landed above the cluster and one
+       third below, so it sat low. Adding one below the last nav row splits it half above /
+       half below, with the search still centred in the upper half. */
+    .console-root .cs-side > .cs-item-tail { margin-bottom: auto; }
+
+    /* The wordmark's glow was being clipped into a hard rectangle by the overflow:hidden
+       that the fold's max-width clip needs. Padding gives the halo room inside the box, and
+       the outer radius comes in so it stays within it. */
+    .console-root .cs-brand span { padding: 10px 0.26em 10px 0; margin-top: -10px; margin-bottom: -10px; }
+    .console-root #cs-view.cs-night .cs-brand span {
+      text-shadow: 0 0 10px rgba(255,255,255,0.55), 0 0 20px rgba(255,255,255,0.28);
+    }

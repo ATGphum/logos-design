@@ -90,6 +90,15 @@ export function SettingsPanel() {
           <button className="cs-btn pri">Save resources</button>
         </div>
       </div>
+      {/* moved off the Dashboard: control-plane detail that only admins act on.
+          Parked here so the wiring has somewhere to land later. */}
+      <div className="cs-sec" style={{ marginTop: 80 }}>
+        <SecH l="Operations" r="control-plane detail — mostly relevant to admins" />
+      </div>
+      <div className="cs-sec">
+        <SecH l="Operations overview" r="readiness, credentials, preflight warnings, and acknowledgements" />
+        <p className="cs-note">[Placeholder] Operations detail drawer — wired by backend.</p>
+      </div>
     </>
   )
 }

@@ -6,6 +6,9 @@
  */
 import "../../vendor/infra/styles/logos-tokens.css"
 import "../../vendor/infra/styles/console-skin.css"
+/* Design overrides must load wherever this page mounts — the console panel renders
+   this component directly, bypassing RechargeDesign (the gallery wrapper). */
+import "./recharge.css"
 import { BillingPage } from "./upstream/components/billing/BillingPage"
 
 export default function AdoptedRechargePage({ night }: { night: boolean }) {

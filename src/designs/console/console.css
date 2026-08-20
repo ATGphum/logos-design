@@ -1622,3 +1622,18 @@
       opacity: 1; filter: blur(0);
       transition: opacity .13s ease .16s, filter .13s ease .16s;
     }
+
+    /* ===== Nothing escapes the capsule mid-morph ===== */
+    /* The label is a fixed 204px of type while the capsule narrows to 50px under it, so
+       for a few frames the words hung ~13px outside the rounded edge. Clipping to the
+       button confines them to the shape as it closes — the glow is a box-shadow and is
+       drawn outside the box, so it is unaffected, and the instance menu hangs off the
+       wrap, not the button. */
+    .console-root .cs-sideacc .cs-acc-btn { overflow: hidden; }
+    /* and "Access" leaves early, so there is less type to clip in the first place */
+    .console-root #cs-view.cs-collapsed .cs-acc-word {
+      transition: opacity .06s ease, max-width var(--cs-fold), margin var(--cs-fold);
+    }
+    .console-root #cs-view.cs-collapsed .cs-sideacc .cs-acc-btn .lb {
+      transition: opacity .09s ease, filter .09s ease;
+    }

@@ -1142,7 +1142,13 @@
     .console-root .cs-side.as-user .cs-tsearch input { font-size: 14px; }
     /* with the search fixed, two autos remain — above the nav and above the footer — so the
        cluster still lands centred rather than riding high */
-    .console-root .cs-side.as-user > .cs-item-tail { margin-bottom: 0; }
+    /* was margin-bottom: 0, which left user view with two auto margins where admin has
+       three. That difference only showed up on the fold: collapsing switched the column
+       from a two-way to a three-way split of the free space and dropped the bottom pair
+       ~43px, so mainpage and settings flew vertically while dashboard and billing barely
+       moved. Same split in both states now — the pair holds its line and only the glyph
+       slides, like the rows above it. */
+    .console-root .cs-side.as-user > .cs-item-tail { margin-bottom: auto; }
 
     /* the social row leads the footer block now, so it carries the auto that pins the pair
        to the bottom — leaving it on .cs-vers would split them apart */
@@ -1271,7 +1277,9 @@
       transition: opacity .16s ease;
     }
     .console-root .cs-sideacc .cs-acc-btn .cs-acc-ico { opacity: 0; }
-    .console-root #cs-view.cs-collapsed .cs-sideacc .cs-acc-btn .lb { opacity: 0; max-width: none; }
+    /* the label no longer hands over to a separate slab, so it stays visible in the
+       rail — only the word "Access" inside it fades. */
+    .console-root #cs-view.cs-collapsed .cs-sideacc .cs-acc-btn .lb { opacity: 1; max-width: none; }
     .console-root #cs-view.cs-collapsed .cs-acc-ico { opacity: 1; }
 
     /* ===== Fold arrow below the enso in the rail =====
@@ -1359,7 +1367,6 @@
           cluster's leading auto grows from 98px to 141px.
        2. the 18px row font makes each row 44.8px instead of 42px.
        Both are undone here, collapsed only, so the open column keeps its own proportions. */
-    .console-root #cs-view.cs-collapsed .cs-side.as-user > .cs-item-tail { margin-bottom: auto; }
     .console-root #cs-view.cs-collapsed .cs-side.as-user .cs-item { font-size: 15px; }
     .console-root #cs-view.cs-collapsed .cs-side.as-user .cs-group { font-size: 12.5px; }
 
@@ -1424,7 +1431,7 @@
        early and leaves the eye something single to follow. */
     .console-root #cs-view.cs-collapsed .cs-bottom .cs-item-lb,
     .console-root #cs-view.cs-collapsed .cs-item-tail .cs-item-lb {
-      transition: opacity .03s ease, transform var(--cs-fold);
+      transition: opacity .11s ease, transform var(--cs-fold);
     }
     /* Opening, these two labels wait for the travel instead of racing it. The counter-
        translate only cancels the horizontal push; the bottom pair also rides the column's
@@ -1478,3 +1485,102 @@
        curve was spent before the heading started to close. */
     .console-root .cs-side > .cs-group { max-height: 24px; }
 
+
+    /* ===== Access capsule travels an L, not a diagonal ===== */
+    /* Width and height were both on the fold clock, so the capsule cut a diagonal from
+       wide-and-short to narrow-and-tall. Sequencing them reads as one deliberate move:
+       folding in it narrows to the rail first, then grows up; folding out it shortens
+       first, then opens back across. Same total time.
+       It also takes the violence out of everything below it — the capsule gaining 56px of
+       height is what shoves mainpage and settings down the column, and holding that to the
+       second half means the rows stay put while their labels are still fading. */
+    .console-root #cs-view { --cs-lpath: cubic-bezier(.33,.45,.25,1); }
+
+    /* folding in: across, then up */
+    .console-root #cs-view.cs-collapsed .cs-sideacc .cs-acc-btn {
+      transition: width .15s var(--cs-lpath),
+        height .16s var(--cs-lpath) .13s,
+        margin var(--cs-fold), padding var(--cs-fold), border-radius var(--cs-fold),
+        background .26s, color .26s, box-shadow .25s;
+    }
+    .console-root #cs-view.cs-collapsed .cs-sideacc .cs-acc-wrap {
+      transition: padding .15s var(--cs-lpath);
+    }
+    /* folding out: down, then across */
+    .console-root .cs-sideacc .cs-acc-btn {
+      transition: height .15s var(--cs-lpath),
+        width .16s var(--cs-lpath) .13s,
+        margin var(--cs-fold), padding var(--cs-fold), border-radius var(--cs-fold),
+        background .26s, color .26s, box-shadow .25s;
+    }
+    .console-root .cs-sideacc .cs-acc-wrap {
+      transition: padding .16s var(--cs-lpath) .13s;
+    }
+
+    /* With the shove deferred, the labels can fade on a real curve instead of being cut:
+       strongly eased out, so most of the fade is done early but it never snaps. */
+    .console-root #cs-view.cs-collapsed .cs-bottom .cs-item-lb,
+    .console-root #cs-view.cs-collapsed .cs-item-tail .cs-item-lb {
+      transition: opacity .13s cubic-bezier(.15,.85,.3,1), transform var(--cs-fold);
+    }
+
+    /* ===== The wordmark re-stacks instead of being swapped out ===== */
+    /* Previously the horizontal label and a separate vertical slab cross-faded, so LOGOS
+       disappeared and a different LOGOS appeared. Now there is one label: "Access" fades
+       and the mark's own five letters travel from a row into a column.
+       Each letter is given a uniform 1em advance so both arrangements are computable from
+       its index alone — expanded it sits at i * adv across, collapsed at the block's
+       centre and (i - 2) * step down. */
+    .console-root .cs-sideacc .cs-acc-btn .lb {
+      display: flex; align-items: center; justify-content: center; gap: 0.5em;
+    }
+    .console-root .cs-acc-word {
+      display: inline-block; white-space: nowrap;
+      transition: opacity .12s ease, max-width var(--cs-fold), margin var(--cs-fold);
+      max-width: 8em; overflow: hidden;
+    }
+    .console-root .cs-acc-mark {
+      display: inline-flex; flex: none;
+      --cs-acc-adv: 1.02em;   /* uniform per-letter advance */
+      --cs-acc-step: 1.22em;  /* vertical rhythm of the stacked form */
+    }
+    .console-root .cs-acc-l {
+      display: inline-block; width: var(--cs-acc-adv); text-align: center; flex: none;
+      transition: transform var(--cs-fold);
+    }
+    /* collapsed: every letter pulls to the block's centre column and steps down by index */
+    .console-root #cs-view.cs-collapsed .cs-acc-l {
+      transform: translate(
+        calc((2 - var(--i)) * var(--cs-acc-adv)),
+        calc((var(--i) - 2) * var(--cs-acc-step)));
+    }
+    .console-root #cs-view.cs-collapsed .cs-acc-word {
+      opacity: 0; max-width: 0; margin-left: -0.5em;
+    }
+    /* the old swap partners are gone */
+    .console-root .cs-sideacc .cs-acc-btn .cs-acc-ico { display: none; }
+    /* the old swap set the label to display: block in the rail at ID specificity, which
+       left align-items inert and dropped the stack to the top of the capsule. */
+    .console-root #cs-view.cs-collapsed .cs-sideacc .cs-acc-btn .lb {
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ===== Letters trace the same L as the capsule ===== */
+    /* X on the outer span, Y on the inner, so the two axes can be sequenced separately.
+       Folding in: across first (with the capsule narrowing), then down. Folding out the
+       order reverses. Previously both axes shared the fold clock while the capsule's width
+       ran a shorter one, which pulled the letters two ways at once and put a reversal in
+       their horizontal path. */
+    .console-root .cs-acc-li { display: inline-block; }
+    /* folding out: stack collapses first, then the letters spread across */
+    .console-root .cs-acc-l { transition: transform .16s var(--cs-lpath) .13s; }
+    .console-root .cs-acc-li { transition: transform .15s var(--cs-lpath); }
+    /* folding in: across first, then down */
+    .console-root #cs-view.cs-collapsed .cs-acc-l {
+      transition: transform .15s var(--cs-lpath);
+      transform: translateX(calc((2 - var(--i)) * var(--cs-acc-adv)));
+    }
+    .console-root #cs-view.cs-collapsed .cs-acc-li {
+      transition: transform .16s var(--cs-lpath) .13s;
+      transform: translateY(calc((var(--i) - 2) * var(--cs-acc-step)));
+    }

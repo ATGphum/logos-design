@@ -276,9 +276,27 @@ export function ConsoleView({ displayed, hidden, night, onToggleNight, onEnterAg
       <div className="cs-sideacc">
         <div className={"cs-acc-wrap" + (accOpen ? " on" : "")} id="cs-acc-wrap">
           <button className="cs-acc-btn" onClick={ciAccess} title="Open LOGOS">
-            <span className="lb">Access LOGOS</span>
-            {/* rail form: the wordmark set vertically — an arrow here read as a fold control */}
-            <span className="cs-acc-ico" aria-hidden="true">LOGOS</span>
+            {/* One label in both states, not two that swap: "Access" fades out and the
+                wordmark's own letters re-stack into the rail's vertical slab, so the word
+                is continuous through the fold. Each letter carries its index so CSS can
+                place it on either axis. */}
+            <span className="lb">
+              <span className="cs-acc-word">Access</span>
+              <span className="cs-acc-mark">
+                {"LOGOS".split("").map((ch, i) => (
+                  /* two nested spans so each axis can run on its own clock — the
+                     letters converge across while the capsule narrows, then stack down
+                     while it grows tall, tracing the same L the capsule does */
+                  <span
+                    key={i}
+                    className="cs-acc-l"
+                    style={{ ["--i" as string]: i }}
+                  >
+                    <span className="cs-acc-li">{ch}</span>
+                  </span>
+                ))}
+              </span>
+            </span>
           </button>
           <button
             className="cs-acc-pick"

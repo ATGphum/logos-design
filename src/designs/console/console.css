@@ -1160,7 +1160,7 @@
        rather than riding the fold. Carrying a visible box down to nothing dominates the
        movement; the shapes are gone before the column really starts travelling. */
     .console-root #cs-view.cs-collapsed .cs-side > .cs-tmold {
-      transition: background-color .09s ease, border-color .09s ease,
+      transition: background-color .05s ease, border-color .05s ease,
         width var(--cs-fold), margin var(--cs-fold), padding var(--cs-fold),
         border-radius var(--cs-fold), opacity var(--cs-foldfade);
     }

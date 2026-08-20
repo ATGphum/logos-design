@@ -1449,3 +1449,17 @@
       transform: scale(1);
       margin-left: 0; margin-right: 0;
     }
+
+    /* ===== Collapse the Operations rows over their real height ===== */
+    /* .cs-item carries max-height: 72px as a generous cap, but these rows are 32px tall.
+       Animating 72 -> 0 therefore does nothing at all for the first ~55% of the curve —
+       the cap is still above the content — and then dumps the whole 32px of collapse into
+       what is left. Eight rows doing that at once is what threw the bottom pair around:
+       peak vertical velocity was 5.1x the average, spiking mid-fold rather than easing.
+       Capping them just above their natural height makes the curve map onto real height
+       almost 1:1, so the space closes at an even rate. */
+    .console-root .cs-side > .cs-item:not(:has(.cs-navico)) { max-height: 36px; }
+    /* the group headings had the same slack: 20px of type under a 40px cap, so half the
+       curve was spent before the heading started to close. */
+    .console-root .cs-side > .cs-group { max-height: 24px; }
+

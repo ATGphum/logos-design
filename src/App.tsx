@@ -1,6 +1,7 @@
 import { Component, Suspense, useEffect, useState, type ReactNode } from "react"
 import { ThemeProvider } from "./vendor/webui/theme"
 import { designs } from "./designs/registry"
+import { ViewAsProvider, ViewAsSwitch } from "./sandbox/viewAs"
 
 function useHashRoute(): string {
   const [hash, setHash] = useState(() => window.location.hash)
@@ -77,18 +78,24 @@ export default function App() {
   const active = designs.find((d) => d.id === route)
   return (
     <ThemeProvider>
-      {active ? (
-        <DesignBoundary key={active.id}>
-          <Suspense fallback={<div className="gal-loading">loading…</div>}>
-            <active.component />
-          </Suspense>
-          <a className="gal-back" href="#/" title="Back to gallery">
-            ⌂
-          </a>
-        </DesignBoundary>
-      ) : (
-        <Gallery />
-      )}
+      <ViewAsProvider>
+        {active ? (
+          <DesignBoundary key={active.id}>
+            <Suspense fallback={<div className="gal-loading">loading…</div>}>
+              <active.component />
+            </Suspense>
+            <div className="gal-chrome">
+              {/* only the console has admin-only surfaces to hide */}
+              {active.id === "console" ? <ViewAsSwitch /> : null}
+              <a className="gal-back" href="#/" title="Back to gallery">
+                ⌂
+              </a>
+            </div>
+          </DesignBoundary>
+        ) : (
+          <Gallery />
+        )}
+      </ViewAsProvider>
     </ThemeProvider>
   )
 }

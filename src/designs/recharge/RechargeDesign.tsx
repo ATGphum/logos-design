@@ -14,7 +14,6 @@
  */
 import { useTheme } from "../../vendor/webui/theme"
 import AdoptedRechargePage from "./AdoptedRechargePage"
-import "./recharge.css"
 
 export default function RechargeDesign() {
   const { resolvedMode } = useTheme()

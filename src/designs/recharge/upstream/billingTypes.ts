@@ -1,10 +1,10 @@
-import { formatCurrencyMicrosExact } from './utils/format'
+import { formatCurrencyMicrosExact, formatCurrencyNanosExact } from './utils/format'
 
 export const billingCheckoutPlanIDs = ['pro_7d', 'pro_quarterly', 'pro_6_months'] as const
 
 export type BillingCheckoutPlanID = (typeof billingCheckoutPlanIDs)[number]
 
-export type BillingPaymentMethod = 'stripe' | 'tao'
+export type BillingPaymentMethod = 'stripe'
 
 export type BillingPlan = Readonly<{
   id: BillingCheckoutPlanID
@@ -35,15 +35,10 @@ export type BillingPublicConfig = Readonly<{
     expressCheckoutEnabled: boolean
     customerPortalEnabled: boolean
   }>
-  tao: Readonly<{
-    enabled: boolean
-    walletTransferEnabled: boolean
-    browserPublicWssUrl: string
-  }>
 }>
 
 export type BillingEntitlementSource = Readonly<{
-  kind: 'stripe_subscription' | 'stripe_one_time' | 'tao' | 'admin_adjustment'
+  kind: 'stripe_subscription' | 'stripe_one_time' | 'admin_adjustment'
   provider: BillingPaymentMethod | null
   renewalMode: 'automatic' | 'manual' | 'one_time' | 'none'
   orderId?: string
@@ -86,7 +81,7 @@ export type BillingAccount = Readonly<{
 
 export type BillingRechargeAccount = Readonly<{
   customerExists: boolean
-  balanceMicros: string
+  balanceNanos: string
   ledgerConfigured: boolean
   topup: Readonly<{
     allowed: boolean
@@ -101,7 +96,7 @@ export type BillingTopupProduct = Readonly<{
   name: string
   currency: 'USD'
   paidMicros: string
-  creditedMicros: string
+  creditedNanos: string
   displayAmount: string
   revision: number
   customAmount: Readonly<{
@@ -123,31 +118,35 @@ export type BillingRechargeProfileView = Readonly<{
   actionLabel: 'Recharge'
 }>
 
-export function billingCreditMicrosValid(value: unknown): value is string {
+export function billingIntegerAmountValid(value: unknown): value is string {
   if (typeof value !== 'string' || !/^(?:0|-?[1-9][0-9]{0,18})$/.test(value)) return false
-  const micros = BigInt(value)
-  return micros >= -9_223_372_036_854_775_808n && micros <= 9_223_372_036_854_775_807n
+  const amount = BigInt(value)
+  return amount >= -9_223_372_036_854_775_808n && amount <= 9_223_372_036_854_775_807n
 }
 
 export function formatBillingCreditUSD(value: string): string {
+  return formatCurrencyNanosExact(value, 'USD')
+}
+
+export function formatBillingPaidUSD(value: string): string {
   return formatCurrencyMicrosExact(value, 'USD')
 }
 
 export function parseBillingRechargeAccount(value: unknown): BillingRechargeAccount | null {
   if (!isRecord(value) || typeof value.customerExists !== 'boolean' ||
-      !billingCreditMicrosValid(value.balanceMicros) || typeof value.ledgerConfigured !== 'boolean' ||
+      !billingIntegerAmountValid(value.balanceNanos) || typeof value.ledgerConfigured !== 'boolean' ||
       !isRecord(value.topup) || typeof value.topup.allowed !== 'boolean' ||
       typeof value.topup.canCreateCheckout !== 'boolean' ||
       !(value.topup.activeOrderId === null || billingID(value.topup.activeOrderId, 'bord'))) return null
   const activeOrderId = value.topup.activeOrderId as string | null
-  if (!value.ledgerConfigured && (value.balanceMicros !== '0' || value.topup.allowed ||
+  if (!value.ledgerConfigured && (value.balanceNanos !== '0' || value.topup.allowed ||
       value.topup.canCreateCheckout || activeOrderId !== null)) return null
   if (!value.topup.allowed && value.topup.canCreateCheckout) return null
   if (value.topup.canCreateCheckout && activeOrderId !== null) return null
   if (!value.customerExists && activeOrderId !== null) return null
   return Object.freeze({
     customerExists: value.customerExists,
-    balanceMicros: value.balanceMicros,
+    balanceNanos: value.balanceNanos,
     ledgerConfigured: value.ledgerConfigured,
     topup: Object.freeze({
       allowed: value.topup.allowed,
@@ -162,26 +161,26 @@ export function parseBillingTopupProducts(value: unknown): readonly BillingTopup
   const items: BillingTopupProduct[] = []
   const ids = new Set<string>()
   const codes = new Set<string>()
-  const productKeys = new Set(['id', 'code', 'name', 'currency', 'paidMicros', 'creditedMicros', 'displayAmount', 'revision', 'customAmount', 'paymentMethods'])
+  const productKeys = new Set(['id', 'code', 'name', 'currency', 'paidMicros', 'creditedNanos', 'displayAmount', 'revision', 'customAmount', 'paymentMethods'])
   for (const candidate of value.items) {
     if (!isRecord(candidate) || Object.keys(candidate).length !== productKeys.size || Object.keys(candidate).some((key) => !productKeys.has(key)) ||
         !billingTopupProductIDValid(candidate.id) || !billingID(candidate.code, 'topup') ||
         !safeText(candidate.name, 120) || candidate.currency !== 'USD' ||
-        !billingCreditMicrosValid(candidate.paidMicros) || BigInt(candidate.paidMicros) <= 0n ||
-        !billingCreditMicrosValid(candidate.creditedMicros) || BigInt(candidate.creditedMicros) <= 0n ||
+        !billingIntegerAmountValid(candidate.paidMicros) || BigInt(candidate.paidMicros) <= 0n ||
+        !billingIntegerAmountValid(candidate.creditedNanos) || BigInt(candidate.creditedNanos) <= 0n ||
         typeof candidate.displayAmount !== 'string' || !/^(?:0|[1-9][0-9]{0,12})\.[0-9]{2}$/.test(candidate.displayAmount) ||
         !Number.isSafeInteger(candidate.revision) || Number(candidate.revision) < 1 ||
         !isRecord(candidate.customAmount) || Object.keys(candidate.customAmount).length !== 3 ||
         typeof candidate.customAmount.enabled !== 'boolean' ||
-        !billingCreditMicrosValid(candidate.customAmount.minMicros) || BigInt(candidate.customAmount.minMicros) <= 0n ||
-        !billingCreditMicrosValid(candidate.customAmount.maxMicros) ||
+        !billingIntegerAmountValid(candidate.customAmount.minMicros) || BigInt(candidate.customAmount.minMicros) <= 0n ||
+        !billingIntegerAmountValid(candidate.customAmount.maxMicros) ||
         BigInt(candidate.customAmount.maxMicros) < BigInt(candidate.customAmount.minMicros) ||
-        !isRecord(candidate.paymentMethods) || Object.keys(candidate.paymentMethods).length !== 2 ||
-        typeof candidate.paymentMethods.tao !== 'boolean' ||
+        !isRecord(candidate.paymentMethods) || Object.keys(candidate.paymentMethods).length !== 1 ||
         typeof candidate.paymentMethods.stripe !== 'boolean' || ids.has(candidate.id as string) || codes.has(candidate.code as string)) return null
     const [whole, cents] = candidate.displayAmount.split('.')
     const displayMicros = BigInt(whole) * 1_000_000n + BigInt(cents) * 10_000n
-    if (displayMicros !== BigInt(candidate.paidMicros) || BigInt(candidate.customAmount.minMicros) % 10_000n !== 0n ||
+    if (displayMicros !== BigInt(candidate.paidMicros) || BigInt(candidate.creditedNanos) !== BigInt(candidate.paidMicros) * 1_000n ||
+        BigInt(candidate.customAmount.minMicros) % 10_000n !== 0n ||
         BigInt(candidate.customAmount.maxMicros) % 10_000n !== 0n ||
         (candidate.customAmount.enabled
           ? BigInt(candidate.paidMicros) !== BigInt(candidate.customAmount.minMicros)
@@ -194,7 +193,7 @@ export function parseBillingTopupProducts(value: unknown): readonly BillingTopup
       name: candidate.name as string,
       currency: 'USD',
       paidMicros: candidate.paidMicros,
-      creditedMicros: candidate.creditedMicros,
+      creditedNanos: candidate.creditedNanos,
       displayAmount: candidate.displayAmount,
       revision: Number(candidate.revision),
       customAmount: Object.freeze({
@@ -202,7 +201,7 @@ export function parseBillingTopupProducts(value: unknown): readonly BillingTopup
         minMicros: candidate.customAmount.minMicros,
         maxMicros: candidate.customAmount.maxMicros,
       }),
-      paymentMethods: Object.freeze({ tao: candidate.paymentMethods.tao, stripe: candidate.paymentMethods.stripe }),
+      paymentMethods: Object.freeze({ stripe: candidate.paymentMethods.stripe }),
     }))
   }
   return Object.freeze(items)
@@ -215,7 +214,7 @@ export function billingRechargeProfileView(
 ): BillingRechargeProfileView {
   if (loading && account === null) return Object.freeze({ kind: 'loading', balanceLabel: 'Checking…', statusLabel: 'Checking…', actionLabel: 'Recharge' })
   if (!available || account === null) return Object.freeze({ kind: 'unavailable', balanceLabel: 'Unavailable', statusLabel: 'Unavailable', actionLabel: 'Recharge' })
-  const balanceLabel = formatBillingCreditUSD(account.balanceMicros)
+  const balanceLabel = formatBillingCreditUSD(account.balanceNanos)
   if (account.topup.activeOrderId !== null) return Object.freeze({ kind: 'pending', balanceLabel, statusLabel: 'Payment pending', actionLabel: 'Recharge' })
   if (!account.ledgerConfigured || !account.topup.allowed) return Object.freeze({ kind: 'restricted', balanceLabel, statusLabel: 'Recharge unavailable', actionLabel: 'Recharge' })
   return Object.freeze({ kind: 'ready', balanceLabel, statusLabel: 'Available', actionLabel: 'Recharge' })
@@ -239,15 +238,10 @@ export function billingProfileView(account: BillingAccount | null, available: bo
 
 export type BillingHistoryPayment = Readonly<{
   paymentId: string
-  kind: 'stripe_payment' | 'stripe_invoice' | 'tao_transaction'
-  status: 'pending' | 'processing' | 'succeeded' | 'failed' | 'canceled' | 'refunded' |
-    'not_found' | 'submitted' | 'in_block' | 'finalized' | 'reverted' | 'duplicate' |
-    'invalid_recipient' | 'invalid_amount' | 'invalid_sender' | 'expired_quote'
+  kind: 'stripe_payment' | 'stripe_invoice'
+  status: 'pending' | 'processing' | 'succeeded' | 'failed' | 'canceled' | 'refunded'
   recordedAt: string
   paidAt?: string
-  finalizedAt?: string
-  transactionHash?: string
-  transactionURL?: string
 }>
 
 export type BillingHistoryItem = Readonly<{
@@ -277,10 +271,8 @@ export const billingOrderLifecycleStatuses = [
 ] as const
 
 export const billingPaymentStatuses = [
-  'waiting', 'pending', 'processing', 'not_found', 'submitted', 'in_block', 'finalizing', 'finalized',
-  'confirmed', 'succeeded', 'failed', 'canceled', 'refunded', 'manual_review', 'expired',
-  'underpaid', 'overpaid', 'reverted', 'duplicate', 'invalid_recipient', 'invalid_amount',
-  'invalid_sender', 'expired_quote',
+  'waiting', 'pending', 'processing', 'finalizing', 'confirmed', 'succeeded', 'failed',
+  'canceled', 'refunded', 'manual_review', 'expired', 'underpaid', 'overpaid',
 ] as const
 
 export const billingOrderEntitlementStatuses = [
@@ -406,8 +398,8 @@ export function parseBillingPlans(value: unknown): BillingPlan[] | null {
         !Number.isSafeInteger(candidate.duration.count) || Number(candidate.duration.count) < 1 ||
         !isRecord(candidate.price) || candidate.price.currency !== 'USD' || !decimalUSD(candidate.price.total) ||
         !(candidate.price.displayMonthly === null || decimalUSD(candidate.price.displayMonthly)) ||
-        !isRecord(candidate.paymentMethods) || typeof candidate.paymentMethods.stripe !== 'boolean' ||
-        typeof candidate.paymentMethods.tao !== 'boolean' || !Number.isSafeInteger(candidate.policyRevision) ||
+        !isRecord(candidate.paymentMethods) || Object.keys(candidate.paymentMethods).length !== 1 ||
+        typeof candidate.paymentMethods.stripe !== 'boolean' || !Number.isSafeInteger(candidate.policyRevision) ||
         Number(candidate.policyRevision) < 1) return null
     const policy = parseEntitlementPolicy(candidate.entitlementPolicy)
     if (policy === null) return null
@@ -426,7 +418,7 @@ export function parseBillingPlans(value: unknown): BillingPlan[] | null {
         total: candidate.price.total,
         displayMonthly: candidate.price.displayMonthly as string | null,
       }),
-      paymentMethods: Object.freeze({ stripe: candidate.paymentMethods.stripe, tao: candidate.paymentMethods.tao }),
+      paymentMethods: Object.freeze({ stripe: candidate.paymentMethods.stripe }),
       policyRevision: Number(candidate.policyRevision),
       entitlementPolicy: policy,
       ...(discountLabel ? { discountLabel } : {}),
@@ -441,16 +433,12 @@ export function parseBillingPublicConfig(value: unknown): BillingPublicConfig | 
   if (!isRecord(value) || !isRecord(value.stripe) || typeof value.stripe.enabled !== 'boolean' ||
       typeof value.stripe.publishableKey !== 'string' || typeof value.stripe.liveMode !== 'boolean' ||
       typeof value.stripe.paymentElementEnabled !== 'boolean' || typeof value.stripe.expressCheckoutEnabled !== 'boolean' ||
-      typeof value.stripe.customerPortalEnabled !== 'boolean' || !isRecord(value.tao) ||
-      typeof value.tao.enabled !== 'boolean' || typeof value.tao.walletTransferEnabled !== 'boolean' ||
-      typeof value.tao.browserPublicWssUrl !== 'string') return null
+      typeof value.stripe.customerPortalEnabled !== 'boolean') return null
   const keyMode = publishableKeyMode(value.stripe.publishableKey)
   if (value.stripe.enabled && (!keyMode || (keyMode === 'live') !== value.stripe.liveMode ||
       !value.stripe.paymentElementEnabled && !value.stripe.expressCheckoutEnabled)) return null
   if (!value.stripe.enabled && (value.stripe.publishableKey !== '' || value.stripe.liveMode ||
       value.stripe.paymentElementEnabled || value.stripe.expressCheckoutEnabled)) return null
-  if (value.tao.walletTransferEnabled && (!value.tao.enabled || !taoBrowserPublicWSSURL(value.tao.browserPublicWssUrl))) return null
-  if (!value.tao.walletTransferEnabled && value.tao.browserPublicWssUrl !== '') return null
   return Object.freeze({ stripe: Object.freeze({
     enabled: value.stripe.enabled,
     publishableKey: value.stripe.publishableKey,
@@ -458,37 +446,20 @@ export function parseBillingPublicConfig(value: unknown): BillingPublicConfig | 
     paymentElementEnabled: value.stripe.paymentElementEnabled,
     expressCheckoutEnabled: value.stripe.expressCheckoutEnabled,
     customerPortalEnabled: value.stripe.customerPortalEnabled,
-  }), tao: Object.freeze({
-    enabled: value.tao.enabled,
-    walletTransferEnabled: value.tao.walletTransferEnabled,
-    browserPublicWssUrl: value.tao.browserPublicWssUrl,
   }) })
 }
 
-function taoBrowserPublicWSSURL(value: string) {
-  if (value.length > 2048 || value.trim() !== value) return false
-  try {
-    const parsed = new URL(value)
-    return parsed.protocol === 'wss:' && parsed.username === '' && parsed.password === '' && parsed.port === '' &&
-      parsed.search === '' && parsed.hash === '' && (parsed.pathname === '' || parsed.pathname === '/')
-  } catch {
-    return false
-  }
-}
-
 function parseBillingEntitlementSource(value: unknown): BillingEntitlementSource | null {
-  if (!isRecord(value) || !['stripe_subscription', 'stripe_one_time', 'tao', 'admin_adjustment'].includes(String(value.kind)) ||
+  if (!isRecord(value) || !['stripe_subscription', 'stripe_one_time', 'admin_adjustment'].includes(String(value.kind)) ||
       !['automatic', 'manual', 'one_time', 'none'].includes(String(value.renewalMode)) ||
-      !(value.provider === null || ['stripe', 'tao'].includes(String(value.provider))) ||
+      !(value.provider === null || value.provider === 'stripe') ||
       (value.orderId !== undefined && !billingID(value.orderId, 'bord')) ||
       (value.subscriptionId !== undefined && !billingID(value.subscriptionId, 'bsub'))) return null
   const exact = value.kind === 'stripe_subscription'
     ? value.provider === 'stripe' && value.renewalMode === 'automatic' && typeof value.orderId === 'string' && typeof value.subscriptionId === 'string'
     : value.kind === 'stripe_one_time'
       ? value.provider === 'stripe' && value.renewalMode === 'one_time' && typeof value.orderId === 'string' && value.subscriptionId === undefined
-      : value.kind === 'tao'
-        ? value.provider === 'tao' && value.renewalMode === 'manual' && typeof value.orderId === 'string' && value.subscriptionId === undefined
-        : value.provider === null && value.renewalMode === 'none' && value.orderId === undefined && value.subscriptionId === undefined
+      : value.provider === null && value.renewalMode === 'none' && value.orderId === undefined && value.subscriptionId === undefined
   if (!exact) return null
   return Object.freeze({
     kind: value.kind as BillingEntitlementSource['kind'],
@@ -519,8 +490,7 @@ function parseBillingAccountEntitlement(value: unknown): BillingAccountEntitleme
 
 function parseBillingAccountSubscription(value: unknown): BillingAccountSubscription | null {
   if (!isRecord(value) || !billingID(value.id, 'bsub') || !billingCheckoutPlanIDValid(String(value.planId || '')) ||
-      !['stripe', 'tao'].includes(String(value.provider)) || !['automatic', 'manual'].includes(String(value.renewalMode)) ||
-      (value.provider === 'stripe' ? value.renewalMode !== 'automatic' : value.renewalMode !== 'manual') ||
+      value.provider !== 'stripe' || value.renewalMode !== 'automatic' ||
       !billingSubscriptionStatuses.includes(value.status as BillingSubscriptionStatus) ||
       ['canceled', 'expired', 'unpaid'].includes(String(value.status)) ||
       !isoDate(value.currentPeriodStart) || !isoDate(value.currentPeriodEnd) ||
@@ -589,7 +559,7 @@ export function parseBillingHistory(value: unknown): BillingHistory | null {
   let stripeInvoicePresent = false
   for (const item of value.items) {
     if (!isRecord(item) || !billingID(item.orderId, 'bord') || !safeText(item.orderNo, 64) ||
-        !billingCheckoutPlanIDValid(String(item.planId || '')) || !['stripe', 'tao'].includes(String(item.provider)) ||
+        !billingCheckoutPlanIDValid(String(item.planId || '')) || item.provider !== 'stripe' ||
         !['one_time', 'subscription_initial', 'renewal'].includes(String(item.orderType)) ||
         !['automatic', 'manual', 'one_time'].includes(String(item.renewalMode)) ||
         !decimalUSD(item.amountUSD) || item.amountUSD === '0.00' ||
@@ -598,11 +568,9 @@ export function parseBillingHistory(value: unknown): BillingHistory | null {
         !['not_refunded', 'refunded'].includes(String(item.refundStatus)) ||
         (item.refundedAt !== undefined && !isoDate(item.refundedAt)) || !Array.isArray(item.payments) ||
         orderIDs.has(item.orderId as string) || orderNumbers.has(item.orderNo as string)) return null
-    const exactRenewal = item.provider === 'tao'
-      ? item.orderType === 'one_time' && item.renewalMode === 'manual'
-      : item.orderType === 'one_time'
-        ? item.renewalMode === 'one_time'
-        : ['subscription_initial', 'renewal'].includes(String(item.orderType)) && item.renewalMode === 'automatic'
+    const exactRenewal = item.orderType === 'one_time'
+      ? item.renewalMode === 'one_time'
+      : ['subscription_initial', 'renewal'].includes(String(item.orderType)) && item.renewalMode === 'automatic'
     const paidState = item.status === 'paid' || item.status === 'refunded'
     const refundedState = item.status === 'refunded'
     if (!exactRenewal || paidState !== (item.paidAt !== undefined) ||
@@ -615,36 +583,21 @@ export function parseBillingHistory(value: unknown): BillingHistory | null {
     let refundEvidence = false
     for (const payment of item.payments) {
       if (!isRecord(payment) || !billingID(payment.paymentId, 'bpay') || paymentIDs.has(payment.paymentId as string) ||
-          !['stripe_payment', 'stripe_invoice', 'tao_transaction'].includes(String(payment.kind)) ||
+          !['stripe_payment', 'stripe_invoice'].includes(String(payment.kind)) ||
           !safeText(payment.status, 48) || !isoDate(payment.recordedAt) ||
-          (payment.paidAt !== undefined && !isoDate(payment.paidAt)) ||
-          (payment.finalizedAt !== undefined && !isoDate(payment.finalizedAt)) ||
-          (payment.transactionHash !== undefined && (typeof payment.transactionHash !== 'string' || !/^0x[0-9a-f]{64}$/.test(payment.transactionHash))) ||
-          (payment.transactionURL !== undefined && (typeof payment.transactionURL !== 'string' ||
-            payment.transactionURL !== `https://taostats.io/extrinsic/${String(payment.transactionHash || '')}`))) return null
+          (payment.paidAt !== undefined && !isoDate(payment.paidAt))) return null
       const stripeStatus = ['pending', 'processing', 'succeeded', 'failed', 'canceled', 'refunded'].includes(String(payment.status))
-      const taoStatus = ['not_found', 'submitted', 'in_block', 'finalized', 'failed', 'reverted', 'duplicate',
-        'invalid_recipient', 'invalid_amount', 'invalid_sender', 'expired_quote'].includes(String(payment.status))
-      const exactProvider = item.provider === 'stripe'
-        ? (payment.kind === 'stripe_payment' || payment.kind === 'stripe_invoice') && stripeStatus &&
-          payment.finalizedAt === undefined && payment.transactionHash === undefined && payment.transactionURL === undefined
-        : payment.kind === 'tao_transaction' && taoStatus && payment.paidAt === undefined &&
-          ((payment.transactionHash === undefined) === (payment.transactionURL === undefined))
-      const stripePaid = item.provider === 'stripe' && ['succeeded', 'refunded'].includes(String(payment.status))
+      const exactProvider = (payment.kind === 'stripe_payment' || payment.kind === 'stripe_invoice') && stripeStatus
+      const stripePaid = ['succeeded', 'refunded'].includes(String(payment.status))
       if (!exactProvider || (stripePaid !== (payment.paidAt !== undefined)) ||
           (payment.paidAt !== undefined && Date.parse(payment.paidAt as string) < Date.parse(payment.recordedAt as string)) ||
-          (payment.finalizedAt !== undefined && Date.parse(payment.finalizedAt as string) < Date.parse(payment.recordedAt as string)) ||
-          (stripePaid && payment.kind !== 'stripe_invoice') ||
-          (payment.status === 'finalized' && (payment.finalizedAt === undefined || payment.transactionHash === undefined))) return null
+          (stripePaid && payment.kind !== 'stripe_invoice')) return null
       const parsedPayment = Object.freeze({
         paymentId: payment.paymentId as string,
         kind: payment.kind as BillingHistoryPayment['kind'],
         status: payment.status as BillingHistoryPayment['status'],
         recordedAt: payment.recordedAt as string,
         ...(typeof payment.paidAt === 'string' ? { paidAt: payment.paidAt } : {}),
-        ...(typeof payment.finalizedAt === 'string' ? { finalizedAt: payment.finalizedAt } : {}),
-        ...(typeof payment.transactionHash === 'string' ? { transactionHash: payment.transactionHash } : {}),
-        ...(typeof payment.transactionURL === 'string' ? { transactionURL: payment.transactionURL } : {}),
       })
       if (previousPayment !== null && !billingHistoryRecordPrecedes(previousPayment.recordedAt, previousPayment.paymentId,
         parsedPayment.recordedAt, parsedPayment.paymentId)) return null
@@ -653,14 +606,12 @@ export function parseBillingHistory(value: unknown): BillingHistory | null {
       paymentCount += 1
       if (paymentCount > 200) return null
       stripeInvoicePresent = stripeInvoicePresent || parsedPayment.kind === 'stripe_invoice'
-      paidEvidence = paidEvidence || (item.provider === 'stripe'
-        ? ['succeeded', 'refunded'].includes(parsedPayment.status)
-        : parsedPayment.status === 'finalized')
+      paidEvidence = paidEvidence || ['succeeded', 'refunded'].includes(parsedPayment.status)
       refundEvidence = refundEvidence || parsedPayment.status === 'refunded'
       payments.push(parsedPayment)
     }
     if ((item.status === 'paid' && (!paidEvidence || refundEvidence)) ||
-        (item.status === 'refunded' && (!paidEvidence || item.provider === 'stripe' && !refundEvidence)) ||
+        (item.status === 'refunded' && (!paidEvidence || !refundEvidence)) ||
         (!paidState && (paidEvidence || refundEvidence))) return null
     const parsedItem = Object.freeze({
       orderId: item.orderId as string,
@@ -726,8 +677,7 @@ function parseBillingOrderSubscriptionOutcome(
 ): BillingOrderSubscriptionOutcome | null | undefined {
   if (value === undefined) return undefined
   if (!isRecord(value) || !billingID(value.id, 'bsub') || value.id !== subscriptionID || value.initialOrderId !== orderID ||
-      value.planId !== planID || value.provider !== provider || !['automatic', 'manual'].includes(String(value.renewalMode)) ||
-      (provider === 'stripe' ? value.renewalMode !== 'automatic' : value.renewalMode !== 'manual') ||
+      value.planId !== planID || value.provider !== provider || value.renewalMode !== 'automatic' ||
       !billingSubscriptionStatuses.includes(value.status as BillingSubscriptionStatus) ||
       !isoDate(value.currentPeriodStart) || !isoDate(value.currentPeriodEnd) ||
       Date.parse(value.currentPeriodEnd) <= Date.parse(value.currentPeriodStart) || typeof value.cancelAtPeriodEnd !== 'boolean') return null
@@ -746,7 +696,7 @@ function parseBillingOrderSubscriptionOutcome(
 
 export function parseBillingOrderStatus(value: unknown): BillingOrderStatus | null {
   if (!isRecord(value) || !billingID(value.id, 'bord') || !safeText(value.orderNo, 64) ||
-      !billingCheckoutPlanIDValid(String(value.planId || '')) || !['stripe', 'tao'].includes(String(value.provider)) ||
+      !billingCheckoutPlanIDValid(String(value.planId || '')) || value.provider !== 'stripe' ||
       !billingOrderLifecycleStatuses.includes(value.status as BillingOrderLifecycleStatus) ||
       !billingPaymentStatuses.includes(value.paymentStatus as BillingPaymentStatus) ||
       !billingOrderEntitlementStatuses.includes(value.entitlementStatus as BillingOrderEntitlementStatus) ||

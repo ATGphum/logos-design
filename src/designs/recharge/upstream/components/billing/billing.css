@@ -7,12 +7,11 @@ body[data-logos-mode='dark'] .billing-page, body[data-logos-mode='dark'] .billin
 .billing-page__header p { color: var(--cs-faint); margin: 0; }
 .billing-page__header > div:last-child, .billing-success > div:last-child { display: flex; flex-wrap: wrap; gap: 10px; }
 .billing-page__header button, .billing-empty button, .billing-recovery button, .billing-success button, .billing-back,
-.billing-actions-panel button, .billing-upgrade__actions button, .billing-tao button, .billing-status button, .billing-reference button,
+.billing-actions-panel button, .billing-upgrade__actions button, .billing-status button,
 .recharge-order-status button, .recharge-success button, .recharge-history button {
   align-items: center; background: transparent; border: 1px solid var(--cs-line); border-radius: 999px; color: inherit; cursor: pointer; display: inline-flex; gap: 7px; justify-content: center; min-height: 44px; padding: 0 16px;
 }
-.billing-page__header button.is-primary, .billing-empty button, .billing-upgrade__actions button, .billing-success button.is-primary,
-.billing-sender-form > button, .billing-reference > button { background: var(--cs-ink); color: var(--cs-bg); }
+.billing-page__header button.is-primary, .billing-empty button, .billing-upgrade__actions button, .billing-success button.is-primary { background: var(--cs-ink); color: var(--cs-bg); }
 .billing-page button:disabled, .billing-dialog button:disabled { cursor: not-allowed; opacity: .45; }
 .billing-eyebrow { font-size: .72rem; font-weight: 800; letter-spacing: .16em; }
 .billing-tabs { border-bottom: 1px solid var(--cs-line); display: flex; gap: 3px; }
@@ -60,23 +59,11 @@ body[data-logos-mode='dark'] .billing-page, body[data-logos-mode='dark'] .billin
 .recharge-method-card__status--degraded, .recharge-method-card__status--loading { background: rgba(214, 147, 48, .12); }
 .recharge-method-card__arrow { flex: none; }
 .crypto-deposit-panel { display: grid; gap: 20px; min-width: 0; }
-.crypto-deposit-selector, .crypto-deposit-address { background: color-mix(in srgb, var(--cs-bg) 90%, var(--cs-ink) 10%); border: 1px solid var(--cs-line); border-radius: 20px; padding: 24px; }
-.crypto-deposit-choice { border: 0; display: grid; gap: 10px; margin: 0; min-width: 0; padding: 0; }
-.crypto-deposit-choice legend { font-size: .82rem; font-weight: 800; margin-bottom: 7px; text-transform: uppercase; }
-.crypto-deposit-choice__grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-.crypto-deposit-choice label { align-items: center; background: transparent; border: 1px solid var(--cs-line); border-radius: 14px; cursor: pointer; display: grid; gap: 11px; grid-template-columns: auto auto minmax(0, 1fr); min-height: 66px; padding: 12px 14px; }
-.crypto-deposit-choice label.is-selected { border-color: var(--cs-ink); box-shadow: inset 0 0 0 1px var(--cs-ink); }
-.crypto-deposit-choice label:has(input:focus-visible) { outline: 2px solid var(--cs-ink); outline-offset: 2px; }
-.crypto-deposit-choice input { height: 18px; margin: 0; width: 18px; }
-.crypto-deposit-choice label > span { display: grid; gap: 3px; min-width: 0; }
-.crypto-deposit-choice label small { color: var(--cs-faint); line-height: 1.4; }
+.crypto-deposit-address { background: color-mix(in srgb, var(--cs-bg) 90%, var(--cs-ink) 10%); border: 1px solid var(--cs-line); border-radius: 20px; padding: 24px; }
 .crypto-deposit-availability, .crypto-deposit-stop { align-items: flex-start; background: rgba(214, 147, 48, .12); border: 1px solid var(--cs-line); border-radius: 13px; display: grid; gap: 10px; grid-template-columns: auto minmax(0, 1fr); padding: 14px; }
 .crypto-deposit-stop { background: rgba(177, 74, 66, .13); border-color: color-mix(in srgb, var(--billing-danger) 45%, var(--cs-line)); }
 .crypto-deposit-availability span, .crypto-deposit-stop span { display: grid; gap: 4px; }
 .crypto-deposit-availability small, .crypto-deposit-stop small { color: var(--cs-faint); line-height: 1.45; }
-.crypto-deposit-action { align-items: center; border-top: 1px solid var(--cs-line); display: flex; gap: 16px; justify-content: space-between; padding-top: 20px; }
-.crypto-deposit-action button { align-items: center; background: var(--cs-ink); border: 1px solid var(--cs-ink); border-radius: 999px; color: var(--cs-bg); cursor: pointer; display: inline-flex; font-weight: 750; justify-content: center; min-height: 46px; padding: 0 20px; }
-.crypto-deposit-action small { color: var(--cs-faint); line-height: 1.45; max-width: 440px; }
 .crypto-deposit-loading, .crypto-deposit-panel--empty { align-items: center; justify-items: center; min-height: 260px; padding: 32px; text-align: center; }
 .crypto-deposit-loading small, .crypto-deposit-panel--empty p { color: var(--cs-faint); line-height: 1.5; margin: 0; }
 .crypto-deposit-empty-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
@@ -149,18 +136,10 @@ body[data-logos-mode='dark'] .billing-page, body[data-logos-mode='dark'] .billin
 .recharge-checkout-action { align-items: center; border-top: 1px solid var(--cs-line); display: flex; gap: 14px; justify-content: space-between; padding-top: 20px; }
 .recharge-checkout-action button { align-items: center; background: var(--cs-ink); border: 1px solid var(--cs-ink); border-radius: 999px; color: var(--cs-bg); cursor: pointer; display: inline-flex; font-weight: 700; justify-content: center; min-height: 46px; padding: 0 20px; }
 .recharge-checkout-action small { color: var(--cs-faint); line-height: 1.45; max-width: 560px; }
-.recharge-tao-checkout { border-radius: 16px; padding: 20px; }
-.recharge-tao-checkout__product { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.recharge-tao-checkout__product > span { background: var(--cs-soft); border-radius: 12px; display: grid; gap: 4px; padding: 14px; }
-.recharge-tao-checkout__product small { color: var(--cs-faint); font-size: .7rem; text-transform: uppercase; }
-.recharge-tao-submission { align-items: flex-start; background: rgba(214, 147, 48, .12); border: 1px solid var(--cs-line); border-radius: 13px; display: grid; gap: 10px; grid-template-columns: auto 1fr; padding: 14px; }
-.recharge-tao-submission--manual_review { background: rgba(177, 74, 66, .12); }
-.recharge-tao-submission span { display: grid; gap: 4px; }
-.recharge-tao-submission small { color: var(--cs-faint); line-height: 1.45; }
 .recharge-options-empty { min-height: 240px; }
 .recharge-options-empty__actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .billing-settings { display: grid; gap: 16px; grid-template-columns: minmax(0, 1.1fr) minmax(320px, .9fr); }
-.billing-current-plan, .billing-actions-panel, .billing-empty, .billing-recovery, .billing-history-wrap, .billing-status, .billing-tao {
+.billing-current-plan, .billing-actions-panel, .billing-empty, .billing-recovery, .billing-history-wrap, .billing-status {
   background: color-mix(in srgb, var(--cs-bg) 90%, var(--cs-ink) 10%); border: 1px solid var(--cs-line); border-radius: 20px;
 }
 .billing-current-plan { padding: 24px; }
@@ -290,7 +269,6 @@ body[data-logos-mode='dark'] .add-credits-dialog {
 .add-credits-dialog .recharge-options.cs-sec,
 .add-credits-dialog .billing-empty.cs-sec { margin: 0; }
 .add-credits-dialog .recharge-options,
-.add-credits-dialog .crypto-deposit-selector,
 .add-credits-dialog .crypto-deposit-address {
   background: transparent;
   border: 0;
@@ -324,7 +302,6 @@ body[data-logos-mode='dark'] .add-credits-dialog {
 .add-credits-dialog .recharge-amount__quick > span,
 .add-credits-dialog .recharge-amount > label strong,
 .add-credits-dialog .recharge-amount > label small,
-.add-credits-dialog .crypto-deposit-choice legend,
 .add-credits-dialog .crypto-deposit-address__identity small,
 .add-credits-dialog .crypto-deposit-address__copy > small,
 .add-credits-dialog .crypto-deposit-facts dt {
@@ -335,7 +312,6 @@ body[data-logos-mode='dark'] .add-credits-dialog {
 }
 .add-credits-dialog .recharge-amount__quick button,
 .add-credits-dialog .recharge-checkout-action button,
-.add-credits-dialog .crypto-deposit-action button,
 .add-credits-dialog .crypto-deposit-empty-actions .cs-btn {
   border-radius: 2px;
   font-size: 10.5px;
@@ -351,20 +327,7 @@ body[data-logos-mode='dark'] .add-credits-dialog {
   border-left: 3px solid var(--cs-line);
   border-radius: 0;
 }
-.add-credits-dialog .recharge-checkout-action,
-.add-credits-dialog .crypto-deposit-action { padding-top: 16px; }
-.add-credits-dialog .crypto-deposit-choice__grid { gap: 0 28px; }
-.add-credits-dialog .crypto-deposit-choice label {
-  border: 0;
-  border-bottom: 1px solid var(--cs-line);
-  border-radius: 0;
-  min-height: 64px;
-  padding: 13px 4px;
-}
-.add-credits-dialog .crypto-deposit-choice label.is-selected { border-color: var(--cs-ink); box-shadow: inset 0 -1px 0 var(--cs-ink); }
-.add-credits-dialog .crypto-deposit-choice input { accent-color: var(--cs-ink); }
-.add-credits-dialog .crypto-deposit-choice label strong { font-size: 13px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; }
-.add-credits-dialog .crypto-deposit-choice label small { font-size: 12px; letter-spacing: .04em; }
+.add-credits-dialog .recharge-checkout-action { padding-top: 16px; }
 .add-credits-dialog .crypto-deposit-address__identity { gap: 18px; }
 .add-credits-dialog .crypto-deposit-address__identity > span {
   background: transparent;
@@ -458,82 +421,7 @@ body[data-logos-mode='dark'] .add-credits-dialog {
 .billing-price-summary--compact { border: 1px solid var(--cs-line); }
 .billing-loading { align-items: center; display: flex; justify-content: center; min-height: 180px; }
 
-.billing-tao { display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr); min-width: 0; padding: 20px; }
-.billing-checkout-heading { align-items: center; display: flex; gap: 12px; max-width: 100%; min-width: 0; width: 100%; }
-.billing-checkout-heading > span { align-items: center; background: var(--cs-ink); border-radius: 50%; color: var(--cs-bg); display: flex; font-size: .72rem; font-weight: 800; height: 42px; justify-content: center; width: 42px; }
-.billing-checkout-heading > div { min-width: 0; }
-.billing-checkout-heading h3, .billing-checkout-heading p { margin: 0; }
-.billing-checkout-heading p { color: var(--cs-faint); font-size: .8rem; margin-top: 3px; overflow-wrap: anywhere; }
-.billing-wallet-options { border: 1px solid var(--cs-line); border-radius: 14px; box-sizing: border-box; justify-self: start; max-width: 640px; padding: 15px; text-align: left; width: 100%; }
-.billing-wallet-options h4 { align-items: center; display: flex; gap: 7px; margin: 0 0 12px; }
-.billing-wallet-options > div { display: grid; gap: 8px; grid-template-columns: repeat(3, 1fr); }
-.billing-wallet-options button { border-radius: 10px; display: grid; justify-content: stretch; justify-items: start; min-height: 54px; text-align: left; }
-.billing-wallet-options button small { font-size: .66rem; }
-.billing-wallet-accounts { border: 0; border-top: 1px solid var(--cs-line); display: grid; gap: 8px; margin: 14px 0 0; padding: 14px 0 0; }
-.billing-wallet-accounts legend { font-size: .78rem; font-weight: 750; padding: 0 0 8px; }
-.billing-wallet-account-select { display: grid; gap: 5px; min-width: 0; }
-.billing-wallet-account-select > span { color: var(--cs-faint); font-size: 9.5px; letter-spacing: .24em; text-transform: uppercase; }
-.billing-wallet-account-dropdown { min-width: 0; position: relative; }
-.billing-wallet-account-dropdown.is-open { z-index: 500; }
-.billing-wallet-account-dropdown > .billing-wallet-account-trigger { align-items: center; background: transparent; border: 0; border-bottom: 1px solid var(--cs-line); border-radius: 0; color: var(--cs-ink); cursor: pointer; display: grid; gap: 8px; grid-template-columns: auto minmax(0, 1fr) auto; justify-content: stretch; min-height: 40px; padding: 8px 0; text-align: left; width: 100%; }
-.billing-wallet-account-trigger:hover:not(:disabled), .billing-wallet-account-trigger:focus-visible, .billing-wallet-account-dropdown.is-open > .billing-wallet-account-trigger { border-bottom-color: var(--cs-ink); outline: none; }
-.billing-wallet-account-trigger > span { align-items: baseline; display: flex; flex-wrap: wrap; gap: 2px 8px; min-width: 0; width: 100%; }
-.billing-wallet-account-trigger b, .billing-wallet-account-trigger small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.billing-wallet-account-trigger b { font-size: .82rem; font-weight: 650; max-width: 100%; }
-.billing-wallet-account-trigger small { color: var(--cs-faint); font-size: .69rem; max-width: 100%; }
-.billing-wallet-account-trigger > svg:last-child { justify-self: end; transition: transform .14s ease; }
-.billing-wallet-account-dropdown.is-open > .billing-wallet-account-trigger > svg:last-child { transform: rotate(180deg); }
-.billing-wallet-account-menu { background: var(--cs-bg); border: 1px solid var(--cs-line); box-shadow: 0 14px 32px rgba(0, 0, 0, .18); box-sizing: border-box; left: 0; margin-top: 6px; max-height: min(240px, calc(100vh - 160px)); min-width: 100%; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; padding: 4px; position: absolute; scroll-padding-block: 4px; top: 100%; width: 100%; z-index: 500; }
-.billing-wallet-account-menu > button { align-content: center; align-items: center; background: transparent; border: 0; border-radius: 0; color: var(--cs-ink); cursor: pointer; display: grid; gap: 4px 10px; grid-template-columns: minmax(0, max-content) auto; height: auto; justify-content: start; justify-items: start; min-height: 70px; outline: none; overflow: visible; padding: 10px 12px 12px; text-align: left; width: 100%; }
-.billing-wallet-account-menu > button:hover, .billing-wallet-account-menu > button:focus-visible, .billing-wallet-account-menu > button.is-selected { background: var(--cs-hl, var(--cs-soft)); }
-.billing-wallet-account-menu > button > span { display: grid; gap: 2px; max-width: min(440px, calc(100vw - 150px)); min-width: 0; }
-.billing-wallet-account-menu b { font-size: .8rem; font-weight: 650; line-height: 1.35; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.billing-wallet-account-menu small { color: var(--cs-faint); font-size: .68rem; line-height: 1.35; }
-.billing-wallet-account-menu code { color: var(--cs-faint); display: block; font-size: .68rem; grid-column: 1; line-height: 1.35; max-width: 100%; overflow: hidden; padding-bottom: 1px; text-overflow: ellipsis; white-space: nowrap; }
-.billing-wallet-account-menu > button > svg { grid-column: 2; grid-row: 1 / span 2; justify-self: start; opacity: 0; }
-.billing-wallet-account-menu > button.is-selected > svg { opacity: 1; }
-.billing-wallet-account-details { border: 1px solid var(--cs-line); display: grid; gap: 6px; justify-items: start; min-width: 0; padding: 10px 12px; text-align: left; }
-.billing-wallet-account-details span { display: grid; gap: 2px; justify-items: start; }
-.billing-wallet-account-details code { font-size: .7rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.billing-wallet-account-details small { color: var(--cs-faint); }
-.billing-wallet-accounts > button { justify-self: start; min-height: 44px; }
-.billing-or { align-items: center; color: var(--cs-faint); display: flex; font-size: .72rem; gap: 12px; text-transform: uppercase; }
-.billing-or::before, .billing-or::after { background: var(--cs-line); content: ''; flex: 1; height: 1px; }
-.billing-sender-form, .billing-reference { align-items: end; display: grid; gap: 10px; grid-template-columns: 1fr auto; }
-.billing-sender-form label, .billing-reference label { display: grid; gap: 7px; }
-.billing-sender-form label > span, .billing-reference label > span { font-size: .78rem; font-weight: 700; }
-.billing-sender-form input, .billing-reference input { background: transparent; border: 1px solid var(--cs-line); border-radius: 10px; box-sizing: border-box; color: inherit; font: inherit; min-height: 44px; padding: 0 12px; width: 100%; }
-.billing-tao__summary { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; }
-.billing-tao__summary > div { background: var(--cs-soft); border-radius: 14px; display: grid; gap: 4px; padding: 15px; }
-.billing-tao__summary span { color: var(--cs-faint); font-size: .72rem; text-transform: uppercase; }
-.billing-tao__summary strong { font-size: 1.35rem; }
-.billing-tao__summary small { color: var(--cs-faint); }
-.billing-tao__summary button { justify-self: start; min-height: 44px; padding: 0 10px; }
-.billing-tao__summary .is-expired { outline: 1px solid #b15d52; }
-.billing-wallet-pay { align-items: center; background: color-mix(in srgb, var(--cs-soft) 80%, transparent); border: 1px solid var(--cs-line); border-radius: 14px; display: grid; gap: 13px; grid-template-columns: minmax(0, 1fr) auto; padding: 15px; }
-.billing-wallet-pay__details { display: grid; gap: 5px; min-width: 0; }
-.billing-wallet-pay__actions { display: flex; gap: 8px; }
-.billing-wallet-pay__actions > button { white-space: nowrap; }
-.billing-wallet-pay h4 { align-items: center; display: flex; gap: 7px; margin: 0; }
-.billing-wallet-pay p { color: var(--cs-faint); font-size: .77rem; margin: 0; }
-.billing-wallet-pay code { font-size: .7rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.billing-wallet-pay__disabled { color: var(--cs-faint); font-size: .75rem; max-width: 240px; text-align: right; }
-.billing-tao__transfer { align-items: center; display: grid; gap: 22px; grid-template-columns: auto 1fr; }
-.billing-qr { align-items: center; background: #fff; border-radius: 14px; color: #161513; display: grid; justify-items: center; padding: 9px; }
-.billing-qr img { display: block; height: auto; max-width: 100%; }
-.billing-qr small { font-size: .65rem; padding-bottom: 4px; }
-.billing-qr__error { font-size: .75rem; line-height: 1.4; max-width: 196px; padding: 56px 8px; text-align: center; }
-.billing-tao__transfer dl { margin: 0; min-width: 0; }
-.billing-tao__transfer dl > div { border-bottom: 1px solid var(--cs-line); display: grid; gap: 7px; padding: 10px 0; }
-.billing-tao__transfer dt { color: var(--cs-faint); font-size: .7rem; text-transform: uppercase; }
-.billing-tao__transfer dd { align-items: center; display: flex; gap: 8px; margin: 0; min-width: 0; }
-.billing-tao__transfer code { flex: 1; min-width: 0; overflow-wrap: anywhere; white-space: normal; }
-.billing-copy-control { align-items: center; display: inline-flex; flex: 0 0 auto; }
-.billing-copy { min-height: 44px !important; padding: 0 11px !important; }
-.billing-copy-feedback { clip: rect(0 0 0 0); clip-path: inset(50%); height: 1px; overflow: hidden; position: absolute; white-space: nowrap; width: 1px; }
-.billing-tao__notice { background: rgba(214, 147, 48, .12); border-radius: 12px; display: grid; font-size: .8rem; gap: 4px; padding: 12px; }
 .billing-error { color: var(--billing-danger); font-size: .82rem; margin: 0; }
-.billing-explorer-link { align-items: center; color: inherit; display: inline-flex; font-size: .78rem; gap: 6px; justify-self: start; }
 .billing-status { display: grid; gap: 14px; padding: 16px; }
 .billing-status__head { align-items: center; display: flex; justify-content: space-between; }
 .billing-status__head > div { align-items: center; display: flex; gap: 10px; }
@@ -626,7 +514,6 @@ body[data-logos-mode='dark'] .add-credits-dialog {
   .recharge-overview { grid-template-columns: 1fr; }
   .billing-settings { grid-template-columns: 1fr; }
   .billing-purchase-policies > div { grid-template-columns: 1fr; }
-  .billing-wallet-options > div { grid-template-columns: 1fr; }
 }
 @media (max-width: 700px) {
   .billing-plan-grid { grid-template-columns: 1fr; }
@@ -649,7 +536,6 @@ body[data-logos-mode='dark'] .add-credits-dialog {
   .recharge-methods label em { grid-column: 3; justify-self: start; }
   .recharge-checkout-action { align-items: stretch; flex-direction: column; }
   .recharge-checkout-action button { width: 100%; }
-  .recharge-tao-checkout__product { grid-template-columns: 1fr; }
   .recharge-balance__heading { align-items: flex-start; flex-wrap: wrap; }
   .recharge-balance__heading em { margin-left: 0; }
   .recharge-balance__value { margin-top: 26px; }
@@ -661,14 +547,6 @@ body[data-logos-mode='dark'] .add-credits-dialog {
   .billing-success dl > div { align-items: flex-start; flex-direction: column; gap: 4px; text-align: left; }
   .billing-success dd { overflow-wrap: anywhere; text-align: left; }
   .billing-upgrade__actions button { width: 100%; }
-  .billing-tao__summary, .billing-tao__transfer { grid-template-columns: 1fr; }
-  .billing-wallet-pay { grid-template-columns: 1fr; }
-  .billing-wallet-pay__actions { width: 100%; }
-  .billing-wallet-pay__actions > button { flex: 1; }
-  .billing-wallet-pay__disabled { max-width: none; text-align: left; }
-  .billing-qr { justify-self: center; }
-  .billing-sender-form, .billing-reference { grid-template-columns: 1fr; }
-  .billing-sender-form > button, .billing-reference > button { width: 100%; }
   .billing-current-plan dl > div { align-items: flex-start; flex-direction: column; gap: 6px; }
   .billing-current-plan dd { text-align: left; }
   .billing-current-plan__title { align-items: flex-start; flex-wrap: wrap; }
@@ -739,13 +617,10 @@ body[data-logos-mode='dark'] .add-credits-dialog {
   .recharge-method-card__arrow { grid-column: 3; grid-row: 1 / span 2; }
   .recharge-step-toolbar { align-items: flex-start; }
   .add-credits-dialog .recharge-step-toolbar { align-items: flex-start; flex-direction: column; gap: 10px; }
-  .crypto-deposit-selector, .crypto-deposit-address { border-radius: 16px; padding: 18px; }
-  .crypto-deposit-choice__grid, .crypto-deposit-address__identity, .crypto-deposit-facts { grid-template-columns: 1fr; }
-  .add-credits-dialog .crypto-deposit-choice__grid,
+  .crypto-deposit-address { border-radius: 16px; padding: 18px; }
+  .crypto-deposit-address__identity, .crypto-deposit-facts { grid-template-columns: 1fr; }
   .add-credits-dialog .crypto-deposit-address__identity,
   .add-credits-dialog .crypto-deposit-facts { grid-template-columns: 1fr; }
-  .crypto-deposit-action { align-items: stretch; flex-direction: column; }
-  .crypto-deposit-action button { width: 100%; }
   .crypto-deposit-address__main { grid-template-columns: 1fr; }
   .add-credits-dialog .crypto-deposit-address__main { gap: 18px; grid-template-columns: 1fr; }
   .crypto-deposit-qr { height: min(220px, calc(100vw - 72px)); justify-self: center; max-width: 220px; width: min(220px, calc(100vw - 72px)); }
@@ -754,8 +629,7 @@ body[data-logos-mode='dark'] .add-credits-dialog {
   .crypto-deposit-address__copy button, .crypto-deposit-address__copy a { width: 100%; }
   .add-credits-dialog .crypto-deposit-address__copy button,
   .add-credits-dialog .crypto-deposit-address__copy a,
-  .add-credits-dialog .recharge-checkout-action button,
-  .add-credits-dialog .crypto-deposit-action button { width: 100%; }
+  .add-credits-dialog .recharge-checkout-action button { width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) {
   .billing-page *, .billing-dialog * { scroll-behavior: auto !important; transition-duration: .01ms !important; }
@@ -800,8 +674,7 @@ body[data-logos-mode='dark'] .add-credits-dialog {
 .logos-console-root.cs-billing-root .recharge-options__header h2,
 .logos-console-root.cs-billing-root .recharge-history > header h2,
 .logos-console-root.cs-billing-root .recharge-order-status > header h2,
-.logos-console-root.cs-billing-root .recharge-success h2,
-.logos-console-root.cs-billing-root .billing-checkout-heading h3 {
+.logos-console-root.cs-billing-root .recharge-success h2 {
   color: var(--cs-ink);
   font-family: "Julius Sans One", "Jost", sans-serif;
   font-size: 17px;
@@ -838,14 +711,7 @@ body[data-logos-mode='dark'] .add-credits-dialog {
 }
 
 .logos-console-root.cs-billing-root .cs-btn,
-.logos-console-root.cs-billing-root .billing-back,
-.logos-console-root.cs-billing-root .billing-copy,
-.logos-console-root.cs-billing-root .billing-wallet-options button,
-.logos-console-root.cs-billing-root .billing-wallet-accounts > button,
-.logos-console-root.cs-billing-root .billing-wallet-pay__actions > button,
-.logos-console-root.cs-billing-root .billing-tao__summary button,
-.logos-console-root.cs-billing-root .billing-sender-form > button,
-.logos-console-root.cs-billing-root .billing-reference > button {
+.logos-console-root.cs-billing-root .billing-back {
   align-items: center;
   background: transparent;
   border: 1px solid var(--cs-line);
@@ -866,19 +732,12 @@ body[data-logos-mode='dark'] .add-credits-dialog {
 }
 
 .logos-console-root.cs-billing-root .cs-btn:hover,
-.logos-console-root.cs-billing-root .billing-back:hover,
-.logos-console-root.cs-billing-root .billing-wallet-options button:hover,
-.logos-console-root.cs-billing-root .billing-wallet-pay__actions > button:hover,
-.logos-console-root.cs-billing-root .billing-sender-form > button:hover,
-.logos-console-root.cs-billing-root .billing-reference > button:hover {
+.logos-console-root.cs-billing-root .billing-back:hover {
   border-color: var(--cs-ink);
 }
 
 .logos-console-root.cs-billing-root .cs-btn.pri,
-.logos-console-root.cs-billing-root .is-primary,
-.logos-console-root.cs-billing-root .billing-sender-form > button,
-.logos-console-root.cs-billing-root .billing-reference > button,
-.logos-console-root.cs-billing-root .billing-wallet-pay__confirm {
+.logos-console-root.cs-billing-root .is-primary {
   background: var(--cs-ink);
   border-color: var(--cs-ink);
   color: var(--cs-bg);
@@ -909,8 +768,7 @@ body[data-logos-mode='dark'] .add-credits-dialog {
 .logos-console-root.cs-billing-root .recharge-success,
 .logos-console-root.cs-billing-root .recharge-history,
 .logos-console-root.cs-billing-root .billing-empty,
-.logos-console-root.cs-billing-root .billing-recovery,
-.logos-console-root.cs-billing-root .billing-tao {
+.logos-console-root.cs-billing-root .billing-recovery {
   background: transparent;
   border: 0;
   border-radius: 0;
@@ -980,8 +838,6 @@ body[data-logos-mode='dark'] .add-credits-dialog {
 
 .logos-console-root.cs-billing-root .recharge-entry__status,
 .logos-console-root.cs-billing-root .recharge-selection,
-.logos-console-root.cs-billing-root .recharge-tao-submission,
-.logos-console-root.cs-billing-root .billing-tao__notice,
 .logos-console-root.cs-billing-root .billing-warning-note,
 .logos-console-root.cs-billing-root .billing-inline-note {
   background: transparent;
@@ -992,8 +848,7 @@ body[data-logos-mode='dark'] .add-credits-dialog {
 }
 
 .logos-console-root.cs-billing-root .recharge-entry__status--ready,
-.logos-console-root.cs-billing-root .recharge-selection,
-.logos-console-root.cs-billing-root .recharge-tao-submission {
+.logos-console-root.cs-billing-root .recharge-selection {
   border-left-color: var(--billing-success);
 }
 
@@ -1001,7 +856,6 @@ body[data-logos-mode='dark'] .add-credits-dialog {
   border-left-color: #b18432;
 }
 
-.logos-console-root.cs-billing-root .recharge-tao-submission--manual_review,
 .logos-console-root.cs-billing-root .recharge-selection--unavailable {
   border-left-color: var(--billing-danger);
 }
@@ -1161,121 +1015,6 @@ body[data-logos-mode='dark'] .add-credits-dialog {
 .logos-console-root.cs-billing-root .recharge-checkout-action small {
   font-size: 11.5px;
   letter-spacing: .035em;
-}
-
-.logos-console-root.cs-billing-root .billing-tao.recharge-tao-checkout {
-  border-top: 1px solid var(--cs-line);
-  gap: 22px;
-  margin-top: 2px;
-  padding-top: 24px;
-}
-
-.logos-console-root.cs-billing-root .recharge-tao-checkout__product > span,
-.logos-console-root.cs-billing-root .billing-tao__summary > div {
-  background: transparent;
-  border-bottom: 1px solid var(--cs-soft);
-  border-radius: 0;
-  padding: 12px 4px;
-}
-
-.logos-console-root.cs-billing-root .billing-wallet-options {
-  border: 0;
-  border-bottom: 1px solid var(--cs-line);
-  border-radius: 0;
-  padding: 0 0 18px;
-}
-
-.logos-console-root.cs-billing-root .billing-wallet-options button,
-.logos-console-root.cs-billing-root .billing-wallet-account-trigger {
-  border-radius: 0;
-}
-
-.logos-console-root.cs-billing-root .billing-wallet-account-menu {
-  background: var(--cs-bg);
-  border-color: var(--cs-line);
-  border-radius: 0;
-}
-
-.logos-console-root.cs-billing-root .billing-wallet-account-menu > button {
-  border-bottom: 1px solid var(--cs-soft);
-  border-radius: 0;
-}
-
-.logos-console-root.cs-billing-root .billing-wallet-options .billing-wallet-account-trigger {
-  border: 0;
-  border-bottom: 1px solid var(--cs-line);
-  display: grid;
-  font-size: 13px;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  justify-content: stretch;
-  letter-spacing: normal;
-  min-height: 40px;
-  padding: 8px 0;
-  text-align: left;
-  text-transform: none;
-}
-
-.logos-console-root.cs-billing-root .billing-wallet-options .billing-wallet-account-trigger > span {
-  align-items: baseline;
-  display: flex;
-  flex-wrap: wrap;
-  text-align: left;
-  width: 100%;
-}
-
-.logos-console-root.cs-billing-root .billing-wallet-options .billing-wallet-account-menu > button {
-  align-content: center;
-  border: 0;
-  display: grid;
-  grid-template-columns: minmax(0, max-content) auto;
-  height: auto;
-  justify-content: start;
-  justify-items: start;
-  letter-spacing: normal;
-  min-height: 70px;
-  overflow: visible;
-  padding: 10px 12px 12px;
-  text-align: left;
-  text-transform: none;
-  width: 100%;
-}
-
-.logos-console-root.cs-billing-root .billing-wallet-options .billing-wallet-account-menu > button > span {
-  justify-items: start;
-  text-align: left;
-}
-
-.logos-console-root.cs-billing-root .billing-wallet-account-menu > button:last-child {
-  border-bottom: 0;
-}
-
-.logos-console-root.cs-billing-root .billing-wallet-account-menu > button:hover,
-.logos-console-root.cs-billing-root .billing-wallet-account-menu > button:focus-visible,
-.logos-console-root.cs-billing-root .billing-wallet-account-menu > button.is-selected {
-  background: var(--cs-hl);
-}
-
-.logos-console-root.cs-billing-root .billing-wallet-account-details {
-  background: var(--cs-hl);
-  border-color: var(--cs-soft);
-  border-left: 2px solid var(--cs-ink);
-  padding: 11px 13px;
-}
-
-.logos-console-root.cs-billing-root .billing-sender-form input,
-.logos-console-root.cs-billing-root .billing-reference input {
-  border-radius: 0;
-}
-
-.logos-console-root.cs-billing-root .billing-wallet-pay {
-  background: transparent;
-  border: 1px solid var(--cs-line);
-  border-radius: 0;
-}
-
-.logos-console-root.cs-billing-root .billing-qr {
-  border: 1px solid var(--cs-line);
-  border-radius: 0;
 }
 
 .logos-console-root.cs-billing-root .recharge-order-status,

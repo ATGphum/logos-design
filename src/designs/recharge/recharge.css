@@ -15,3 +15,395 @@
   max-width: 1120px;
   margin: 0 auto;
 }
+
+/* DESIGN HANDOFF styling — recharge history folds away.
+   Lives here rather than in upstream/billing.css so `npm run sync` has one less
+   file to reconcile; the markup change itself is marked in RechargeHistory.tsx. */
+.logos-console-root.cs-billing-root .recharge-history__header--foldable {
+  cursor: pointer;
+  user-select: none;
+  align-items: center;
+}
+.logos-console-root.cs-billing-root .recharge-history__header--foldable:hover h2 {
+  opacity: 0.82;
+}
+.logos-console-root.cs-billing-root .recharge-history__fold {
+  flex: none;
+  opacity: 0.65;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s;
+}
+.logos-console-root.cs-billing-root .recharge-history--folded .recharge-history__fold {
+  transform: rotate(-90deg);
+}
+.logos-console-root.cs-billing-root .recharge-history__header--foldable:hover .recharge-history__fold {
+  opacity: 1;
+}
+
+/* Smooth fold: grid-template-rows 0fr -> 1fr animates to the content's own height
+   without hard-coding one. `hidden` cannot be transitioned, hence the wrapper. */
+.logos-console-root.cs-billing-root .recharge-history__body {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.38s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.28s ease;
+  opacity: 1;
+}
+.logos-console-root.cs-billing-root .recharge-history--folded .recharge-history__body {
+  grid-template-rows: 0fr;
+  opacity: 0;
+  pointer-events: none;
+}
+.logos-console-root.cs-billing-root .recharge-history__bodyinner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Figures use the console's normal sans, not the display face — long numerals in
+   Julius Sans One read as decorative rather than as data. */
+.logos-console-root.cs-billing-root.cs-billing-root .recharge-balance__value {
+  font-family: var(--app-font-sans, "Jost", system-ui, sans-serif);
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  -webkit-text-stroke: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+
+/* Transaction table — date / amount / status / action, one line each.
+   Replaces upstream's per-transaction cards; markup change is marked in
+   RechargeHistory.tsx and CryptoDepositActivity.tsx. */
+.logos-console-root.cs-billing-root .rc-txhead,
+.logos-console-root.cs-billing-root .rc-txrow {
+  display: grid;
+  grid-template-columns: minmax(120px, 1.1fr) minmax(90px, 1fr) minmax(80px, 0.9fr) 70px;
+  align-items: center;
+  gap: 16px;
+}
+.logos-console-root.cs-billing-root .rc-txhead {
+  padding: 0 2px 9px;
+  border-bottom: 1px solid var(--cs-line);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cs-faint);
+  opacity: 0.7;
+}
+.logos-console-root.cs-billing-root .recharge-history__list {
+  display: block;
+}
+.logos-console-root.cs-billing-root .rc-txrow {
+  padding: 11px 2px;
+  border-bottom: 1px solid var(--cs-soft);
+  background: none;
+  border-radius: 0;
+}
+.logos-console-root.cs-billing-root .rc-txrow:last-child {
+  border-bottom: none;
+}
+.logos-console-root.cs-billing-root .rc-txrow__date {
+  font-size: 0.82rem;
+  color: var(--cs-faint);
+  font-variant-numeric: tabular-nums;
+}
+.logos-console-root.cs-billing-root .rc-txrow__amount {
+  font-size: 0.88rem;
+  font-variant-numeric: tabular-nums;
+}
+.logos-console-root.cs-billing-root .rc-txrow__status {
+  font-size: 0.72rem;
+  justify-self: start;
+}
+.logos-console-root.cs-billing-root .rc-txrow__action {
+  font-size: 0.8rem;
+  justify-self: start;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  opacity: 0.85;
+}
+.logos-console-root.cs-billing-root .rc-txrow__action:hover {
+  opacity: 1;
+}
+.logos-console-root.cs-billing-root .rc-txrow__action--none {
+  text-decoration: none;
+  opacity: 0.35;
+}
+
+/* Overview: the figure and the action share one row, so they align by construction
+   rather than by a per-context offset. The overview drops to a single column since the
+   second one now only appears for problem states. */
+.logos-console-root.cs-billing-root .recharge-overview {
+  grid-template-columns: minmax(0, 1fr);
+}
+.logos-console-root.cs-billing-root .rc-balance-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(14px, 3vw, 32px);
+  /* never wrap: the action belongs beside the figure at every width */
+  flex-wrap: nowrap;
+}
+.logos-console-root.cs-billing-root .rc-balance-row .recharge-balance__value {
+  margin: 24px 0 0;
+}
+.logos-console-root.cs-billing-root .rc-balance-row__action {
+  /* sized to its label, not to a share of the row — a percentage width squeezed the
+     button until "Add credits" broke onto two lines. */
+  flex: 0 0 auto;
+  width: auto;
+  max-width: 320px;
+  padding-left: clamp(16px, 2vw, 26px);
+  padding-right: clamp(16px, 2vw, 26px);
+  white-space: nowrap;
+  margin: 24px 0 0;
+}
+.logos-console-root.cs-billing-root .rc-balance-row .recharge-balance__value {
+  min-width: 0;
+  overflow-wrap: normal;
+}
+.logos-console-root.cs-billing-root .recharge-balance__heading em {
+  display: none;
+}
+.logos-console-root.cs-billing-root .recharge-entry {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+/* Upstream pulls the result count up with margin-top: -6px, which drags it through the
+   filter row's bottom border. Clear the line and give it its own space. */
+.logos-console-root.cs-billing-root .recharge-history__results {
+  margin-top: 14px;
+  margin-bottom: 4px;
+  font-size: 0.72rem;
+  opacity: 0.65;
+}
+
+/* ===== Consistent scaling =====
+   Same rule everywhere: controls size to their labels and never overlap; columns give
+   up width before anything wraps or collides. Upstream's fixed 3-up filter grid and
+   the fixed table columns both broke down at narrow widths. */
+
+/* Filters: fit as many as there is room for, then re-flow — no fixed 3-up grid. */
+.logos-console-root.cs-billing-root .recharge-history__filters {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  align-items: end;
+  gap: 12px 16px;
+}
+.logos-console-root.cs-billing-root .recharge-history__filters .cs-btn {
+  grid-column: -2 / -1;
+  justify-self: end;
+  width: auto;
+  white-space: nowrap;
+  padding-left: clamp(12px, 1.6vw, 20px);
+  padding-right: clamp(12px, 1.6vw, 20px);
+}
+
+/* Table: the action column is fixed, the rest share what is left and can shrink. */
+.logos-console-root.cs-billing-root .rc-txhead,
+.logos-console-root.cs-billing-root .rc-txrow {
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 0.9fr) minmax(52px, auto);
+  gap: clamp(8px, 1.6vw, 16px);
+}
+.logos-console-root.cs-billing-root .rc-txrow > * {
+  min-width: 0;
+}
+.logos-console-root.cs-billing-root .rc-txrow__date,
+.logos-console-root.cs-billing-root .rc-txrow__amount {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.logos-console-root.cs-billing-root .rc-txrow__status {
+  white-space: nowrap;
+}
+
+/* Page header: the refresh button keeps its label rather than squashing. */
+.logos-console-root.cs-billing-root .billing-page__header .cs-btn {
+  white-space: nowrap;
+  flex: none;
+}
+
+/* ===== Billing inside the console: fewer rules, no duplicate title =====
+   The console topbar already shows the page title, so the adopted page's own header is a
+   second "BILLING" plus a second rule under it. Hidden here only — the standalone gallery
+   route has no topbar, so it keeps its header. */
+.cs-panel .logos-console-root.cs-billing-root .billing-page__header {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+.cs-panel .logos-console-root.cs-billing-root .billing-page__header h1,
+.cs-panel .logos-console-root.cs-billing-root .billing-page__header .billing-eyebrow {
+  display: none;
+}
+
+/* the $ mark sat in an outlined square; the glyph alone is enough */
+.logos-console-root.cs-billing-root.cs-billing-root .recharge-balance__heading > span {
+  border: none;
+  background: transparent;
+  width: auto;
+  height: auto;
+  border-radius: 0;
+}
+
+/* one rule per section boundary: the balance heading and the history heading keep theirs,
+   the intermediate ones were stacking two lines within a few pixels of each other */
+.logos-console-root.cs-billing-root .recharge-overview .recharge-balance__heading {
+  padding-bottom: 10px;
+}
+.logos-console-root.cs-billing-root .recharge-history > header {
+  padding-bottom: 10px;
+}
+.logos-console-root.cs-billing-root .recharge-history__filters {
+  border-top: none;
+  padding-top: 10px;
+}
+
+/* the filter row drew its own bottom rule while each select already carries an underline —
+   two near-parallel lines a few pixels apart */
+.logos-console-root.cs-billing-root .recharge-history__filters {
+  border-bottom: none;
+  padding-bottom: 4px;
+}
+
+/* ===== Readability =====
+   The whole page was set a size or two below the console's own body text and dimmed on top
+   of that. Sizes come up and the muted tones are pulled back toward full ink. */
+.logos-console-root.cs-billing-root .rc-txrow__date {
+  font-size: 0.95rem;
+  color: var(--cs-ink);
+  opacity: 0.78;
+}
+.logos-console-root.cs-billing-root .rc-txrow__amount {
+  font-size: 1.02rem;
+  color: var(--cs-ink);
+}
+.logos-console-root.cs-billing-root .rc-txrow__status {
+  font-size: 0.8rem;
+}
+.logos-console-root.cs-billing-root .rc-txrow__action {
+  font-size: 0.92rem;
+  opacity: 1;
+}
+.logos-console-root.cs-billing-root .rc-txhead {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  opacity: 0.85;
+}
+.logos-console-root.cs-billing-root .recharge-history__results {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+.logos-console-root.cs-billing-root .recharge-history__filters label,
+.logos-console-root.cs-billing-root .recharge-history__filters .console-filter-label {
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  opacity: 0.85;
+}
+.logos-console-root.cs-billing-root .console-filter-trigger,
+.logos-console-root.cs-billing-root .recharge-history__filters select {
+  font-size: 0.95rem;
+  color: var(--cs-ink);
+}
+.logos-console-root.cs-billing-root .recharge-balance__heading small {
+  font-size: 0.78rem;
+  opacity: 0.85;
+}
+.logos-console-root.cs-billing-root .recharge-balance__heading h2 {
+  font-size: 1.15rem;
+}
+.logos-console-root.cs-billing-root .recharge-overview p {
+  font-size: 0.92rem;
+  opacity: 0.8;
+}
+.logos-console-root.cs-billing-root .recharge-history > header .billing-eyebrow {
+  font-size: 0.74rem;
+  opacity: 0.85;
+}
+
+/* ===== Light mode contrast =====
+   The page reads on a cream ground where the muted tones lose almost all their contrast,
+   so light mode gets full ink and a size bump rather than the dark theme's dimming. */
+.logos-console-root.cs-billing-root:not(.cs-night) .rc-txrow__date,
+.logos-console-root.cs-billing-root:not(.cs-night) .rc-txrow__amount,
+.logos-console-root.cs-billing-root:not(.cs-night) .rc-txrow__action {
+  color: #1a1916;
+  opacity: 1;
+}
+.logos-console-root.cs-billing-root:not(.cs-night) .rc-txhead,
+.logos-console-root.cs-billing-root:not(.cs-night) .recharge-history__results,
+.logos-console-root.cs-billing-root:not(.cs-night) .recharge-overview p,
+.logos-console-root.cs-billing-root:not(.cs-night) .recharge-balance__heading small,
+.logos-console-root.cs-billing-root:not(.cs-night) .recharge-history > header .billing-eyebrow {
+  color: rgba(26, 25, 22, 0.82);
+  opacity: 1;
+}
+.logos-console-root.cs-billing-root:not(.cs-night) .recharge-overview p {
+  font-size: 0.95rem;
+}
+.logos-console-root.cs-billing-root:not(.cs-night) .rc-txhead {
+  font-size: 0.75rem;
+}
+.logos-console-root.cs-billing-root:not(.cs-night) .console-filter-trigger,
+.logos-console-root.cs-billing-root:not(.cs-night) .recharge-history__filters select {
+  color: #1a1916;
+}
+
+/* ===== Balance block: one line, no ornament =====
+   The $ tile and the "available usd credit" eyebrow were both restating the heading, and
+   the tile pushed the heading out of line with everything below it. */
+.logos-console-root.cs-billing-root .recharge-balance__heading > span,
+.logos-console-root.cs-billing-root .recharge-balance__heading small {
+  display: none;
+}
+.logos-console-root.cs-billing-root .recharge-balance__heading {
+  gap: 0;
+  padding-bottom: 14px;
+}
+.logos-console-root.cs-billing-root.cs-billing-root .recharge-balance__heading h2 {
+  font-size: 1.6rem;
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  margin: 0;
+}
+/* the note was pinned between the figure and the button; give it room on both sides */
+.logos-console-root.cs-billing-root .recharge-overview .recharge-balance > p {
+  margin: 26px 0 0;
+  padding-bottom: 30px;
+}
+
+/* The refresh glyph spins whenever the page reports loading; on fixtures that state never
+   resolves, so it span forever. Design shows a static icon. */
+.logos-console-root.cs-billing-root .billing-spin {
+  animation: none;
+}
+
+/* ===== Fit billing on one screen =====
+   Balance starts at the search field's height rather than a screen down from it, and the
+   vertical rhythm tightens so the whole page lands without scrolling. */
+.cs-panel .logos-console-root.cs-billing-root .billing-page__header {
+  margin-top: -56px;
+}
+.logos-console-root.cs-billing-root .recharge-overview.cs-sec {
+  margin-top: 0;
+}
+.logos-console-root.cs-billing-root .recharge-balance__value {
+  margin: 14px 0 0;
+}
+.logos-console-root.cs-billing-root .recharge-overview .recharge-balance > p {
+  margin: 16px 0 0;
+  padding-bottom: 18px;
+}
+.logos-console-root.cs-billing-root .recharge-history > header {
+  padding-bottom: 8px;
+}
+.logos-console-root.cs-billing-root .recharge-history__filters {
+  padding-top: 6px;
+  padding-bottom: 0;
+}
+.logos-console-root.cs-billing-root .recharge-history__results {
+  margin-top: 10px;
+  margin-bottom: 2px;
+}
+.logos-console-root.cs-billing-root .rc-txrow {
+  padding: 9px 2px;
+}

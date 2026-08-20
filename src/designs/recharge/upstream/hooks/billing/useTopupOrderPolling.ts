@@ -137,5 +137,14 @@ export function useTopupOrderPolling(orderID: string | null, enabled = true, opt
     return pollRef.current()
   }, [canPoll, clearTimer])
 
-  return { status, error, loading, refresh }
+  const replaceStatus = useCallback((next: BillingTopupOrderStatus) => {
+    if (!validOrderID || orderID === null || next.id !== orderID) return
+    clearTimer()
+    stopped.current = billingTopupPollingDecision(next) !== 'continue'
+    setStatus(next)
+    setError('')
+    setLoading(false)
+  }, [clearTimer, orderID, validOrderID])
+
+  return { status, error, loading, refresh, replaceStatus }
 }

@@ -68,30 +68,36 @@ export interface NavItem {
   panel: string
   title: string
   sub: string
+  /** Glyph shown before the label, and the only thing shown in the collapsed rail. */
+  icon?: "back" | "gear" | "dashboard" | "billing"
 }
 
-export type NavEntry = { group: string } | { item: NavItem; bottom?: boolean; back?: boolean }
+export type NavEntry =
+  | { group: string; admin?: boolean }
+  /** admin: hidden when the sandbox previews the console as a plain user. */
+  | { item: NavItem; bottom?: boolean; back?: boolean; hidden?: boolean; admin?: boolean }
 
 export const CS_NAV: NavEntry[] = [
   { group: "Workspace" },
-  { item: { label: "/ Overview", panel: "overview", title: "Overview", sub: "Your credit, your instances, and what they are costing you." } },
-  { item: { label: "/ Instances", panel: "instances", title: "Instances", sub: "Deployment instances across your machines." } },
-  { item: { label: "/ API Keys", panel: "api", title: "API Keys", sub: "Create, budget and monitor scoped keys." } },
-  { item: { label: "/ Usage", panel: "usage", title: "Usage", sub: "Rollups, provider records and cost windows." } },
+  { item: { label: "Dashboard", panel: "overview", title: "Dashboard", sub: "", icon: "dashboard" } },
+  // Reached from the Dashboard's "Manage instances" button rather than the
+  // sidebar — most accounts run a single instance. Kept in CS_NAV (hidden) so
+  // the panel stays routable and nav indices stay stable.
+  { item: { label: "/ Instances", panel: "instances", title: "Instances", sub: "Deployment instances across your machines." }, hidden: true },
   // Upstream renamed the sidebar item Recharge → Billing (logos-infra
   // navigation.json); the page header itself still says Recharge.
-  { item: { label: "/ Billing", panel: "recharge", title: "Billing", sub: "View your available USD credit and add more with a one-time payment." } },
-  { group: "Operations" },
-  { item: { label: "/ Users", panel: "users", title: "Users", sub: "Accounts, roles, balances and sessions." } },
-  { item: { label: "/ Machines", panel: "machines", title: "Machines", sub: "Nodes, providers, pools and capacity." } },
-  { item: { label: "/ Models", panel: "ph", title: "Models", sub: "[Placeholder] Model registry." } },
-  { item: { label: "/ Feedback", panel: "ph", title: "Feedback", sub: "[Placeholder] Feedback inbox." } },
-  { item: { label: "/ Audit", panel: "ph", title: "Audit", sub: "[Placeholder] Audit trail." } },
-  { item: { label: "/ Sessions", panel: "ph", title: "Sessions", sub: "[Placeholder] Active sessions." } },
-  { group: "Framework" },
-  { item: { label: "/ Components", panel: "components", title: "Components", sub: "Base components of the LOGOS framework — dialogs, notifications, drawers." } },
-  { item: { label: "/ Back to mainpage", panel: "", title: "", sub: "" }, bottom: true, back: true },
-  { item: { label: "/ Settings", panel: "settings", title: "Settings", sub: "Signup, resource and registration policies." } },
+  { item: { label: "Billing", panel: "recharge", title: "Billing", sub: "View your available USD credit and add more with a one-time payment.", icon: "billing" } },
+  { group: "Operations", admin: true },
+  { item: { label: "/ API Keys", panel: "api", title: "API Keys", sub: "Create, budget and monitor scoped keys." }, admin: true },
+  { item: { label: "/ Usage", panel: "usage", title: "Usage", sub: "Rollups, provider records and cost windows." }, admin: true },
+  { item: { label: "/ Users", panel: "users", title: "Users", sub: "Accounts, roles, balances and sessions." }, admin: true },
+  { item: { label: "/ Machines", panel: "machines", title: "Machines", sub: "Nodes, providers, pools and capacity." }, admin: true },
+  { item: { label: "/ Models", panel: "ph", title: "Models", sub: "[Placeholder] Model registry." }, admin: true },
+  { item: { label: "/ Feedback", panel: "ph", title: "Feedback", sub: "[Placeholder] Feedback inbox." }, admin: true },
+  { item: { label: "/ Audit", panel: "ph", title: "Audit", sub: "[Placeholder] Audit trail." }, admin: true },
+  { item: { label: "/ Sessions", panel: "ph", title: "Sessions", sub: "[Placeholder] Active sessions." }, admin: true },
+  { item: { label: "Mainpage", panel: "", title: "", sub: "", icon: "back" }, bottom: true, back: true },
+  { item: { label: "Settings", panel: "settings", title: "Settings", sub: "Signup, resource and registration policies.", icon: "gear" } },
 ]
 
 /* ===================== agent chat surface ===================== */

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
-import { ArrowLeft, ArrowRight, CreditCard, LockKeyhole, Orbit, ShieldCheck, Sparkles, WalletCards } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CreditCard, LockKeyhole, ShieldCheck, Sparkles, WalletCards } from 'lucide-react'
 import { billingPaymentMethodAvailability } from '../../billingPaymentMethods'
 import { billingSuccessPresentation } from '../../billingSuccessPresentation'
 import type { BillingCheckoutPlanID, BillingOrderStatus, BillingPaymentMethod, BillingPlan, BillingPublicConfig, BillingStripePendingReference } from '../../billingTypes'
@@ -50,7 +50,6 @@ export function UpgradeModal({ open, plans, config, loading = false, error = '',
     ...plan,
     paymentMethods: Object.freeze({
       stripe: methodAvailability.stripe.enabled,
-      tao: methodAvailability.tao.enabled,
     }),
   } : plan, [methodAvailability, plan])
   const selectedMethodEnabled = method !== null && Boolean(methodAvailability?.[method].enabled)
@@ -94,7 +93,7 @@ export function UpgradeModal({ open, plans, config, loading = false, error = '',
   useEffect(() => {
     const status = polling.status
     if (!status || !pending) return
-    if (status.id !== pending.orderId || status.provider !== 'stripe') {
+    if (status.id !== pending.orderId) {
       setRecoveryError(pageText('billing.upgradeModal.theStripePaymentReferenceCouldNotBeVerifiedFor'))
       return
     }
@@ -163,7 +162,7 @@ export function UpgradeModal({ open, plans, config, loading = false, error = '',
   return (
     <LogosDialog
       open={open}
-      title={step === 'select' ? pageText('billing.upgradeModal.upgradeToPro') : recoveringStripe ? pageText('billing.upgradeModal.verifyingStripePayment') : method === 'stripe' ? pageText('billing.upgradeModal.secureStripeCheckout') : pageText('billing.upgradeModal.taoCheckout')}
+      title={step === 'select' ? pageText('billing.upgradeModal.upgradeToPro') : recoveringStripe ? pageText('billing.upgradeModal.verifyingStripePayment') : pageText('billing.upgradeModal.secureStripeCheckout')}
       subtitle={step === 'select' ? pageText('billing.upgradeModal.chooseAServerPricedTermProRemainsIndependentFrom') : plan ? billingPlanName(plan) : pageText('billing.upgradeModal.checkingYourPaymentWithTheServer')}
       wide
       contentClassName="billing-dialog"
@@ -185,12 +184,11 @@ export function UpgradeModal({ open, plans, config, loading = false, error = '',
               <section className="billing-payment-trust" aria-labelledby="billing-payment-trust-title">
                 <div>
                   <ShieldCheck size={18} aria-hidden="true" />
-                  <span><strong id="billing-payment-trust-title">{pageText('billing.upgradeModal.securePayment')}</strong><small>{pageText('billing.upgradeModal.paymentCredentialsAreHandledByStripeOrYourWallet')}</small></span>
+                  <span><strong id="billing-payment-trust-title">{pageText('billing.upgradeModal.securePayment')}</strong><small>{pageText('billing.upgradeModal.paymentCredentialsAreHandledByStripe')}</small></span>
                 </div>
                 <div className="billing-payment-badges" aria-label={pageText('billing.upgradeModal.paymentCapabilities')}>
                   <span className={methodAvailability?.stripe.enabled && config?.stripe.paymentElementEnabled ? '' : 'is-disabled'}><CreditCard size={15} aria-hidden="true" />{pageText('billing.upgradeModal.cardViaStripe')}</span>
                   <span className={methodAvailability?.stripe.enabled && config?.stripe.expressCheckoutEnabled ? '' : 'is-disabled'}><WalletCards size={15} aria-hidden="true" />{pageText('billing.upgradeModal.expressCheckoutAfterContinue')}</span>
-                  <span className={methodAvailability?.tao.enabled ? '' : 'is-disabled'}><Orbit size={15} aria-hidden="true" />{pageText('billing.upgradeModal.nativeTao')}</span>
                 </div>
                 <small>{pageText('billing.upgradeModal.stripeDynamicallyDecidesWhetherApplePayGooglePayLink')}</small>
               </section>
@@ -198,7 +196,7 @@ export function UpgradeModal({ open, plans, config, loading = false, error = '',
                 <summary>{pageText('billing.upgradeModal.termsPrivacyRefundCancellation')}</summary>
                 <div>
                   <section><h4>{pageText('billing.upgradeModal.terms')}</h4><p>{pageText('billing.upgradeModal.youArePurchasingTheSelectedServerPricedProTerm')}</p></section>
-                  <section><h4>{pageText('billing.upgradeModal.privacy')}</h4><p>{pageText('billing.upgradeModal.stripeElementsCollectsStripePaymentDetailsTaoTransfersAre')}</p></section>
+                  <section><h4>{pageText('billing.upgradeModal.privacy')}</h4><p>{pageText('billing.upgradeModal.stripeElementsCollectsStripePaymentDetails')}</p></section>
                   <section><h4>{pageText('billing.upgradeModal.refundCancellation')}</h4><p>{pageText('billing.upgradeModal.v1CompleteRefundsRevokeTheRelatedProEntitlementAfter')}</p></section>
                 </div>
               </details>
@@ -218,9 +216,7 @@ export function UpgradeModal({ open, plans, config, loading = false, error = '',
           <div className="billing-checkout-summary"><span className="billing-checkout-summary__plan"><small>{pageText('billing.upgradeModal.selectedPlan2')}</small><strong>{billingPlanName(plan)}</strong></span><BillingPriceSummary plan={selectablePlan ?? plan} method={method} compact /></div>
           {method === 'stripe' ? (
             <StripeCheckout planId={plan.id} onPendingVerification={(reference) => setPending(reference)} />
-          ) : (
-            <section className="billing-recovery" role="alert"><h3>{pageText('billing.upgradeModal.taoProCheckoutIsUnavailable')}</h3><p>{pageText('billing.upgradeModal.taoIsAvailableOnlyForOneTimeCreditRecharge')}</p></section>
-          )}
+          ) : null}
         </div>
       ) : null}
     </LogosDialog>

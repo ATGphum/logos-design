@@ -46,6 +46,61 @@ export function InstancesPanel({ flashCreate }: { flashCreate: number }) {
         <Stat k="Active capacity" v="1/1" t={<span className="chip chip-n">platform_admin</span>} />
         <Stat k="Readiness" v="ready" t={<span className="chip chip-g">postgres</span>} />
       </div>
+      <div className="cs-sec">
+        <SecH l="Lifecycle signals" r="runtime state, attention, and queued operations — 25 tracked" />
+        <div className="cs-mods">
+          <Mod mk="Running" mv="25" mr={<span className="cs-tag warn">0 pending</span>} />
+          <Mod mk="Attention" mv="0" mr={<span className="cs-tag warn">0 findings</span>} />
+          <Mod mk="Queued ops" mv="0" mr={<span className="cs-tag warn">0 runtime stale</span>} />
+        </div>
+        <p className="cs-note">enrolled 25</p>
+      </div>
+      <div className="cs-sec">
+        <SecH l="Instance workspace" r="my instances, admin filters, and all visible instances — 25 visible" />
+        <div className="cs-mods">
+          <Mod
+            mk="My instances"
+            mv="1"
+            mr={
+              <>
+                <span className="cs-tag">usr_a7pwt9fvch8j8pb392ya0s5kq4</span>
+                <span className="cs-act">View</span>
+              </>
+            }
+          />
+          <Mod
+            mk="Instance filters"
+            mv="Enabled"
+            mr={
+              <>
+                <span className="cs-tag">All</span>
+                <span className="cs-act">View</span>
+              </>
+            }
+          />
+          <Mod
+            mk="All instances"
+            mv="25"
+            mr={
+              <>
+                <span className="cs-tag">25 total</span>
+                <span className="cs-act">View</span>
+              </>
+            }
+          />
+        </div>
+      </div>
+      <div className="cs-sec" id="ci-create" ref={createRef}>
+        <SecH l="Create instance" r="provision a workspace with the current default resource policy" />
+        <div className="cs-mods">
+          <Mod mk="CPU" mv="2" />
+          <Mod mk="Memory" mv="8.0 GB" />
+          <Mod mk="Workspace" mv="100 GB" />
+        </div>
+        <div className="cs-formfoot" style={{ justifyContent: "flex-start" }}>
+          <button className="cs-btn pri">+ Create instance</button>
+        </div>
+      </div>
       <div className="cs-sec ci-hub">
         <SecH l="Instances" r="scope, owner, status, runtime and quick actions — 25 visible" />
         <div className="ci-filters">
@@ -155,61 +210,6 @@ export function InstancesPanel({ flashCreate }: { flashCreate: number }) {
           </tbody>
         </table>
         <p className="cs-note">showing 6 of 25 — page 1</p>
-      </div>
-      <div className="cs-sec">
-        <SecH l="Lifecycle signals" r="runtime state, attention, and queued operations — 25 tracked" />
-        <div className="cs-mods">
-          <Mod mk="Running" mv="25" mr={<span className="cs-tag warn">0 pending</span>} />
-          <Mod mk="Attention" mv="0" mr={<span className="cs-tag warn">0 findings</span>} />
-          <Mod mk="Queued ops" mv="0" mr={<span className="cs-tag warn">0 runtime stale</span>} />
-        </div>
-        <p className="cs-note">enrolled 25</p>
-      </div>
-      <div className="cs-sec">
-        <SecH l="Instance workspace" r="my instances, admin filters, and all visible instances — 25 visible" />
-        <div className="cs-mods">
-          <Mod
-            mk="My instances"
-            mv="1"
-            mr={
-              <>
-                <span className="cs-tag">usr_a7pwt9fvch8j8pb392ya0s5kq4</span>
-                <span className="cs-act">View</span>
-              </>
-            }
-          />
-          <Mod
-            mk="Instance filters"
-            mv="Enabled"
-            mr={
-              <>
-                <span className="cs-tag">All</span>
-                <span className="cs-act">View</span>
-              </>
-            }
-          />
-          <Mod
-            mk="All instances"
-            mv="25"
-            mr={
-              <>
-                <span className="cs-tag">25 total</span>
-                <span className="cs-act">View</span>
-              </>
-            }
-          />
-        </div>
-      </div>
-      <div className="cs-sec" id="ci-create" ref={createRef}>
-        <SecH l="Create instance" r="provision a workspace with the current default resource policy" />
-        <div className="cs-mods">
-          <Mod mk="CPU" mv="2" />
-          <Mod mk="Memory" mv="8.0 GB" />
-          <Mod mk="Workspace" mv="100 GB" />
-        </div>
-        <div className="cs-formfoot" style={{ justifyContent: "flex-start" }}>
-          <button className="cs-btn pri">+ Create instance</button>
-        </div>
       </div>
     </>
   )

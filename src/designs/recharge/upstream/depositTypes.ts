@@ -440,9 +440,20 @@ export function parseCryptoDepositActivity(
 }
 
 export function formatAtomicAssetAmount(atomicAmount: string, decimals: number) {
-  if (decimals === 0) return atomicAmount
+  const displayDecimals = 2
+  if (decimals === 0) return `${atomicAmount}.${'0'.repeat(displayDecimals)}`
+  const value = BigInt(atomicAmount)
+  if (decimals > displayDecimals) {
+    const roundingDivisor = 10n ** BigInt(decimals - displayDecimals)
+    let displayUnits = value / roundingDivisor
+    if (value % roundingDivisor * 2n >= roundingDivisor) displayUnits += 1n
+    const displayDivisor = 10n ** BigInt(displayDecimals)
+    const whole = displayUnits / displayDivisor
+    const fraction = (displayUnits % displayDivisor).toString().padStart(displayDecimals, '0')
+    return `${whole}.${fraction}`
+  }
   const padded = atomicAmount.padStart(decimals + 1, '0')
   const whole = padded.slice(0, -decimals)
-  const fraction = padded.slice(-decimals).replace(/0+$/, '')
-  return fraction === '' ? whole : `${whole}.${fraction}`
+  const fraction = padded.slice(-decimals).padEnd(displayDecimals, '0')
+  return `${whole}.${fraction}`
 }

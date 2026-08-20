@@ -40,7 +40,7 @@ export type BillingSettingsPresentation = Readonly<{
 
 function providerLabel(source: BillingEntitlementSource | BillingAccountSubscription) {
   if ('kind' in source && source.kind === 'admin_adjustment') return 'Administrative grant'
-  return source.provider === 'tao' ? 'TAO · Bittensor Mainnet' : 'Stripe'
+  return 'Stripe'
 }
 
 function renewalPresentation(source: BillingEntitlementSource, subscription: BillingAccountSubscription | null) {
@@ -56,9 +56,6 @@ function renewalPresentation(source: BillingEntitlementSource, subscription: Bil
   }
   if (source.kind === 'stripe_one_time') return Object.freeze({
     label: 'One-time purchase', detail: 'This Stripe term does not renew automatically.',
-  })
-  if (source.kind === 'tao') return Object.freeze({
-    label: 'Manual renewal', detail: 'TAO terms do not renew automatically. Purchase another term before access expires.',
   })
   return Object.freeze({
     label: 'No payment renewal', detail: 'This administrative Pro grant is not connected to an automatic payment.',
@@ -87,7 +84,7 @@ export function billingSettingsPresentation(
       statusLabel: 'Free plan',
       statusDetail: 'No active or scheduled Pro entitlement is attached to this account.',
       providerLabel: 'Not applicable', renewalLabel: 'No renewal',
-      renewalDetail: 'Upgrade whenever you are ready. Existing token balance and instance limits remain independent.',
+      renewalDetail: 'Upgrade whenever you are ready. Existing account balance and instance limits remain independent.',
       periodLabel: 'Access period', periodStart: null, periodEnd: null, nextDateLabel: null, nextDate: null,
       graceEndsAt: null, purchaseActionLabel: 'Compare Pro plans', showPaymentManagement: false,
       canManagePaymentMethod: false, canCancel: false, cancellationScheduled: false,
@@ -150,7 +147,7 @@ export function billingSettingsPresentation(
     periodLabel: active ? 'Current access period' : 'Scheduled access period',
     periodStart: entitlement.startsAt, periodEnd: entitlement.expiresAt,
     nextDateLabel, nextDate: graceEndsAt ?? entitlement.expiresAt, graceEndsAt,
-    purchaseActionLabel: source.kind === 'tao' ? 'Renew Pro' : source.kind === 'stripe_one_time' ? 'Buy another term' : 'Change plan',
+    purchaseActionLabel: source.kind === 'stripe_one_time' ? 'Buy another term' : 'Change plan',
     showPaymentManagement: source.kind === 'stripe_subscription',
     canManagePaymentMethod: account.actions.canManagePaymentMethod,
     canCancel: account.actions.canCancel,

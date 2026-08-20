@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ExternalLink, FileText, LoaderCircle, ReceiptText, RefreshCw } from 'lucide-react'
+import { FileText, LoaderCircle, ReceiptText, RefreshCw } from 'lucide-react'
 import { apiErrorMessage } from '../../api'
 import { billingHistoryPresentation } from '../../billingHistoryPresentation'
 import type { BillingHistory as BillingHistoryData, BillingPlan } from '../../billingTypes'
@@ -113,7 +113,6 @@ export function BillingHistory({ history, plans, available, fresh = true, loadin
                             {payment.payment.kind === 'stripe_invoice' ? <p>{pageText('billing.billingHistory.stripeInvoiceEvidenceIsStoredWithoutExposingProviderIdentifiers')}</p> : null}
                             {payment.canViewStripeReceipt ? <button type="button" onClick={() => void openStripeReceipts()} disabled={!fresh || portalWorking}>{portalWorking ? pageText('billing.billingHistory.openingStripe') : pageText('billing.billingHistory.viewStripeReceipts')}</button> : null}
                             {payment.payment.kind === 'stripe_invoice' && !payment.canViewStripeReceipt ? <p className="billing-muted">{pageText('billing.billingHistory.theSecureStripeReceiptPortalIsNotEnabledRight')}</p> : null}
-                            {payment.payment.transactionURL ? <a href={payment.payment.transactionURL} target="_blank" rel="noreferrer" aria-label={pageText('billing.billingHistory.viewTaoTransactionForOrder', { order: view.item.orderNo })}>{pageText('billing.billingHistory.viewFinalizedTransaction')}<ExternalLink size={13} aria-hidden="true" /></a> : null}
                           </li>
                         ))}</ul>
                       )}

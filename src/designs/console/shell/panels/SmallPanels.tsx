@@ -127,6 +127,24 @@ export function UsagePanel() {
         <Stat k="Output tokens" v="0" t="model responses" />
         <Stat k="Estimated cost" v="$0.00" t="2026-07-13" />
       </div>
+{/* moved off the Dashboard — this is what "Usage breakdown" goes to */}
+      <div className="cs-sec ov-breakdown">
+        <SecH l="Where the credit went" />
+        <div className="ov-bd">
+          <div className="row">
+            <span className="n">Agent sessions</span>
+            <span className="a">$52.90</span>
+          </div>
+          <div className="row">
+            <span className="n">Instance runtime</span>
+            <span className="a">$26.10</span>
+          </div>
+          <div className="row">
+            <span className="n">Storage</span>
+            <span className="a">$7.40</span>
+          </div>
+        </div>
+      </div>
       <div className="cs-sec">
         <SecH l="Usage workspace" r="rollups, provider records, lookup, csv import & export" />
         <div className="cs-mods">

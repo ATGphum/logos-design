@@ -1,6 +1,6 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowLeft, BadgeDollarSign, Check, RefreshCw } from 'lucide-react'
-import { formatBillingCreditUSD, type BillingTopupProduct } from '../../billingTypes'
+import { formatBillingCreditUSD, formatBillingPaidUSD, type BillingTopupProduct } from '../../billingTypes'
 import { pageText } from '../../i18n/pageText'
 import { billingTopupProductName } from '../../billingCatalogText'
 
@@ -39,8 +39,8 @@ function customAmountProduct(product: BillingTopupProduct | null, input: string)
     return {
       product: null,
       error: pageText('dynamic.billing.amountRange', {
-        minimum: formatBillingCreditUSD(product.customAmount.minMicros),
-        maximum: formatBillingCreditUSD(product.customAmount.maxMicros),
+        minimum: formatBillingPaidUSD(product.customAmount.minMicros),
+        maximum: formatBillingPaidUSD(product.customAmount.maxMicros),
       }),
     }
   }
@@ -52,7 +52,7 @@ function customAmountProduct(product: BillingTopupProduct | null, input: string)
       ...product,
       name: `$${displayAmount} Credit`,
       paidMicros: micros.toString(),
-      creditedMicros: micros.toString(),
+      creditedNanos: (micros * 1_000n).toString(),
       displayAmount,
     }),
     error: '',
@@ -60,7 +60,7 @@ function customAmountProduct(product: BillingTopupProduct | null, input: string)
 }
 
 function quickAmountLabel(product: BillingTopupProduct) {
-  return formatBillingCreditUSD(product.paidMicros).replace(/\.00$/, '')
+  return formatBillingPaidUSD(product.paidMicros)
 }
 
 export function RechargeOptions({
@@ -131,7 +131,7 @@ export function RechargeOptions({
           <Check size={19} aria-hidden="true" />
           <span>
             <strong>{billingTopupProductName(checkoutProduct)}</strong>
-            <small>{pageText('billing.rechargeOptions.payAmountWithStripe', { amount: formatBillingCreditUSD(checkoutProduct.paidMicros) })}</small>
+            <small>{pageText('billing.rechargeOptions.payAmountWithStripe', { amount: formatBillingPaidUSD(checkoutProduct.paidMicros) })}</small>
           </span>
         </div>
         <Suspense fallback={<div className="billing-loading" role="status">{pageText('billing.rechargeOptions.loadingSecureStripeCheckout')}</div>}>
@@ -183,7 +183,7 @@ export function RechargeOptions({
               <button
                 type="button"
                 key={product.id}
-                aria-label={pageText('billing.rechargeOptions.useAmount', { amount: formatBillingCreditUSD(product.paidMicros) })}
+                aria-label={pageText('billing.rechargeOptions.useAmount', { amount: formatBillingPaidUSD(product.paidMicros) })}
                 aria-pressed={selectedProduct?.paidMicros === product.paidMicros}
                 disabled={!amountEnabled}
                 onClick={() => setCustomAmount(product.displayAmount)}
@@ -212,9 +212,9 @@ export function RechargeOptions({
         </div>
         <div className="recharge-amount__meta" id="recharge-amount-help">
           <small>{selectedProduct
-            ? pageText('billing.rechargeOptions.youReceiveCredit', { amount: formatBillingCreditUSD(selectedProduct.creditedMicros) })
+            ? pageText('billing.rechargeOptions.youReceiveCredit', { amount: formatBillingCreditUSD(selectedProduct.creditedNanos) })
             : pageText('billing.rechargeOptions.enterTheAmountYouWantToAdd')}</small>
-          {customTemplate ? <small>{pageText('billing.rechargeOptions.allowed')} {formatBillingCreditUSD(customTemplate.customAmount.minMicros)}–{formatBillingCreditUSD(customTemplate.customAmount.maxMicros)}</small> : null}
+          {customTemplate ? <small>{pageText('billing.rechargeOptions.allowed')} {formatBillingPaidUSD(customTemplate.customAmount.minMicros)}–{formatBillingPaidUSD(customTemplate.customAmount.maxMicros)}</small> : null}
         </div>
         {customTemplate === null ? <p className="billing-inline-error" role="alert">{pageText('billing.rechargeOptions.customRechargeIsNotAvailableInTheVerifiedServer')}</p> : customSelection.error ? <p className="billing-inline-error" role="alert">{customSelection.error}</p> : null}
       </div>
@@ -225,8 +225,8 @@ export function RechargeOptions({
           <span>
             <strong>{pageText('billing.rechargeOptions.stripeAmountSelected')}</strong>
             <small>{pageText('billing.rechargeOptions.payAmountWithStripeAndReceiveCredit', {
-              amount: formatBillingCreditUSD(selectedProduct.paidMicros),
-              credit: formatBillingCreditUSD(selectedProduct.creditedMicros),
+              amount: formatBillingPaidUSD(selectedProduct.paidMicros),
+              credit: formatBillingCreditUSD(selectedProduct.creditedNanos),
             })}</small>
           </span>
         </div>

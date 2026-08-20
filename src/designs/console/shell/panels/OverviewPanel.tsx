@@ -1,103 +1,45 @@
 /** Overview panel (#cs-panel-overview) — ported 1:1 from the prototype markup. */
 import { Mod, SecH, Stat } from "./bits"
 
-export function OverviewPanel() {
+export function OverviewPanel({ onManageInstances, onUsageBreakdown }: { onManageInstances?: () => void; onUsageBreakdown?: () => void }) {
   return (
     <>
-      <div className="cs-sec ov-budget" style={{ marginTop: 20 }}>
-        <div className="cs-sec-h ov-sech">
-          <div>
-            <span className="l">Budget</span>
-            <span className="r">your credit for this cycle · resets 1 September</span>
-          </div>
-          <div className="acts">
-            <button className="cs-btn neutral">Add credit</button>
-            <button className="cs-btn">Usage breakdown</button>
-          </div>
-        </div>
+      <div className="cs-sec ov-budget" style={{ marginTop: 6 }}>
         <div className="ov-btop">
           <div className="ov-bmain">
-            <div className="lab">Available to spend</div>
+            <div className="lab">
+              Remaining budget
+              <span className="ov-spent">
+                <span className="sl">/</span>
+                <span className="fig">
+                  <span className="cur">$</span>4.12
+                </span>
+                <span className="tok">(2.31M tokens)</span>
+                <span className="per">past 24h</span>
+              </span>
+            </div>
             <div className="amt ov-money disp">
               <span className="cur">$</span>163.60
             </div>
           </div>
-          <div className="ov-bpct">
-            <div className="lab">Used so far</div>
-            <div className="big ov-money">35%</div>
+          <div className="acts">
+            <button className="cs-btn neutral">Add credit</button>
+            <button className="cs-btn" onClick={onUsageBreakdown}>Usage breakdown</button>
+            <button className="cs-btn ov-manage" onClick={onManageInstances}>
+              Manage instances
+            </button>
           </div>
         </div>
         <div className="ov-bar">
           <span className="fill" style={{ width: "34.6%" }}></span>
         </div>
-        <div className="ov-blegend">
-          <div className="grp">
-            <span className="li">
-              <span className="sw used"></span>
-              <b>
-                <span className="ov-money">
-                  <span className="cur">$</span>86.40
-                </span>
-              </b>
-              <i>used</i>
-            </span>
-            <span className="li">
-              <span className="sw left"></span>
-              <b>
-                <span className="ov-money">
-                  <span className="cur">$</span>163.60
-                </span>
-              </b>
-              <i>remaining</i>
-            </span>
-            <span className="li">
-              <i>of</i>
-              <b>
-                <span className="ov-money">
-                  <span className="cur">$</span>250.00
-                </span>
-              </b>
-              <i>total</i>
-            </span>
-          </div>
-        </div>
+        <div className="ov-bused">35% used</div>
       </div>
-      <div className="cs-stats" style={{ marginTop: 96 }}>
-        <Stat
-          k="Spend today"
-          vCls="ov-money disp"
-          v={
-            <>
-              <span className="cur">$</span>4.12
-            </>
-          }
-          t={<span className="chip chip-n">2.31M tokens</span>}
-        />
-        <Stat k="Your instances" vCls="ov-money" v="6" t={<span className="chip chip-g">6 running</span>} />
-        <Stat k="Readiness" v="Ready" t={<span className="chip chip-g">all systems normal</span>} />
-      </div>
-      <div className="cs-sec ov-breakdown">
-        <SecH l="Where the credit went" />
-        <div className="ov-bd">
-          <div className="row">
-            <span className="n">Agent sessions</span>
-            <span className="a">$52.90</span>
-          </div>
-          <div className="row">
-            <span className="n">Instance runtime</span>
-            <span className="a">$26.10</span>
-          </div>
-          <div className="row">
-            <span className="n">Storage</span>
-            <span className="a">$7.40</span>
-          </div>
-        </div>
-      </div>
-      <div className="cs-sec" style={{ marginTop: 80 }}>
-        <SecH l="Operations" r="control-plane detail — mostly relevant to admins" />
-      </div>
+      {/* instance count + readiness live on the Instances page, behind the button below */}
+
+      {/* "where the credit went" lives on the Usage page, behind "Usage breakdown" */}
       <div className="cs-sec">
-        <SecH l="Attention queue" r="instances, stale heartbeats, and control-plane drift" />
+        <SecH l="Attention queue" />
         <div className="cs-mods">
           <Mod
             mk="Needs attention"
@@ -165,10 +107,6 @@ export function OverviewPanel() {
             }
           />
         </div>
-      </div>
-      <div className="cs-sec">
-        <SecH l="Operations overview" r="readiness, credentials, preflight warnings, and acknowledgements" />
-        <p className="cs-note">[Placeholder] Operations detail drawer — wired by backend.</p>
       </div>
     </>
   )

@@ -1,24 +1,22 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ArrowLeft, Check, Copy, ExternalLink, Globe2, Landmark, QrCode, RefreshCw, ShieldAlert } from 'lucide-react'
+import { ArrowLeft, Check, Copy, ExternalLink, Landmark, QrCode, RefreshCw, ShieldAlert } from 'lucide-react'
 import QRCode from './qrcodeShim' // DESIGN SHIM (was 'qrcode')
 import type { QRCodeToDataURLOptions } from './qrcodeShim' // DESIGN SHIM (was 'qrcode')
 import {
   formatAtomicAssetAmount,
   type CryptoDepositAddress,
-  type CryptoDepositAsset,
   type CryptoDepositFixture,
   type CryptoDepositNetwork,
   type CryptoDepositWarningCode,
 } from '../../depositTypes'
 import { pageText } from '../../i18n/pageText'
 
-export type CryptoDepositStep = 'crypto_selector' | 'crypto_address'
+export type CryptoDepositStep = 'crypto_address'
 
 type CryptoDepositPanelProps = {
   fixture: CryptoDepositFixture
   step: CryptoDepositStep
   onBackToMethods: () => void
-  onStepChange: (step: CryptoDepositStep) => void
 }
 
 const qrOptions = Object.freeze({
@@ -75,10 +73,8 @@ function defaultSelection(fixture: CryptoDepositFixture) {
   return { network, asset }
 }
 
-export function CryptoDepositPanel({ fixture, step, onBackToMethods, onStepChange }: CryptoDepositPanelProps) {
+export function CryptoDepositPanel({ fixture, step, onBackToMethods }: CryptoDepositPanelProps) {
   const initial = useMemo(() => defaultSelection(fixture), [fixture])
-  const [selectedNetworkID, setSelectedNetworkID] = useState(initial.network?.networkId ?? '')
-  const [selectedAssetID, setSelectedAssetID] = useState(initial.asset?.assetId ?? '')
   const [addresses, setAddresses] = useState<Readonly<Record<string, CryptoDepositAddress>>>({})
   const [addressLoading, setAddressLoading] = useState(false)
   const [addressError, setAddressError] = useState('')
@@ -89,11 +85,8 @@ export function CryptoDepositPanel({ fixture, step, onBackToMethods, onStepChang
   const requestController = useRef<AbortController | null>(null)
   const copyTimer = useRef<number | null>(null)
 
-  const selectedNetwork = fixture.catalog.networks.find((network) => network.networkId === selectedNetworkID) ?? initial.network
-  const selectedAsset = selectedNetwork?.assets.find((asset) => asset.assetId === selectedAssetID)
-    ?? selectedNetwork?.assets.find((asset) => asset.isDefault)
-    ?? selectedNetwork?.assets[0]
-    ?? null
+  const selectedNetwork = initial.network
+  const selectedAsset = initial.asset
   const address = selectedNetwork ? addresses[selectedNetwork.networkId] ?? null : null
 
   useEffect(() => () => {
@@ -118,23 +111,8 @@ export function CryptoDepositPanel({ fixture, step, onBackToMethods, onStepChang
     return () => { active = false }
   }, [address])
 
-  const selectNetwork = (network: CryptoDepositNetwork) => {
-    requestController.current?.abort()
-    requestGeneration.current += 1
-    setSelectedNetworkID(network.networkId)
-    setSelectedAssetID((network.assets.find((asset) => asset.isDefault) ?? network.assets[0])?.assetId ?? '')
-    setAddressError('')
-    setCopyFeedback('')
-  }
-
-  const selectAsset = (asset: CryptoDepositAsset) => {
-    setSelectedAssetID(asset.assetId)
-    setCopyFeedback('')
-  }
-
   const loadSelectedAddress = useCallback(async () => {
     if (selectedNetwork === null || selectedAsset === null || !selectedNetwork.availability.canReadAddress) return
-    onStepChange('crypto_address')
     if (addresses[selectedNetwork.networkId]) {
       setAddressError('')
       return
@@ -161,7 +139,12 @@ export function CryptoDepositPanel({ fixture, step, onBackToMethods, onStepChang
         requestController.current = null
       }
     }
-  }, [addresses, fixture, onStepChange, selectedAsset, selectedNetwork])
+  }, [addresses, fixture, selectedAsset, selectedNetwork])
+
+  useEffect(() => {
+    if (step !== 'crypto_address' || address !== null || addressLoading || addressError !== '') return
+    void loadSelectedAddress()
+  }, [address, addressError, addressLoading, loadSelectedAddress, step])
 
   const copyAddress = async () => {
     if (address === null || selectedNetwork?.availability.acceptingDeposits !== true) return
@@ -175,14 +158,14 @@ export function CryptoDepositPanel({ fixture, step, onBackToMethods, onStepChang
     copyTimer.current = window.setTimeout(() => setCopyFeedback(''), 4_000)
   }
 
-  const returnToSelector = () => {
+  const returnToMethods = () => {
     requestController.current?.abort()
     requestController.current = null
     requestGeneration.current += 1
     setAddressLoading(false)
     setAddressError('')
     setCopyFeedback('')
-    onStepChange('crypto_selector')
+    onBackToMethods()
   }
 
   if (selectedNetwork === null || selectedAsset === null) {
@@ -198,83 +181,14 @@ export function CryptoDepositPanel({ fixture, step, onBackToMethods, onStepChang
     )
   }
 
-  if (step === 'crypto_selector') {
-    return (
-      <section className="crypto-deposit-panel crypto-deposit-selector" aria-label={pageText('billing.cryptoDepositPanel.cryptoNetworkAndAsset')}>
-        <div className="recharge-step-toolbar">
-          <button className="recharge-step-back" type="button" onClick={onBackToMethods}>
-            <ArrowLeft size={17} aria-hidden="true" />
-            {pageText('billing.stripeCheckout.backToPaymentMethods')}
-          </button>
-          <span className="billing-status-pill billing-status-pill--active">{pageText('billing.cryptoDepositPanel.personalAddress')}</span>
-        </div>
+  const addressReadPending = address === null && addressError === '' && selectedNetwork.availability.canReadAddress
 
-        <fieldset className="crypto-deposit-choice">
-          <legend>{pageText('billing.cryptoDepositPanel.network')}</legend>
-          <div className="crypto-deposit-choice__grid">
-            {fixture.catalog.networks.map((network) => (
-              <label key={network.networkId} className={network.networkId === selectedNetwork.networkId ? 'is-selected' : ''}>
-                <input
-                  type="radio"
-                  name="crypto-deposit-network"
-                  value={network.networkId}
-                  checked={network.networkId === selectedNetwork.networkId}
-                  onChange={() => selectNetwork(network)}
-                />
-                <Globe2 size={18} aria-hidden="true" />
-                <span><strong>{network.displayName}</strong><small>{availabilityText(network)}</small></span>
-              </label>
-            ))}
-          </div>
-        </fieldset>
-
-        <fieldset className="crypto-deposit-choice">
-          <legend>{pageText('billing.cryptoDepositPanel.asset')}</legend>
-          <div className="crypto-deposit-choice__grid">
-            {selectedNetwork.assets.map((asset) => (
-              <label key={asset.assetId} className={asset.assetId === selectedAsset.assetId ? 'is-selected' : ''}>
-                <input
-                  type="radio"
-                  name="crypto-deposit-asset"
-                  value={asset.assetId}
-                  checked={asset.assetId === selectedAsset.assetId}
-                  onChange={() => selectAsset(asset)}
-                />
-                <Landmark size={18} aria-hidden="true" />
-                <span><strong>{asset.displayName}</strong><small>{pageText('billing.cryptoDepositPanel.nativeAsset', { symbol: asset.symbol })}</small></span>
-              </label>
-            ))}
-          </div>
-        </fieldset>
-
-        {selectedNetwork.availability.reasonCode ? (
-          <div className="crypto-deposit-availability" role="status">
-            <ShieldAlert size={18} aria-hidden="true" />
-            <span><strong>{availabilityText(selectedNetwork)}</strong><small>{pageText('billing.cryptoDepositPanel.addressRemainsIndependent')}</small></span>
-          </div>
-        ) : null}
-
-        <div className="crypto-deposit-action">
-          <button
-            className="cs-btn pri"
-            type="button"
-            disabled={!selectedNetwork.availability.canReadAddress}
-            onClick={() => void loadSelectedAddress()}
-          >
-            {pageText('billing.cryptoDepositPanel.showMyDepositAddress')}
-          </button>
-          <small>{pageText('billing.cryptoDepositPanel.noAmountOrWalletRequired')}</small>
-        </div>
-      </section>
-    )
-  }
-
-  if (addressLoading) {
+  if (addressLoading || addressReadPending) {
     return (
       <section className="crypto-deposit-panel crypto-deposit-loading" role="status" aria-busy="true">
-        <button className="recharge-step-back" type="button" onClick={returnToSelector}>
+        <button className="recharge-step-back" type="button" onClick={returnToMethods}>
           <ArrowLeft size={17} aria-hidden="true" />
-          {pageText('billing.cryptoDepositPanel.backToNetworkAndAsset')}
+          {pageText('billing.stripeCheckout.backToPaymentMethods')}
         </button>
         <RefreshCw className="billing-spin" size={28} aria-hidden="true" />
         <strong>{pageText('billing.cryptoDepositPanel.loadingPersonalAddress')}</strong>
@@ -290,9 +204,9 @@ export function CryptoDepositPanel({ fixture, step, onBackToMethods, onStepChang
         <strong>{addressError || pageText('billing.cryptoDepositPanel.addressUnavailable')}</strong>
         <p>{pageText('billing.cryptoDepositPanel.noAddressWasReplacedOrCanceled')}</p>
         <div className="crypto-deposit-empty-actions">
-          <button className="recharge-step-back" type="button" onClick={returnToSelector}>
+          <button className="recharge-step-back" type="button" onClick={returnToMethods}>
             <ArrowLeft size={17} aria-hidden="true" />
-            {pageText('billing.cryptoDepositPanel.backToNetworkAndAsset')}
+            {pageText('billing.stripeCheckout.backToPaymentMethods')}
           </button>
           <button className="cs-btn" type="button" onClick={() => void loadSelectedAddress()}>{pageText('billing.cryptoDepositPanel.retryAddress')}</button>
         </div>
@@ -306,9 +220,9 @@ export function CryptoDepositPanel({ fixture, step, onBackToMethods, onStepChang
   return (
     <section className="crypto-deposit-panel crypto-deposit-address" aria-label={pageText('billing.cryptoDepositPanel.yourCryptoDepositAddress')}>
       <div className="recharge-step-toolbar">
-        <button className="recharge-step-back" type="button" onClick={returnToSelector}>
+        <button className="recharge-step-back" type="button" onClick={returnToMethods}>
           <ArrowLeft size={17} aria-hidden="true" />
-          {pageText('billing.cryptoDepositPanel.backToNetworkAndAsset')}
+          {pageText('billing.stripeCheckout.backToPaymentMethods')}
         </button>
         <span className={`billing-status-pill billing-status-pill--${acceptingDeposits ? 'active' : 'pending'}`}>
           {acceptingDeposits ? pageText('billing.cryptoDepositPanel.readyToReceive') : pageText('billing.cryptoDepositPanel.doNotTransfer')}

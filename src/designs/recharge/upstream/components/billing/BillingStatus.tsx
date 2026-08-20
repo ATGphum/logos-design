@@ -6,7 +6,6 @@ import { pageText } from '../../i18n/pageText'
 
 const providerSteps = () => ({
   stripe: [pageText('billing.billingStatus.paymentSubmitted'), pageText('billing.billingStatus.confirmingWithStripe'), pageText('billing.billingStatus.paymentConfirmed'), pageText('billing.billingStatus.proAccessActivated')],
-  tao: [pageText('billing.billingStatus.transactionSubmitted'), pageText('billing.billingStatus.confirmingOnBittensor'), pageText('billing.billingStatus.paymentConfirmed'), pageText('billing.billingStatus.proAccessActivated')],
 })
 
 function completedCount(status: BillingOrderStatus | null) {
@@ -24,7 +23,7 @@ export function BillingStatus({ status, error, loading, onRefresh, onStartNewAtt
   loading: boolean
   onRefresh: () => void
   onStartNewAttempt?: () => void
-  providerHint?: 'stripe' | 'tao'
+  providerHint?: 'stripe'
 }) {
   const done = completedCount(status)
   const recovery = billingOrderRecovery(status)
@@ -44,7 +43,7 @@ export function BillingStatus({ status, error, loading, onRefresh, onStartNewAtt
         </div>
       </div>
       <ol className="billing-status__timeline">
-        {providerSteps()[status?.provider ?? providerHint ?? 'tao'].map((step, index) => (
+        {providerSteps()[status?.provider ?? providerHint ?? 'stripe'].map((step, index) => (
           <li className={index < done ? 'is-complete' : index === done && !warning ? 'is-current' : ''} key={step}>
             {index < done ? <Check size={14} /> : <Circle size={14} />}<span>{step}</span>
           </li>

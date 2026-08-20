@@ -1,5 +1,4 @@
-import { ExternalLink } from 'lucide-react'
-import { formatBillingCreditUSD } from '../../billingTypes'
+import { formatBillingPaidUSD } from '../../billingTypes'
 import {
   formatAtomicAssetAmount,
   type CryptoDepositActivityItem,
@@ -19,47 +18,17 @@ function statusLabel(item: CryptoDepositActivityItem) {
   }
 }
 
-function statusNote(item: CryptoDepositActivityItem) {
-  switch (item.status) {
-    case 'detected':
-      return pageText('billing.rechargeHistory.depositDetectedNote')
-    case 'pending_price':
-      return pageText('billing.rechargeHistory.depositPendingPriceNote')
-    case 'below_minimum':
-      if (item.minimumAtomic === null || item.assetDecimals === null || item.assetSymbol === null) return null
-      return pageText('billing.rechargeHistory.depositBelowMinimumNote', {
-        minimum: formatAtomicAssetAmount(item.minimumAtomic, item.assetDecimals),
-        symbol: item.assetSymbol,
-      })
-    case 'manual_review':
-      return pageText('billing.rechargeHistory.depositManualReviewNote')
-    case 'credited':
-      return item.creditedMicros === null ? null : pageText('billing.rechargeHistory.depositCreditedNote', {
-        amount: formatBillingCreditUSD(item.creditedMicros),
-      })
-    case 'refunded':
-      return item.creditedMicros === null ? null : pageText('billing.rechargeHistory.depositRefundedNote', {
-        amount: formatBillingCreditUSD(item.creditedMicros),
-      })
-  }
-}
-
-function ledger(item: CryptoDepositActivityItem) {
-  if (item.status === 'refunded') return item.refundEntryId
-  return item.ledgerEntryId
-}
-
 export function CryptoDepositActivityCard({ presentation }: {
   presentation: CryptoDepositHistoryPresentationItem
 }) {
   const { eventAt, item } = presentation
-  const note = statusNote(item)
-  const ledgerID = ledger(item)
   const knownAsset = item.assetSymbol !== null && item.assetDecimals !== null
-  const assetLabel = item.assetSymbol ?? pageText('billing.rechargeHistory.unsupportedAsset')
   const amountLabel = knownAsset
     ? `${formatAtomicAssetAmount(item.atomicAmount, item.assetDecimals)} ${item.assetSymbol}`
     : pageText('billing.rechargeHistory.atomicUnits', { amount: item.atomicAmount })
+  const creditedLabel = item.creditedMicros === null
+    ? amountLabel
+    : `${formatBillingPaidUSD(item.creditedMicros)} ${pageText('billing.rechargeHistory.credit')}`
   const explorerLabel = knownAsset
     ? pageText('billing.rechargeHistory.viewCryptoTransaction', {
       network: item.networkName,
@@ -80,7 +49,7 @@ export function CryptoDepositActivityCard({ presentation }: {
       data-deposit-status={item.status}
     >
       <time className="rc-txrow__date" dateTime={eventAt}>{formatDateTime(eventAt)}</time>
-      <span className="rc-txrow__amount">{amountLabel}</span>
+      <span className="rc-txrow__amount">{creditedLabel}</span>
       <span className={`rc-txrow__status billing-state billing-state--${item.status}`}>{statusLabel(item)}</span>
       <a className="rc-txrow__action" href={item.transactionUrl} target="_blank" rel="noopener noreferrer" aria-label={explorerLabel}>
         View

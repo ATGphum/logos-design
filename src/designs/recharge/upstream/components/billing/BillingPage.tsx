@@ -1,5 +1,6 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { RefreshCw } from 'lucide-react'
+import { apiErrorMessage } from '../../api'
 import {
   cryptoDepositNextRefreshDelay,
   cryptoDepositRefreshOptions,
@@ -10,6 +11,7 @@ import {
   useRechargeAccount,
   useRechargeHistory,
   useRechargeProducts,
+  useStripeTopupCancellation,
   useTopupOrderPolling,
   type CryptoDepositRefreshOptions,
 } from '../../hooks/billing'
@@ -62,14 +64,13 @@ function addCreditsDialogFlow(step: AddCreditsStep): {
       activeStepIndex: step === 'stripe_amount' ? 1 : 2,
     }
   }
-  if (step === 'crypto_selector' || step === 'crypto_address') {
+  if (step === 'crypto_address') {
     return {
       steps: [
         methodStep,
-        { id: 'network', label: pageText('billing.cryptoDepositPanel.cryptoNetworkAndAsset') },
         { id: 'address', label: pageText('billing.cryptoDepositPanel.personalAddress') },
       ],
-      activeStepIndex: step === 'crypto_selector' ? 1 : 2,
+      activeStepIndex: 1,
     }
   }
   return {
@@ -90,6 +91,7 @@ export function BillingPage({
   cryptoDepositRefreshOptions: depositRefreshOverrides,
 }: BillingPageProps) {
   const billing = useRechargeAccount()
+  const cancelTopupOrder = useStripeTopupCancellation()
   const publicConfig = useBillingPublicConfig()
   const history = useRechargeHistory()
   const products = useRechargeProducts(billing.account?.topup.allowed === true)
@@ -150,6 +152,8 @@ export function BillingPage({
   const [addCreditsOpen, setAddCreditsOpen] = useState(false)
   const [addCreditsStep, setAddCreditsStep] = useState<AddCreditsStep>('method_picker')
   const [depositRefreshCycle, setDepositRefreshCycle] = useState(0)
+  const [cancelingOrderID, setCancelingOrderID] = useState<string | null>(null)
+  const [cancelOrderError, setCancelOrderError] = useState('')
   const addCreditsTriggerRef = useRef<HTMLButtonElement>(null)
   const depositPendingStartedAt = useRef<number | null>(null)
   const depositImmediateTimer = useRef<number | null>(null)
@@ -168,6 +172,8 @@ export function BillingPage({
     : null
   const canStartAnother = billing.fresh && billing.account?.topup.canCreateCheckout === true && accountOrderID === null &&
     polling.status?.status !== 'manual_review' && polling.status?.status !== 'underpaid' && polling.status?.status !== 'overpaid'
+  const canCancelCurrentStripeOrder = orderID !== null && polling.status?.provider === 'stripe' &&
+    ['created', 'pending_payment'].includes(polling.status.status) && decision === 'continue'
   const catalogUsesStripe = products.items.some((product) => product.paymentMethods.stripe)
   const stripeMethodAvailability: RechargeMethodAvailability = (() => {
     if (billing.loading || publicConfig.loading || products.loading) {
@@ -230,9 +236,40 @@ export function BillingPage({
     await Promise.allSettled(requests)
   }, [refreshAccount, refreshCryptoActivity, refreshCryptoCatalog, refreshCurrentCryptoAddress, refreshHistory])
 
+  const cancelCurrentStripeOrder = useCallback(async () => {
+    if (orderID === null || !canCancelCurrentStripeOrder || cancelingOrderID !== null) return
+    setCancelingOrderID(orderID)
+    setCancelOrderError('')
+    try {
+      const status = await cancelTopupOrder(orderID)
+      polling.replaceStatus(status)
+      if (['canceled', 'expired', 'failed'].includes(status.status)) {
+        setCreatedHereOrderID((current) => current === orderID ? null : current)
+      }
+      await Promise.allSettled([refreshAccount(), refreshHistory()])
+    } catch (error) {
+      setCancelOrderError(apiErrorMessage(error, pageText('dynamic.billing.cancelRechargeFailed')))
+    } finally {
+      setCancelingOrderID((current) => current === orderID ? null : current)
+    }
+  }, [
+    canCancelCurrentStripeOrder,
+    cancelTopupOrder,
+    cancelingOrderID,
+    orderID,
+    polling,
+    refreshAccount,
+    refreshHistory,
+  ])
+
   useEffect(() => {
     if (accountOrderID !== null && trackedOrderID === null) setTrackedOrderID(accountOrderID)
   }, [accountOrderID, trackedOrderID])
+
+  useEffect(() => {
+    setCancelOrderError('')
+    setCancelingOrderID(null)
+  }, [orderID])
 
   useEffect(() => {
     if (polling.status === null || billingTopupPollingDecision(polling.status) === 'continue') return
@@ -252,11 +289,13 @@ export function BillingPage({
   }, [addCreditsOpen, decision, orderID])
 
   useEffect(() => {
-    const expiredOrderID = polling.status?.status === 'expired' ? polling.status.id : null
-    if (expiredOrderID === null || trackedOrderID !== expiredOrderID || !billing.fresh ||
+    const terminalOrderID = polling.status && ['expired', 'canceled', 'failed'].includes(polling.status.status)
+      ? polling.status.id
+      : null
+    if (terminalOrderID === null || trackedOrderID !== terminalOrderID || !billing.fresh ||
         billing.account?.topup.activeOrderId !== null || billing.account?.topup.canCreateCheckout !== true) return
     setTrackedOrderID(null)
-    setCreatedHereOrderID((current) => current === expiredOrderID ? null : current)
+    setCreatedHereOrderID((current) => current === terminalOrderID ? null : current)
   }, [billing.account, billing.fresh, polling.status, trackedOrderID])
 
   useEffect(() => {
@@ -400,18 +439,14 @@ export function BillingPage({
       ? pageText('billing.rechargeOptions.chooseRechargeAmount')
       : addCreditsStep === 'stripe_checkout'
         ? pageText('billing.rechargeOptions.secureStripeCheckout')
-        : addCreditsStep === 'crypto_selector'
-          ? pageText('billing.cryptoDepositPanel.chooseCryptoNetworkAndAsset')
-          : pageText('billing.cryptoDepositPanel.yourCryptoDepositAddress')
+        : pageText('billing.cryptoDepositPanel.yourCryptoDepositAddress')
   const addCreditsSubtitle = addCreditsStep === 'method_picker'
     ? pageText('billing.rechargeMethodPicker.stripeAndCryptoStayIndependentIfOneIsUnavailable')
     : addCreditsStep === 'stripe_amount'
       ? pageText('billing.rechargeOptions.enterAUsdAmountOrUseAQuickOption')
       : addCreditsStep === 'stripe_checkout'
         ? pageText('billing.rechargeOptions.completeYourPaymentInTheSecureStripeForm')
-        : addCreditsStep === 'crypto_selector'
-          ? pageText('billing.cryptoDepositPanel.selectNetworkAndNativeAsset')
-          : pageText('billing.cryptoDepositPanel.sendOnlyTheSelectedAsset')
+        : pageText('billing.cryptoDepositPanel.sendOnlyTheSelectedAsset')
   const addCreditsFlow = addCreditsDialogFlow(addCreditsStep)
 
   return (
@@ -461,8 +496,12 @@ export function BillingPage({
         error={polling.error}
         loading={polling.loading}
         canStartAnother={canStartAnother}
+        cancelAvailable={canCancelCurrentStripeOrder}
+        canceling={cancelingOrderID === orderID}
+        cancelError={cancelOrderError}
         onRefresh={() => void polling.refresh()}
         onStartAnother={startAnother}
+        onCancel={() => void cancelCurrentStripeOrder()}
       /> : null}
       {resumableStripeOrderID !== null ? (
         <section className="recharge-options cs-sec">
@@ -499,15 +538,14 @@ export function BillingPage({
             stripe={stripeMethodAvailability}
             crypto={cryptoMethodAvailability}
             onSelectStripe={() => setAddCreditsStep('stripe_amount')}
-            onSelectCrypto={cryptoDepositSource ? () => setAddCreditsStep('crypto_selector') : undefined}
+            onSelectCrypto={cryptoDepositSource ? () => setAddCreditsStep('crypto_address') : undefined}
           />
-        ) : addCreditsStep === 'crypto_selector' || addCreditsStep === 'crypto_address' ? (
+        ) : addCreditsStep === 'crypto_address' ? (
           cryptoDepositSource ? (
             <CryptoDepositPanel
               fixture={cryptoDepositSource}
               step={addCreditsStep}
               onBackToMethods={() => setAddCreditsStep('method_picker')}
-              onStepChange={setAddCreditsStep}
             />
           ) : (
             <section className="crypto-deposit-panel crypto-deposit-panel--empty" role="alert">

@@ -58,7 +58,7 @@ export function RechargeOverview({ account, available, fresh, loading, addCredit
             separate grid columns, whose differing internal stacks meant no CSS offset
             aligned them in both the gallery and the console panel. */}
         <div className="rc-balance-row">
-          <div className="recharge-balance__value" aria-live="polite">{formatBillingCreditUSD(account.balanceMicros)}</div>
+          <div className="recharge-balance__value" aria-live="polite">{formatBillingCreditUSD(account.balanceNanos)}</div>
           <button
             className="recharge-entry__action rc-balance-row__action"
             type="button"

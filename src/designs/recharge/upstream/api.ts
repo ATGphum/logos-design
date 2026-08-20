@@ -42,16 +42,16 @@ export class ApiError extends Error {
 }
 
 // ---- fixtures ---------------------------------------------------------------
-// Balance mirrors the production screenshot: $60.936934 (micros are exact).
+// Balance mirrors the production screenshot: $60.936934 (nanos are exact).
 const rechargeAccount = {
   customerExists: true,
-  balanceMicros: '60936934',
+  balanceNanos: '60936934000',
   ledgerConfigured: true,
   topup: { allowed: true, canCreateCheckout: true, activeOrderId: null },
 }
 
-// TAO enabled with browser-wallet transfer; card (Stripe) deliberately
-// unavailable — matches the live console's current recharge page.
+// Card (Stripe) is deliberately unavailable, matching the live console's
+// current recharge page. Crypto deposits are configured independently below.
 const publicConfig = {
   stripe: {
     enabled: false,
@@ -61,16 +61,11 @@ const publicConfig = {
     expressCheckoutEnabled: false,
     customerPortalEnabled: false,
   },
-  tao: {
-    enabled: true,
-    walletTransferEnabled: true,
-    browserPublicWssUrl: 'wss://entrypoint-finney.opentensor.ai',
-  },
 }
 
 const usd = (amount: number) => ({
   paidMicros: String(amount * 1_000_000),
-  creditedMicros: String(amount * 1_000_000),
+  creditedNanos: String(amount * 1_000_000_000),
   displayAmount: `${amount}.00`,
 })
 
@@ -87,7 +82,7 @@ const topupProducts = {
       ...usd(1),
       revision: 1,
       customAmount: { enabled: true, minMicros: '1000000', maxMicros: '10000000000' },
-      paymentMethods: { tao: true, stripe: false },
+      paymentMethods: { stripe: false },
     },
     ...[20, 50, 100].map((amount) => ({
       id: `topup_quick_${amount}`,
@@ -101,13 +96,14 @@ const topupProducts = {
         minMicros: String(amount * 1_000_000),
         maxMicros: String(amount * 1_000_000),
       },
-      paymentMethods: { tao: true, stripe: false },
+      paymentMethods: { stripe: false },
     })),
   ],
 }
 
-// Two settled TAO recharges. Every field crosses parseBillingTopupHistory's
-// invariants: paid ⇒ paidAt + finalized payment evidence + credited credit.
+// Two settled historical Stripe recharges. Every field crosses
+// parseBillingTopupHistory's invariants: paid ⇒ paidAt + succeeded payment
+// evidence + credited credit.
 const historyEntry = (
   n: number,
   amount: number,
@@ -118,13 +114,13 @@ const historyEntry = (
   orderId: `bord_design_${n}`,
   orderNo: `R-2026-00${n}`,
   planId: 'topup_custom_amount',
-  provider: 'tao',
+  provider: 'stripe',
   purchaseKind: 'topup',
   orderType: 'one_time',
-  renewalMode: 'manual',
+  renewalMode: 'one_time',
   amountUSD: `${amount}.00`,
   paidMicros: String(amount * 1_000_000),
-  creditedMicros: String(amount * 1_000_000),
+  creditedNanos: String(amount * 1_000_000_000),
   status: 'paid',
   creditStatus: 'credited',
   createdAt,
@@ -132,27 +128,25 @@ const historyEntry = (
   refundStatus: 'not_refunded',
   credit: {
     ledgerEntryId: `tok_design_${n}`,
-    deltaMicros: String(amount * 1_000_000),
-    balanceMicros: balanceAfter,
+    amountNanos: String(amount * 1_000_000_000),
+    balanceNanos: balanceAfter,
     creditedAt: paidAt,
   },
   payments: [
     {
       paymentId: `bpay_design_${n}`,
-      kind: 'tao_transaction',
-      status: 'finalized',
+      kind: 'stripe_payment',
+      status: 'succeeded',
       recordedAt: createdAt,
-      finalizedAt: paidAt,
-      transactionHash: `0x${String(n).repeat(4).padStart(4, '0').slice(0, 4)}${'ab'.repeat(30)}`,
-      transactionURL: `https://taostats.io/extrinsic/0x${String(n).repeat(4).padStart(4, '0').slice(0, 4)}${'ab'.repeat(30)}`,
+      paidAt,
     },
   ],
 })
 
 const topupHistory = {
   items: [
-    historyEntry(2, 50, '2026-08-09T04:12:00Z', '2026-08-09T04:15:41Z', '75936934'),
-    historyEntry(1, 20, '2026-07-28T11:03:00Z', '2026-07-28T11:07:19Z', '25936934'),
+    historyEntry(2, 50, '2026-08-09T04:12:00Z', '2026-08-09T04:15:41Z', '75936934000'),
+    historyEntry(1, 20, '2026-07-28T11:03:00Z', '2026-07-28T11:07:19Z', '25936934000'),
   ],
   actions: { canViewStripeReceipts: false },
 }

@@ -20,24 +20,22 @@ changes into everything under `upstream/` (provenance: `UPSTREAM.json`).
 |---|---|---|
 | `upstream/api.ts` | real HTTP client | fixture payloads (see below); POSTs fail with a "checkout is simulated" message |
 | `upstream/i18n/pageText.ts` | i18next lookup | direct en/pages.json lookup + `{{var}}`/`{var}`/ICU-plural interpolation |
-| `upstream/hooks/billing/injectedTaoWalletConnector.ts` | @polkadot wallet connector | no wallet ever detected → manual-transfer design path |
-| `upstream/hooks/billing/taoChainClient.ts` | dedot chain client | never talks to a chain |
 | `upstream/components/logos/` | radix primitive kit | minimal `LogosDialog` only |
 | `upstream/components/billing/stripeShim.ts` | @stripe SDKs | types only; Stripe disabled in fixtures |
 | `upstream/components/billing/qrcodeShim.ts` | qrcode package | placeholder QR SVG |
 | `upstream/components/common/useTranslationShim.ts` | react-i18next | en/common.json lookup |
 
 Three files carry a one-line import rewrite marked `// DESIGN SHIM (was …)`:
-`TaoCheckout.tsx` (qrcode), `StripeCheckout.tsx` (stripe), `FilterSelect.tsx`
-(react-i18next). Expect sync conflicts on those lines only if upstream touches
-the same imports.
+`CryptoDepositPanel.tsx` (qrcode), `StripeCheckout.tsx` (stripe), and
+`FilterSelect.tsx` (react-i18next). Expect sync conflicts on those lines only
+if upstream touches the same imports.
 
 ## Fixtures (`upstream/api.ts`)
 
-- Balance **$60.936934** (production screenshot parity; micros exact)
-- Products: custom amount $1–$10,000 + quick $20/$50/$100, TAO-only
+- Balance **$60.936934** in exact nanos (displayed as **$60.94**)
+- Products: custom amount $1–$10,000 + quick $20/$50/$100, Stripe disabled
   (card shows Unavailable, like the live console)
-- History: two settled TAO recharges ($50, $20), credited, taostats links
+- History: two settled historical Stripe recharges ($50, $20), credited
 - Crypto deposit (deposit-v3): one Bittensor network with native TAO,
   an allocated ss58 address (QR via the qrcode shim), one credited deposit
   (2.5 TAO → $11.25) and one just-detected deposit (1.2 TAO)
@@ -45,10 +43,11 @@ the same imports.
   parsers — edit fixtures with the parsers open, they reject silently
 
 Deposit-v3 (absorbed 2026-08-17): recharge options moved behind the
-`Add credits` dialog (method picker → crypto network/asset → personal
-address); history merges recharges + crypto deposits. The upstream sidebar
-item renamed Recharge → Billing — mirrored in the console design's nav
-(the page header itself still says Recharge upstream).
+`Add credits` dialog; with the only supported network/asset now selected
+automatically, crypto goes directly from the method picker to the personal
+address. History merges Stripe recharges + crypto deposits. The upstream
+sidebar item renamed Recharge → Billing — mirrored in the console design's
+nav (the page header itself still says Recharge upstream).
 
 ## Open questions / handoff
 

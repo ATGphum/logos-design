@@ -15,7 +15,7 @@ export function billingPaymentMethodAvailability(
 ): BillingPaymentMethodAvailabilityMap {
   if (config === null) {
     const unavailable = Object.freeze({ enabled: false, reason: unverifiedReason })
-    return Object.freeze({ stripe: unavailable, tao: unavailable })
+    return Object.freeze({ stripe: unavailable })
   }
 
   const stripe = !config.stripe.enabled
@@ -26,13 +26,7 @@ export function billingPaymentMethodAvailability(
         ? { enabled: false, reason: 'Stripe checkout is not available for this plan.' }
         : { enabled: true, reason: '' }
 
-  const tao = !config.tao.enabled
-    ? { enabled: false, reason: 'TAO checkout is disabled by the server.' }
-    : !plan.paymentMethods.tao
-      ? { enabled: false, reason: 'TAO checkout is not available for this plan.' }
-      : { enabled: true, reason: '' }
-
-  return Object.freeze({ stripe: Object.freeze(stripe), tao: Object.freeze(tao) })
+  return Object.freeze({ stripe: Object.freeze(stripe) })
 }
 
 export function billingPaymentMethodEnabled(

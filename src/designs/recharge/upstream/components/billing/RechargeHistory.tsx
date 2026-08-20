@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { ChevronDown, ExternalLink, History, LoaderCircle } from 'lucide-react'
+import { ChevronDown, History, LoaderCircle } from 'lucide-react'
 import { formatBillingCreditUSD } from '../../billingTypes'
 import type { CryptoDepositActivity } from '../../depositTypes'
 import { pageText } from '../../i18n/pageText'
@@ -43,7 +43,6 @@ const statusOptions = (): readonly FilterSelectOption<StatusFilter>[] => [
 const providerOptions = (): readonly FilterSelectOption<ProviderFilter>[] => [
   { value: 'all', label: pageText('billing.rechargeHistory.allMethods') },
   { value: 'crypto', label: pageText('billing.rechargeHistory.crypto') },
-  { value: 'tao', label: pageText('billing.rechargeHistory.tao') },
   { value: 'stripe', label: pageText('billing.rechargeHistory.card') },
 ]
 const periodOptions = (): readonly FilterSelectOption<PeriodFilter>[] => [
@@ -73,14 +72,6 @@ function historyEventAt(item: BillingTopupHistoryItem) {
   return item.refundedAt ?? item.credit?.creditedAt ?? item.createdAt
 }
 
-function ledgerStatus(item: BillingTopupHistoryItem) {
-  if (item.credit !== null) return item.credit.refundEntryId ?? item.credit.ledgerEntryId
-  if (item.status === 'expired') return pageText('billing.rechargeHistory.expired')
-  if (item.status === 'canceled') return pageText('billing.rechargeHistory.canceled')
-  if (['failed', 'underpaid', 'overpaid', 'manual_review'].includes(item.status)) return pageText('billing.rechargeHistory.notCredited')
-  return pageText('billing.rechargeHistory.pending')
-}
-
 function topupHistoryPresentation(history: BillingTopupHistory) {
   const orders = new Map<string, TopupHistoryPresentationItem>()
   for (const item of history.items) {
@@ -100,18 +91,15 @@ function topupHistoryPresentation(history: BillingTopupHistory) {
 
 function TopupHistoryCard({ presentation }: { presentation: TopupHistoryPresentationItem }) {
   const { eventAt, item } = presentation
-  const txUrl = item.payments.find((p) => p.transactionURL)?.transactionURL ?? null
   /* DESIGN SHIM: one table row per payment — date / amount / status / link, matching the
      deposit rows. Paid-vs-credited split, method and ledger id are dropped; the amount
      credited and the status pill are what the list is scanned for. */
   return (
     <div className="rc-txrow" data-history-source={presentation.source} data-history-id={presentation.sourceID}>
       <time className="rc-txrow__date" dateTime={eventAt}>{formatDateTime(eventAt)}</time>
-      <span className="rc-txrow__amount">{formatBillingCreditUSD(item.creditedMicros)}</span>
+      <span className="rc-txrow__amount">{formatBillingCreditUSD(item.creditedNanos)}</span>
       <span className={`rc-txrow__status billing-state billing-state--${item.status}`}>{historyStatus(item)}</span>
-      {txUrl
-        ? <a className="rc-txrow__action" href={txUrl} target="_blank" rel="noreferrer">View</a>
-        : <span className="rc-txrow__action rc-txrow__action--none" aria-hidden="true">—</span>}
+      <span className="rc-txrow__action rc-txrow__action--none" aria-hidden="true">—</span>
     </div>
   )
 }

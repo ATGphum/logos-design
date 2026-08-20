@@ -22,6 +22,29 @@ function finiteNumber(value: NumberValue, fallback = 0) {
   return typeof value === 'number' && Number.isFinite(value) ? value : fallback
 }
 
+export function fmtUSDNanos(value?: string | number | bigint | null) {
+  try {
+    return formatCurrencyUnitsExact(BigInt(value ?? 0).toString(), 9, 2, 'USD', 'en')
+  } catch {
+    return 'Unavailable'
+  }
+}
+
+export function usdToNanos(value: string) {
+  const normalized = value.trim()
+  if (!/^\d+(?:\.\d{0,9})?$/.test(normalized)) throw new Error('Enter a non-negative USD amount with at most 9 decimal places.')
+  const [whole, fraction = ''] = normalized.split('.')
+  return (BigInt(whole) * 1_000_000_000n + BigInt(fraction.padEnd(9, '0'))).toString()
+}
+
+export function nanosToUSDInput(value?: string | null) {
+  if (!value) return ''
+  const nanos = BigInt(value)
+  const whole = nanos / 1_000_000_000n
+  const fraction = (nanos % 1_000_000_000n).toString().padStart(9, '0').replace(/0+$/, '')
+  return `${whole}${fraction ? `.${fraction}` : ''}`
+}
+
 function parsedDate(value: DateValue): Date | null {
   if (value === null || value === undefined || value === '') return null
   const date = value instanceof Date ? value : new Date(value)
@@ -66,6 +89,8 @@ export function formatCurrency(
     style: 'currency',
     currency,
     currencyDisplay: 'symbol',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
     ...options,
   }).format(finiteNumber(value))
 }
@@ -91,6 +116,14 @@ export function formatCurrencyMicrosExact(
   return formatCurrencyUnitsExact(micros, 6, 2, currency, locale)
 }
 
+export function formatCurrencyNanosExact(
+  nanos: string,
+  currency = 'USD',
+  locale?: SupportedLocale,
+) {
+  return formatCurrencyUnitsExact(nanos, 9, 2, currency, locale)
+}
+
 export function formatCurrencyMinorUnitsExact(
   minorUnits: string,
   currency = 'USD',
@@ -102,7 +135,7 @@ export function formatCurrencyMinorUnitsExact(
 function formatCurrencyUnitsExact(
   units: string,
   scale: number,
-  minimumFractionDigits: number,
+  fractionDigits: number,
   currency: string,
   locale?: SupportedLocale,
 ) {
@@ -111,19 +144,27 @@ function formatCurrencyUnitsExact(
   if (value < -9_223_372_036_854_775_808n || value > 9_223_372_036_854_775_807n) return 'Unavailable'
   const negative = value < 0n
   const absolute = negative ? -value : value
-  const divisor = 10n ** BigInt(scale)
-  const whole = absolute / divisor
-  let fraction = (absolute % divisor).toString().padStart(scale, '0')
-  while (fraction.length > minimumFractionDigits && fraction.endsWith('0')) fraction = fraction.slice(0, -1)
+  const displayScale = 10n ** BigInt(fractionDigits)
+  let displayUnits = absolute
+  if (scale > fractionDigits) {
+    const roundingDivisor = 10n ** BigInt(scale - fractionDigits)
+    displayUnits = absolute / roundingDivisor
+    if (absolute % roundingDivisor * 2n >= roundingDivisor) displayUnits += 1n
+  } else if (scale < fractionDigits) {
+    displayUnits = absolute * 10n ** BigInt(fractionDigits - scale)
+  }
+  const whole = displayUnits / displayScale
+  const fraction = (displayUnits % displayScale).toString().padStart(fractionDigits, '0')
   const wholeLabel = new Intl.NumberFormat(localeOrCurrent(locale), { maximumFractionDigits: 0 }).format(whole)
   const decimalSeparator = new Intl.NumberFormat(localeOrCurrent(locale)).formatToParts(1.1)
     .find((part) => part.type === 'decimal')?.value ?? '.'
-  const numberLabel = fraction ? `${wholeLabel}${decimalSeparator}${fraction}` : wholeLabel
+  const numberLabel = fractionDigits > 0 ? `${wholeLabel}${decimalSeparator}${fraction}` : wholeLabel
   const currencyParts = new Intl.NumberFormat(localeOrCurrent(locale), {
     style: 'currency',
     currency,
     currencyDisplay: 'symbol',
-    minimumFractionDigits: 2,
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits,
   }).formatToParts(0)
   const currencyPrefix = currencyParts.findIndex((part) => part.type === 'currency') < currencyParts.findIndex((part) => part.type === 'integer')
   const symbol = currencyParts.find((part) => part.type === 'currency')?.value ?? currency

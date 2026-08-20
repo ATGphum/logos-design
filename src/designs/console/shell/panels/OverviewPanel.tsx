@@ -25,6 +25,9 @@ export function OverviewPanel({ onManageInstances, onUsageBreakdown }: { onManag
           <div className="acts">
             <button className="cs-btn neutral">Add credit</button>
             <button className="cs-btn" onClick={onUsageBreakdown}>Usage breakdown</button>
+            <button className="cs-btn ov-manage" onClick={onManageInstances}>
+              Manage instances
+            </button>
           </div>
         </div>
         <div className="ov-bar">
@@ -33,16 +36,10 @@ export function OverviewPanel({ onManageInstances, onUsageBreakdown }: { onManag
         <div className="ov-bused">35% used</div>
       </div>
       {/* instance count + readiness live on the Instances page, behind the button below */}
-      <div className="ov-manage-row">
-        <button className="cs-btn neutral ov-manage" onClick={onManageInstances}>
-          Manage instances
-        </button>
-        <span className="hint">Create, inspect and retire instances across your machines.</span>
-      </div>
 
       {/* "where the credit went" lives on the Usage page, behind "Usage breakdown" */}
       <div className="cs-sec">
-        <SecH l="Attention queue" r="instances, stale heartbeats, and control-plane drift" />
+        <SecH l="Attention queue" />
         <div className="cs-mods">
           <Mod
             mk="Needs attention"

@@ -289,7 +289,13 @@ export function ConsoleView({ displayed, hidden, night, onToggleNight, onEnterAg
             }}
           >
             <span className="sb" id="cs-acc-sb">
-              {has ? `on ${ciActive}` : "no instance — create one"}
+              {has ? (
+                  <>
+                    <em className="sb-k">Instance:</em> {ciActive}
+                  </>
+                ) : (
+                  "no instance — create one"
+                )}
             </span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
               <path d="m6 9 6 6 6-6" />
@@ -562,38 +568,78 @@ export function ConsoleView({ displayed, hidden, night, onToggleNight, onEnterAg
             <div className="cs-headr"></div>
           </div>
           <div className="cs-panel" id="cs-panel-overview" style={{ display: nav.panel === "overview" ? "block" : "none" }}>
+            {nav.panel === "overview" ? (
+              <>
             <OverviewPanel onManageInstances={ciOpenInstances} onUsageBreakdown={openUsage} />
+              </>
+            ) : null}
           </div>
           <div className="cs-panel" id="cs-panel-instances" style={{ display: nav.panel === "instances" ? "block" : "none" }}>
+            {nav.panel === "instances" ? (
+              <>
             <InstancesPanel flashCreate={flashCreate} />
+              </>
+            ) : null}
           </div>
           <div className="cs-panel" id="cs-panel-api" style={{ display: nav.panel === "api" ? "block" : "none" }}>
+            {nav.panel === "api" ? (
+              <>
             <ApiPanel onCopy={csCopy} />
+              </>
+            ) : null}
           </div>
           <div className="cs-panel" id="cs-panel-usage" style={{ display: nav.panel === "usage" ? "block" : "none" }}>
+            {nav.panel === "usage" ? (
+              <>
             <UsagePanel />
+              </>
+            ) : null}
           </div>
           <div className="cs-panel" id="cs-panel-recharge" style={{ display: nav.panel === "recharge" ? "block" : "none" }}>
+            {nav.panel === "recharge" ? (
+              <>
             {nav.panel === "recharge" ? (
               <Suspense fallback={<div role="status">Loading recharge…</div>}>
                 <AdoptedRechargePage night={night} />
               </Suspense>
             ) : null}
+              </>
+            ) : null}
           </div>
           <div className="cs-panel" id="cs-panel-users" style={{ display: nav.panel === "users" ? "block" : "none" }}>
+            {nav.panel === "users" ? (
+              <>
             <UsersPanel />
+              </>
+            ) : null}
           </div>
           <div className="cs-panel" id="cs-panel-machines" style={{ display: nav.panel === "machines" ? "block" : "none" }}>
+            {nav.panel === "machines" ? (
+              <>
             <MachinesPanel />
+              </>
+            ) : null}
           </div>
           <div className="cs-panel" id="cs-panel-settings" style={{ display: nav.panel === "settings" ? "block" : "none" }}>
+            {nav.panel === "settings" ? (
+              <>
             <SettingsPanel />
+              </>
+            ) : null}
           </div>
           <div className="cs-panel" id="cs-panel-ph" style={{ display: nav.panel === "ph" ? "block" : "none" }}>
+            {nav.panel === "ph" ? (
+              <>
             <PlaceholderPanel />
+              </>
+            ) : null}
           </div>
           <div className="cs-panel" id="cs-panel-components" style={{ display: nav.panel === "components" ? "block" : "none" }}>
+            {nav.panel === "components" ? (
+              <>
             <ComponentsPanel api={api} onMobileNav={csMobileNav} />
+              </>
+            ) : null}
           </div>
           <div className="cs-main-foot">
             <a href="#" onClick={(e) => e.preventDefault()}>

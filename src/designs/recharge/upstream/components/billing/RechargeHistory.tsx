@@ -91,7 +91,7 @@ function topupHistoryPresentation(history: BillingTopupHistory) {
 
 function TopupHistoryCard({ presentation }: { presentation: TopupHistoryPresentationItem }) {
   const { eventAt, item } = presentation
-  /* DESIGN SHIM: one table row per payment — date / amount / status / link, matching the
+  /* DESIGN HANDOFF: one table row per payment — date / amount / status / link, matching the
      deposit rows. Paid-vs-credited split, method and ledger id are dropped; the amount
      credited and the status pill are what the list is scanned for. */
   return (
@@ -154,7 +154,7 @@ export function RechargeHistory({
   onDepositRetry: () => void
   depositEnabled?: boolean
 }) {
-  // DESIGN SHIM: history folds away — starts closed, it is rarely why you opened the page.
+  // DESIGN HANDOFF: history starts open but folds away; it is rarely why you opened the page.
   const [historyOpen, setHistoryOpen] = useState(true)
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [providerFilter, setProviderFilter] = useState<ProviderFilter>('all')
@@ -188,7 +188,7 @@ export function RechargeHistory({
 
   return (
     <section className={`recharge-history cs-sec${historyOpen ? '' : ' recharge-history--folded'}`} id="recharge-history" aria-labelledby="recharge-history-title" aria-busy={overallLoading}>
-      {/* DESIGN SHIM: header is a fold toggle — the list is long and rarely the reason
+      {/* DESIGN HANDOFF: header is a fold toggle — the list is long and rarely the reason
           you opened this page. Sub-description dropped for the same reason. */}
       <header
         className="recharge-history__header recharge-history__header--foldable"
@@ -198,7 +198,7 @@ export function RechargeHistory({
         aria-controls="recharge-history-body"
         onClick={() => setHistoryOpen((v) => !v)}
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setHistoryOpen((v) => !v) } }}
-      ><div><span className="billing-eyebrow">{pageText('billing.rechargeHistory.ownerRecords')}</span><h2 id="recharge-history-title">{pageText('billing.rechargeHistory.rechargeHistory')}</h2></div><ChevronDown className="recharge-history__fold" size={18} aria-hidden="true" />{/* DESIGN SHIM: VERIFIED pill removed. */}</header>
+      ><div><span className="billing-eyebrow">{pageText('billing.rechargeHistory.ownerRecords')}</span><h2 id="recharge-history-title">{pageText('billing.rechargeHistory.rechargeHistory')}</h2></div><ChevronDown className="recharge-history__fold" size={18} aria-hidden="true" />{/* DESIGN HANDOFF: VERIFIED pill removed. */}</header>
       <div className="recharge-history__body" id="recharge-history-body" aria-hidden={!historyOpen}>
         <div className="recharge-history__bodyinner">
       {error ? <SourceRecovery title={pageText('billing.rechargeHistory.paymentHistoryUnavailable')} error={error} retained={history.items.length > 0} otherAvailable={depositEnabled && (depositAvailable || depositActivity.items.length > 0)} loading={loading} onRetry={onRetry} /> : null}

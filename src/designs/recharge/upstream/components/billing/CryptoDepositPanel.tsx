@@ -26,6 +26,10 @@ const qrOptions = Object.freeze({
   color: Object.freeze({ dark: '#141310ff', light: '#ffffffff' }),
 } as const satisfies QRCodeToDataURLOptions)
 
+function isAbortError(error: unknown) {
+  return error instanceof DOMException && error.name === 'AbortError'
+}
+
 function warningText(code: CryptoDepositWarningCode) {
   switch (code) {
     case 'correct_network_only':
@@ -129,8 +133,10 @@ export function CryptoDepositPanel({ fixture, step, onBackToMethods }: CryptoDep
       if (controller.signal.aborted || requestGeneration.current !== generation) return
       if (!addressMatchesFixture(nextAddress, selectedNetwork)) throw new Error('fixture_address_mismatch')
       setAddresses((current) => Object.freeze({ ...current, [selectedNetwork.networkId]: nextAddress }))
-    } catch {
-      if (!controller.signal.aborted && requestGeneration.current === generation) {
+    } catch (error) {
+      // DESIGN HANDOFF: visibility changes intentionally abort deposit reads. Keep
+      // that cancellation recoverable instead of presenting it as an address error.
+      if (!controller.signal.aborted && requestGeneration.current === generation && !isAbortError(error)) {
         setAddressError(pageText('billing.cryptoDepositPanel.addressUnavailable'))
       }
     } finally {
@@ -143,7 +149,14 @@ export function CryptoDepositPanel({ fixture, step, onBackToMethods }: CryptoDep
 
   useEffect(() => {
     if (step !== 'crypto_address' || address !== null || addressLoading || addressError !== '') return
-    void loadSelectedAddress()
+    // DESIGN HANDOFF: an aborted hidden-tab read resumes when the page becomes
+    // visible, without requiring the user to press Retry address.
+    const loadWhenVisible = () => {
+      if (document.visibilityState === 'visible') void loadSelectedAddress()
+    }
+    loadWhenVisible()
+    document.addEventListener('visibilitychange', loadWhenVisible)
+    return () => document.removeEventListener('visibilitychange', loadWhenVisible)
   }, [address, addressError, addressLoading, loadSelectedAddress, step])
 
   const copyAddress = async () => {

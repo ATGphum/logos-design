@@ -1,5 +1,5 @@
 import type { Ref } from 'react'
-import { CircleDollarSign, Clock3, Plus, ShieldCheck, WalletCards } from 'lucide-react'
+import { CircleDollarSign, Plus, WalletCards } from 'lucide-react'
 import { formatBillingCreditUSD, type BillingRechargeAccount } from '../../billingTypes'
 import { pageText } from '../../i18n/pageText'
 
@@ -52,9 +52,9 @@ export function RechargeOverview({ account, available, fresh, loading, addCredit
             <small>{pageText('billing.rechargeOverview.availableUsdCredit')}</small>
             <h2 id="recharge-balance-title">{pageText('billing.rechargeOverview.currentBalance')}</h2>
           </div>
-          {/* DESIGN SHIM: VERIFIED pill removed. */}
+          {/* DESIGN HANDOFF: VERIFIED pill removed. */}
         </div>
-        {/* DESIGN SHIM: the figure and the action share one row. Upstream puts them in
+        {/* DESIGN HANDOFF: the figure and the action share one row. Upstream puts them in
             separate grid columns, whose differing internal stacks meant no CSS offset
             aligned them in both the gallery and the console panel. */}
         <div className="rc-balance-row">
@@ -71,7 +71,7 @@ export function RechargeOverview({ account, available, fresh, loading, addCredit
           </button>
         </div>
         <p>{pageText('billing.rechargeOverview.creditIsConsumedByServiceUsageRechargeDoesNot')}</p>
-        {/* DESIGN SHIM: credit-properties row removed. */}
+        {/* DESIGN HANDOFF: credit-properties row removed. */}
       </section>
 
       {availability.kind === 'ready' ? null : (

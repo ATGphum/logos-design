@@ -458,10 +458,10 @@ export function BillingPage({
     >
       <header className="billing-page__header">
         <div>
-          {/* DESIGN SHIM: eyebrow dropped; page reads "Billing" to match the console nav
+          {/* DESIGN HANDOFF: eyebrow dropped; page reads "Billing" to match the console nav
               (upstream renamed the sidebar item but left this header as "Recharge"). */}
           <h1 id="billing-page-title">Billing</h1>
-          {/* DESIGN SHIM: header description removed — the page title carries it. */}
+          {/* DESIGN HANDOFF: header description removed — the page title carries it. */}
         </div>
         <div>
           <button className="cs-btn" type="button" onClick={() => void refresh()} disabled={loading}>

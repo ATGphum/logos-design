@@ -11,8 +11,8 @@ changes into everything under `upstream/` (provenance: `UPSTREAM.json`).
   console-skin) + `BillingPage` + theme bridge. `recharge.css` (`rc-*`) only
   frames the page.
 - `upstream/**` — adopted copies. Everything is verbatim upstream **except**
-  the shims below. Keep the layout path-aligned with the product repo — the
-  drift tooling depends on it.
+  the sandbox shims and intentional handoff changes below. Keep the layout
+  path-aligned with the product repo — the drift tooling depends on it.
 
 ## Shims (design-only stand-ins, all marked `DESIGN SHIM`)
 
@@ -48,6 +48,34 @@ automatically, crypto goes directly from the method picker to the personal
 address. History merges Stripe recharges + crypto deposits. The upstream
 sidebar item renamed Recharge → Billing — mirrored in the console design's
 nav (the page header itself still says Recharge upstream).
+
+## Design handoff (ahead of product)
+
+These are the intentional product changes. They are marked `DESIGN HANDOFF`
+inside the adopted copy so `npm run handoff` distinguishes them from
+sandbox-only dependency shims:
+
+- `BillingPage.tsx` — use **Billing** as the page title; remove the duplicate
+  eyebrow and description.
+- `RechargeOverview.tsx` — put the exact two-decimal balance and **Add
+  credits** action on one row; remove the verified pill, explanatory fact row,
+  and the duplicate ready-state action card. Error/pending states remain.
+- `RechargeHistory.tsx` + `CryptoDepositActivity.tsx` — replace the tall
+  payment/deposit cards with one shared Date / Amount / Status / Actions
+  table; keep the history section keyboard-foldable and initially open.
+- `CryptoDepositPanel.tsx` — treat hidden-tab request cancellation as
+  recoverable and resume loading the personal address when the page becomes
+  visible, instead of showing a false address error.
+- `recharge.css` — carries the responsive table, fold, balance-row, and
+  light/dark styling for those composition changes. Port the relevant
+  `.rc-*` rules into the product Billing stylesheet; do not copy the sandbox
+  frame rules.
+
+The upstream sync at `logos-infra@29a184b67b` is fully absorbed. It removed
+the legacy TAO checkout, moved top-up credit accounting to nanos, added
+Stripe cancellation, bypassed the single crypto network/asset selector, and
+standardized displayed amounts to two decimals. The handoff above is based on
+that schema, not the older TAO checkout flow.
 
 ## Open questions / handoff
 

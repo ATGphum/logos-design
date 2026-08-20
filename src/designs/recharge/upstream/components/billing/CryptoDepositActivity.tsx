@@ -37,7 +37,7 @@ export function CryptoDepositActivityCard({ presentation }: {
     : pageText('billing.rechargeHistory.viewCryptoTransactionWithoutAsset', {
       network: item.networkName,
     })
-  /* DESIGN SHIM: one table row per deposit — date / amount / status / link.
+  /* DESIGN HANDOFF: one table row per deposit — date / amount / status / link.
      Upstream renders a card with a labelled 4-column <dl>, a note line and a full-text
      explorer link (~5 lines each). Network, asset, ledger id and the note are dropped
      here; the status pill already carries the outcome. */

@@ -580,10 +580,16 @@
     .console-root #cs-view.cs-collapsed .cs-sideacc .cs-acc-btn .lb { display: none; }
     .console-root #cs-view.cs-collapsed .cs-sideacc .cs-acc-pick { display: none; }
     .console-root .cs-acc-ico { display: none; }
-    .console-root #cs-view.cs-collapsed .cs-acc-ico { display: block;
+    /* grid, not block: in vertical-rl a block's line box is laid out from the right edge,
+       so the slab hugged the right wall of the pill. place-items centres the run on both
+       axes whatever the writing mode. padding-top cancels the trailing letter-space —
+       letter-spacing adds a gap after the last glyph too, which pushes the visual centre
+       up by half its value. */
+    .console-root #cs-view.cs-collapsed .cs-acc-ico { display: grid; place-items: center;
       writing-mode: vertical-rl; text-orientation: upright;
       font-family: var(--app-font-sans); font-size: 10.5px; font-weight: 700;
-      letter-spacing: 0.14em; text-transform: uppercase; line-height: 1; }
+      --cs-accls: 0.14em; letter-spacing: var(--cs-accls); padding-top: var(--cs-accls);
+      text-transform: uppercase; line-height: 1; }
 
     /* rail geometry: children shrink to the rail and centre */
     /* flex-start, not center: centring puts the 68px rows in the middle of whatever the
@@ -1181,7 +1187,7 @@
       font-family: "Julius Sans One", sans-serif;
       font-weight: 400;
       font-size: 11.5px;
-      letter-spacing: 0.18em;
+      --cs-accls: 0.18em;
     }
 
     /* ===== Rail at a usable size =====
@@ -1199,7 +1205,7 @@
 
     .console-root #cs-view.cs-collapsed .cs-sideacc .cs-acc-wrap { padding-left: 27px; }
     .console-root #cs-view.cs-collapsed .cs-sideacc .cs-acc-btn { width: 42px; height: 92px; }
-    .console-root #cs-view.cs-collapsed .cs-acc-ico { font-size: 13px; letter-spacing: 0.2em; }
+    .console-root #cs-view.cs-collapsed .cs-acc-ico { font-size: 13px; --cs-accls: 0.2em; }
 
     .console-root #cs-view.cs-collapsed .cs-side-foot svg { width: 18px; height: 18px; }
     .console-root #cs-view.cs-collapsed .cs-expand { width: 28px; height: 28px; }
@@ -1216,7 +1222,7 @@
     .console-root #cs-view.cs-collapsed .cs-item .cs-navico { width: 26px; height: 26px; margin: 0; }
     .console-root #cs-view.cs-collapsed .cs-sideacc .cs-acc-wrap { padding-left: 23px; }
     .console-root #cs-view.cs-collapsed .cs-sideacc .cs-acc-btn { width: 50px; height: 108px; }
-    .console-root #cs-view.cs-collapsed .cs-acc-ico { font-size: 15px; letter-spacing: 0.22em; }
+    .console-root #cs-view.cs-collapsed .cs-acc-ico { font-size: 15px; --cs-accls: 0.22em; }
     .console-root #cs-view.cs-collapsed .cs-side-foot svg { width: 22px; height: 22px; }
     .console-root #cs-view.cs-collapsed .cs-expand { width: 32px; height: 32px; }
     .console-root #cs-view.cs-collapsed .cs-expand svg { width: 19px; height: 19px; }
@@ -1300,4 +1306,50 @@
        icon slides the whole way. */
     .console-root #cs-view.cs-collapsed .cs-item-lb {
       transition: opacity .1s ease, max-width var(--cs-fold);
+    }
+
+    /* ===== The glyph itself has to travel, not pop ===== */
+    /* The row's padding-left animated 11px -> 35px on the fold clock, but the glyph
+       carried no transition of its own, so width (12 -> 26) and margin (-2.84 -> 0)
+       snapped in a single frame. The icon appeared to teleport while the column glided.
+       Its centre moves 30px -> 48px; all three properties now run that on the fold clock. */
+    .console-root .cs-item .cs-navico {
+      transition: width var(--cs-fold), height var(--cs-fold),
+        margin-left var(--cs-fold), margin-right var(--cs-fold),
+        opacity var(--cs-foldfade);
+    }
+
+    /* ===== Travelling glow on the access button ===== */
+    /* A bright arc runs the rim continuously so the primary action reads as live
+       rather than as one more chip. Registering the angle as a typed custom property
+       is what makes it interpolate — a plain --var would step from 0 to 360. */
+    @property --cs-accang { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+    @keyframes cs-accsweep { to { --cs-accang: 360deg; } }
+
+    .console-root #cs-view { --cs-accglow: rgba(26,25,22,0.55); }
+    .console-root #cs-view.cs-night { --cs-accglow: rgba(255,255,255,0.95); }
+
+    /* the halo sits behind the button's own background, so only the part spilling past
+       the edge is visible — an outer bloom that follows the arc. */
+    .console-root .cs-sideacc .cs-acc-btn::before,
+    .console-root .cs-sideacc .cs-acc-btn::after {
+      content: ""; position: absolute; border-radius: inherit; pointer-events: none;
+      background: conic-gradient(from var(--cs-accang),
+        transparent 0deg, var(--cs-accglow) 26deg, transparent 62deg, transparent 360deg);
+      animation: cs-accsweep 3.6s linear infinite;
+    }
+    .console-root .cs-sideacc .cs-acc-btn::before {
+      inset: -6px; z-index: -1; filter: blur(7px); opacity: 0.9;
+    }
+    /* and the crisp 1.5px rim itself: the padding-box / content-box mask pair cancels
+       everything but the border ring. */
+    .console-root .cs-sideacc .cs-acc-btn::after {
+      inset: -1.5px; padding: 1.5px;
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .console-root .cs-sideacc .cs-acc-btn::before,
+      .console-root .cs-sideacc .cs-acc-btn::after { animation: none; }
     }

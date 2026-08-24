@@ -6,7 +6,6 @@ import { pageText } from '../../i18n/pageText'
 type RechargeOverviewProps = {
   account: BillingRechargeAccount | null
   available: boolean
-  fresh: boolean
   loading: boolean
   addCreditsDisabled: boolean
   addCreditsTriggerRef: Ref<HTMLButtonElement>
@@ -30,7 +29,7 @@ function rechargeAvailability(account: BillingRechargeAccount) {
   return { kind: 'ready', label: pageText('billing.rechargeOverview.readyToRecharge'), detail: pageText('billing.rechargeOverview.serverDefinedRechargeAmountsWillBeShownHere') } as const
 }
 
-export function RechargeOverview({ account, available, fresh, loading, addCreditsDisabled, addCreditsTriggerRef, onAddCredits, onRetry }: RechargeOverviewProps) {
+export function RechargeOverview({ account, available, loading, addCreditsDisabled, addCreditsTriggerRef, onAddCredits, onRetry }: RechargeOverviewProps) {
   if (!available || account === null) {
     return (
       <section className="billing-empty cs-sec" aria-busy={loading} aria-live="polite">
@@ -76,7 +75,7 @@ export function RechargeOverview({ account, available, fresh, loading, addCredit
 
       {availability.kind === 'ready' ? null : (
         <section className="recharge-entry" aria-labelledby="recharge-entry-title">
-          <h2 id="recharge-entry-title" className="sr-only">{pageText('billing.rechargeOverview.addCredits')}</h2>
+          <h2 id="recharge-entry-title" className="billing-visually-hidden">{pageText('billing.rechargeOverview.addCredits')}</h2>
           <div className={`recharge-entry__status recharge-entry__status--${availability.kind}`} role="status" aria-live="polite">
             <WalletCards size={20} aria-hidden="true" />
             <span><strong>{availability.label}</strong><small>{availability.detail}</small></span>

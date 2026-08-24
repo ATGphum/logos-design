@@ -228,7 +228,12 @@ body[data-logos-mode='dark'] .billing-page, body[data-logos-mode='dark'] .billin
 .billing-state--in_block, .billing-state--detected, .billing-state--pending_price { background: rgba(214, 147, 48, .12); }
 .billing-muted { color: var(--cs-faint); }
 
-.billing-dialog { max-width: min(1080px, calc(100vw - 32px)); }
+.billing-dialog {
+  max-height: min(86vh, 820px);
+  max-height: min(86dvh, 820px);
+  max-width: min(1080px, calc(100vw - 32px));
+  z-index: 1781;
+}
 .billing-dialog .logos-icon-button { flex: 0 0 44px; height: 44px; margin: -5px; width: 44px; }
 .add-credits-dialog {
   --cs-bg: #f6f4ee;
@@ -1132,9 +1137,255 @@ body[data-logos-mode='dark'] .add-credits-dialog {
   padding: 4px 0 4px 14px;
 }
 
+.logos-console-root.cs-billing-root .recharge-overview {
+  gap: 26px;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.logos-console-root.cs-billing-root .recharge-balance__heading {
+  gap: 0;
+  padding-bottom: 14px;
+}
+
+.logos-console-root.cs-billing-root .recharge-balance__heading > span,
+.logos-console-root.cs-billing-root .recharge-balance__heading small,
+.logos-console-root.cs-billing-root .recharge-balance__heading em {
+  display: none;
+}
+
+.logos-console-root.cs-billing-root .recharge-balance__heading h2 {
+  font-family: "Jost", "Inter", sans-serif;
+  font-size: 1.55rem;
+  font-weight: 300;
+  letter-spacing: 0;
+  margin: 0;
+  text-transform: none;
+}
+
+.logos-console-root.cs-billing-root .rc-balance-row {
+  align-items: flex-end;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.logos-console-root.cs-billing-root .rc-balance-row .recharge-balance__value {
+  font-family: var(--app-font-sans, "Jost", "Inter", sans-serif);
+  font-size: clamp(32px, 5vw, 56px);
+  font-variant-numeric: tabular-nums;
+  font-weight: 300;
+  letter-spacing: 0;
+  line-height: .95;
+  margin: 18px 0 0;
+  min-width: 0;
+  -webkit-text-stroke: 0;
+}
+
+.logos-console-root.cs-billing-root .rc-balance-row__action {
+  border-radius: 2px;
+  flex: 0 0 auto;
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: .16em;
+  margin: 18px 0 2px;
+  max-width: 320px;
+  padding-left: clamp(16px, 2vw, 26px);
+  padding-right: clamp(16px, 2vw, 26px);
+  text-transform: uppercase;
+  white-space: nowrap;
+  width: auto;
+}
+
+.logos-console-root.cs-billing-root .recharge-overview .recharge-balance > p {
+  color: var(--cs-dim);
+  font-size: .95rem;
+  letter-spacing: 0;
+  line-height: 1.55;
+  margin: 16px 0 0;
+  max-width: 720px;
+  padding-bottom: 18px;
+}
+
+.logos-console-root.cs-billing-root .recharge-entry {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+.logos-console-root.cs-billing-root .recharge-history__header--foldable {
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.logos-console-root.cs-billing-root .recharge-history__header--foldable:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--cs-ink) 45%, transparent);
+  outline-offset: 4px;
+}
+
+.logos-console-root.cs-billing-root .recharge-history__header--foldable:hover h2 {
+  opacity: .82;
+}
+
+.logos-console-root.cs-billing-root .recharge-history__fold {
+  flex: none;
+  opacity: .68;
+  transition: opacity .18s ease, transform .22s ease;
+}
+
+.logos-console-root.cs-billing-root .recharge-history__header--foldable:hover .recharge-history__fold {
+  opacity: 1;
+}
+
+.logos-console-root.cs-billing-root .recharge-history--folded .recharge-history__fold {
+  transform: rotate(-90deg);
+}
+
+.logos-console-root.cs-billing-root .recharge-history__body {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+  overflow: visible;
+  transition: grid-template-rows .28s ease, opacity .2s ease, visibility 0s linear 0s;
+  visibility: visible;
+}
+
+.logos-console-root.cs-billing-root .recharge-history--folded .recharge-history__body {
+  grid-template-rows: 0fr;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: grid-template-rows .24s ease, opacity .18s ease, visibility 0s linear .18s;
+  visibility: hidden;
+}
+
+.logos-console-root.cs-billing-root .recharge-history__bodyinner {
+  display: grid;
+  gap: 14px;
+  min-height: 0;
+}
+
+.logos-console-root.cs-billing-root .recharge-history__filters {
+  align-items: end;
+  border-bottom: 0;
+  border-top: 0;
+  gap: 12px 16px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  padding: 8px 0 0;
+}
+
+.logos-console-root.cs-billing-root .recharge-history__filters .cs-btn {
+  border-radius: 2px;
+  justify-self: end;
+  padding-left: 16px;
+  padding-right: 16px;
+  white-space: nowrap;
+  width: auto;
+}
+
+.logos-console-root.cs-billing-root .recharge-history__results {
+  color: var(--cs-dim);
+  font-size: .85rem;
+  letter-spacing: 0;
+  margin: 0;
+  opacity: .8;
+}
+
+.logos-console-root.cs-billing-root .rc-txhead,
+.logos-console-root.cs-billing-root .rc-txrow {
+  align-items: center;
+  display: grid;
+  gap: clamp(8px, 1.6vw, 16px);
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, .9fr) minmax(54px, auto);
+}
+
+.logos-console-root.cs-billing-root .rc-txhead {
+  border-bottom: 1px solid var(--cs-line);
+  color: var(--cs-faint);
+  font-size: .75rem;
+  letter-spacing: .14em;
+  opacity: .9;
+  padding: 0 2px 9px;
+  text-transform: uppercase;
+}
+
+.logos-console-root.cs-billing-root .recharge-history__list {
+  display: block;
+}
+
+.logos-console-root.cs-billing-root .rc-txrow {
+  background: transparent;
+  border-bottom: 1px solid var(--cs-soft);
+  border-radius: 0;
+  padding: 10px 2px;
+}
+
+.logos-console-root.cs-billing-root .rc-txrow:last-child {
+  border-bottom: 0;
+}
+
+.logos-console-root.cs-billing-root .rc-txrow > * {
+  min-width: 0;
+}
+
+.logos-console-root.cs-billing-root .rc-txrow__date,
+.logos-console-root.cs-billing-root .rc-txrow__amount {
+  color: var(--cs-ink);
+  font-variant-numeric: tabular-nums;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logos-console-root.cs-billing-root .rc-txrow__date {
+  font-size: .95rem;
+  opacity: .78;
+}
+
+.logos-console-root.cs-billing-root .rc-txrow__amount {
+  font-size: 1.02rem;
+}
+
+.logos-console-root.cs-billing-root .rc-txrow__status {
+  border-radius: 2px;
+  font-size: .78rem;
+  justify-self: start;
+  white-space: nowrap;
+}
+
+.logos-console-root.cs-billing-root .rc-txrow__action {
+  color: var(--cs-ink);
+  font-size: .9rem;
+  justify-self: start;
+  min-height: 32px;
+  opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.logos-console-root.cs-billing-root .rc-txrow__action:hover {
+  opacity: .72;
+}
+
+.logos-console-root.cs-billing-root .rc-txrow__action--none {
+  opacity: .35;
+  text-decoration: none;
+}
+
+.logos-console-root.cs-billing-root .rc-txrow__action--none::before {
+  content: "-";
+}
+
+.logos-console-root.cs-billing-root .billing-page__header {
+  border-bottom: 0;
+  justify-content: flex-end;
+  margin-bottom: 30px;
+  padding-bottom: 0;
+}
+
 @media (max-width: 880px) {
   .logos-console-root.cs-billing-root .recharge-overview {
-    gap: 44px;
+    gap: 30px;
     grid-template-columns: 1fr;
   }
 }
@@ -1169,5 +1420,403 @@ body[data-logos-mode='dark'] .add-credits-dialog {
 
   .logos-console-root.cs-billing-root .recharge-history__list article {
     padding: 18px 0;
+  }
+
+  .logos-console-root.cs-billing-root .rc-balance-row {
+    align-items: stretch;
+    grid-template-columns: 1fr;
+  }
+
+  .logos-console-root.cs-billing-root .rc-balance-row__action {
+    max-width: none;
+    width: 100%;
+  }
+
+  .logos-console-root.cs-billing-root .recharge-history__filters {
+    grid-template-columns: 1fr;
+  }
+
+  .logos-console-root.cs-billing-root .recharge-history__filters .cs-btn {
+    justify-self: stretch;
+    width: 100%;
+  }
+
+  .logos-console-root.cs-billing-root .rc-txhead {
+    display: none;
+  }
+
+  .logos-console-root.cs-billing-root .rc-txrow {
+    align-items: start;
+    grid-template-areas:
+      "date action"
+      "amount status";
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: 6px;
+  }
+
+  .logos-console-root.cs-billing-root .rc-txrow__date {
+    grid-area: date;
+  }
+
+  .logos-console-root.cs-billing-root .rc-txrow__amount {
+    grid-area: amount;
+  }
+
+  .logos-console-root.cs-billing-root .rc-txrow__status {
+    grid-area: status;
+    justify-self: end;
+  }
+
+  .logos-console-root.cs-billing-root .rc-txrow__action {
+    grid-area: action;
+    justify-self: end;
+  }
+}
+
+/* DESIGN HANDOFF: final Billing parity with logos-design@5fc5242. */
+.logos-console-root.cs-billing-root .billing-page__header {
+  border-bottom: 0;
+  height: 0;
+  justify-content: flex-end;
+  margin: 0;
+  min-height: 0;
+  overflow: visible;
+  padding-bottom: 0;
+}
+
+.logos-console-root.cs-billing-root .billing-page__header .billing-eyebrow {
+  display: none;
+}
+
+.logos-console-root.cs-billing-root .billing-page__header > div:last-child {
+  display: none;
+}
+
+.logos-console-root.cs-billing-root .billing-page__header .cs-btn {
+  flex: none;
+  white-space: nowrap;
+}
+
+.logos-console-root.cs-billing-root .recharge-overview {
+  gap: 34px;
+  grid-template-columns: minmax(0, 1.15fr) minmax(300px, .85fr);
+}
+
+.logos-console-root.cs-billing-root .recharge-overview.cs-sec {
+  margin-top: 0;
+}
+
+.logos-console-root.cs-billing-root .recharge-balance__heading {
+  gap: 0;
+  padding-bottom: 14px;
+}
+
+.logos-console-root.cs-billing-root .recharge-balance__heading > span,
+.logos-console-root.cs-billing-root .recharge-balance__heading small,
+.logos-console-root.cs-billing-root .recharge-balance__heading em {
+  display: none;
+}
+
+.logos-console-root.cs-billing-root.cs-billing-root .recharge-balance__heading h2 {
+  font-family: "Jost", "Inter", sans-serif;
+  font-size: 1.6rem;
+  font-weight: 300;
+  letter-spacing: .01em;
+  margin: 0;
+  text-transform: none;
+}
+
+.logos-console-root.cs-billing-root.cs-billing-root .recharge-balance__value {
+  font-family: var(--app-font-sans, "Jost", system-ui, sans-serif);
+  font-variant-numeric: tabular-nums;
+  font-weight: 300;
+  letter-spacing: -.01em;
+  -webkit-text-stroke: 0;
+}
+
+.logos-console-root.cs-billing-root .rc-balance-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: clamp(14px, 3vw, 32px);
+  justify-content: space-between;
+}
+
+.logos-console-root.cs-billing-root .rc-balance-row .recharge-balance__value {
+  font-size: clamp(32px, 5vw, 56px);
+  line-height: .95;
+  margin: 24px 0 0;
+  min-width: 0;
+  overflow-wrap: normal;
+}
+
+.logos-console-root.cs-billing-root .rc-balance-row__action {
+  align-self: center;
+  border-radius: 999px;
+  flex: 0 0 auto;
+  font-size: 15.5px;
+  font-weight: 300;
+  letter-spacing: 0;
+  margin: 24px 0 0;
+  max-width: 320px;
+  padding-left: 26px;
+  padding-right: 26px;
+  text-transform: none;
+  white-space: nowrap;
+  width: auto;
+}
+
+.logos-console-root.cs-billing-root .recharge-overview .recharge-balance > p {
+  color: var(--cs-dim);
+  font-size: .95rem;
+  letter-spacing: 0;
+  line-height: 1.55;
+  margin: 16px 0 0;
+  max-width: 720px;
+  opacity: .8;
+  padding-bottom: 18px;
+}
+
+.logos-console-root.cs-billing-root .recharge-entry {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.logos-console-root.cs-billing-root .recharge-history__header--foldable {
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.logos-console-root.cs-billing-root .recharge-history__header--foldable:hover h2 {
+  opacity: .82;
+}
+
+.logos-console-root.cs-billing-root .recharge-history__fold {
+  flex: none;
+  opacity: .65;
+  transition: transform .25s cubic-bezier(.4, 0, .2, 1), opacity .2s;
+}
+
+.logos-console-root.cs-billing-root .recharge-history__header--foldable:hover .recharge-history__fold {
+  opacity: 1;
+}
+
+.logos-console-root.cs-billing-root .recharge-history--folded .recharge-history__fold {
+  transform: rotate(-90deg);
+}
+
+.logos-console-root.cs-billing-root .recharge-history__body {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition: grid-template-rows .38s cubic-bezier(.4, 0, .2, 1), opacity .28s ease;
+}
+
+.logos-console-root.cs-billing-root .recharge-history--folded .recharge-history__body {
+  grid-template-rows: 0fr;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.logos-console-root.cs-billing-root .recharge-history__bodyinner {
+  display: block;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.logos-console-root.cs-billing-root .recharge-history > header {
+  padding-bottom: 8px;
+}
+
+.logos-console-root.cs-billing-root .recharge-history__filters {
+  align-items: end;
+  border-bottom: 0;
+  border-top: 0;
+  gap: 12px 16px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  padding: 6px 0 0;
+}
+
+.logos-console-root.cs-billing-root .recharge-history__filters .cs-btn {
+  grid-column: -2 / -1;
+  justify-self: end;
+  padding-left: clamp(12px, 1.6vw, 20px);
+  padding-right: clamp(12px, 1.6vw, 20px);
+  white-space: nowrap;
+  width: auto;
+}
+
+.logos-console-root.cs-billing-root .recharge-history__results {
+  color: var(--cs-dim);
+  font-size: .85rem;
+  letter-spacing: 0;
+  margin: 10px 0 2px;
+  opacity: .8;
+}
+
+.logos-console-root.cs-billing-root .rc-txhead,
+.logos-console-root.cs-billing-root .rc-txrow {
+  align-items: center;
+  display: grid;
+  gap: clamp(8px, 1.6vw, 16px);
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, .9fr) minmax(52px, auto);
+}
+
+.logos-console-root.cs-billing-root .rc-txhead {
+  border-bottom: 1px solid var(--cs-line);
+  color: var(--cs-faint);
+  font-size: .75rem;
+  letter-spacing: .14em;
+  opacity: .85;
+  padding: 0 2px 9px;
+  text-transform: uppercase;
+}
+
+.logos-console-root.cs-billing-root .recharge-history__list {
+  display: block;
+}
+
+.logos-console-root.cs-billing-root .rc-txrow {
+  background: none;
+  border-bottom: 1px solid var(--cs-soft);
+  border-radius: 0;
+  padding: 9px 2px;
+}
+
+.logos-console-root.cs-billing-root .rc-txrow:last-child {
+  border-bottom: 0;
+}
+
+.logos-console-root.cs-billing-root .rc-txrow > * {
+  min-width: 0;
+}
+
+.logos-console-root.cs-billing-root .rc-txrow__date,
+.logos-console-root.cs-billing-root .rc-txrow__amount {
+  color: var(--cs-ink);
+  font-variant-numeric: tabular-nums;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logos-console-root.cs-billing-root .rc-txrow__date {
+  font-size: .95rem;
+  opacity: .78;
+}
+
+.logos-console-root.cs-billing-root .rc-txrow__amount {
+  font-size: 1.02rem;
+}
+
+.logos-console-root.cs-billing-root .rc-txrow__status {
+  border-radius: 2px;
+  font-size: .8rem;
+  justify-self: start;
+  white-space: nowrap;
+}
+
+.logos-console-root.cs-billing-root .rc-txrow__action {
+  color: var(--cs-ink);
+  font-size: .92rem;
+  justify-self: start;
+  min-height: 32px;
+  opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.logos-console-root.cs-billing-root .rc-txrow__action:hover {
+  opacity: 1;
+}
+
+.logos-console-root.cs-billing-root .rc-txrow__action--none {
+  opacity: .35;
+  text-decoration: none;
+}
+
+.logos-console-root.cs-billing-root .rc-txrow__action--none::before {
+  content: "-";
+}
+
+.logos-console-root.cs-billing-root .recharge-history__filters label,
+.logos-console-root.cs-billing-root .recharge-history__filters .console-filter-label {
+  font-size: .74rem;
+  letter-spacing: .12em;
+  opacity: .85;
+}
+
+.logos-console-root.cs-billing-root .console-filter-trigger,
+.logos-console-root.cs-billing-root .recharge-history__filters select {
+  color: var(--cs-ink);
+  font-size: .95rem;
+}
+
+.logos-console-root.cs-billing-root .recharge-history > header .billing-eyebrow {
+  font-size: .74rem;
+  opacity: .85;
+}
+
+.logos-console-root.cs-billing-root .billing-spin {
+  animation: none;
+}
+
+.logos-console-root.cs-billing-root:not(.cs-night) .rc-txrow__date,
+.logos-console-root.cs-billing-root:not(.cs-night) .rc-txrow__amount,
+.logos-console-root.cs-billing-root:not(.cs-night) .rc-txrow__action {
+  color: #1a1916;
+  opacity: 1;
+}
+
+.logos-console-root.cs-billing-root:not(.cs-night) .rc-txhead,
+.logos-console-root.cs-billing-root:not(.cs-night) .recharge-history__results,
+.logos-console-root.cs-billing-root:not(.cs-night) .recharge-overview p,
+.logos-console-root.cs-billing-root:not(.cs-night) .recharge-balance__heading small,
+.logos-console-root.cs-billing-root:not(.cs-night) .recharge-history > header .billing-eyebrow {
+  color: rgba(26, 25, 22, .82);
+  opacity: 1;
+}
+
+.logos-console-root.cs-billing-root:not(.cs-night) .console-filter-trigger,
+.logos-console-root.cs-billing-root:not(.cs-night) .recharge-history__filters select {
+  color: #1a1916;
+}
+
+@media (max-width: 620px) {
+  .logos-console-root.cs-billing-root .billing-page__header {
+    margin-top: 0;
+  }
+
+  .logos-console-root.cs-billing-root .rc-balance-row {
+    align-items: center;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 14px;
+    grid-template-columns: none;
+  }
+
+  .logos-console-root.cs-billing-root .rc-balance-row .recharge-balance__value {
+    font-size: clamp(30px, 9.6vw, 42px);
+  }
+
+  .logos-console-root.cs-billing-root .rc-balance-row__action {
+    flex: 0 0 auto;
+    max-width: none;
+    min-height: 40px;
+    padding-left: 14px;
+    padding-right: 14px;
+    width: auto;
+  }
+
+  .logos-console-root.cs-billing-root .recharge-history__filters {
+    grid-template-columns: 1fr;
+  }
+
+  .logos-console-root.cs-billing-root .recharge-history__filters .cs-btn {
+    grid-column: auto;
+    justify-self: stretch;
+    width: 100%;
   }
 }

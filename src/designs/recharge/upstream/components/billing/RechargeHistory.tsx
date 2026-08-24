@@ -128,13 +128,11 @@ function SourceRecovery({ title, error, retained, otherAvailable, loading, onRet
 export function RechargeHistory({
   history,
   available,
-  fresh,
   loading,
   error,
   onRetry,
   depositActivity,
   depositAvailable,
-  depositFresh,
   depositLoading,
   depositError,
   onDepositRetry,
@@ -142,13 +140,11 @@ export function RechargeHistory({
 }: {
   history: BillingTopupHistory
   available: boolean
-  fresh: boolean
   loading: boolean
   error: string
   onRetry: () => void
   depositActivity: CryptoDepositActivity
   depositAvailable: boolean
-  depositFresh: boolean
   depositLoading: boolean
   depositError: string
   onDepositRetry: () => void
@@ -177,9 +173,9 @@ export function RechargeHistory({
       (earliestEvent === null || Date.parse(item.eventAt) >= earliestEvent))
   }, [items, periodFilter, providerFilter, statusFilter])
   const overallLoading = loading || (depositEnabled && depositLoading)
-  const overallFresh = fresh && (!depositEnabled || depositFresh)
   const allSourcesAvailable = available && (!depositEnabled || depositAvailable)
   const anySourceLoading = loading || (depositEnabled && depositLoading)
+  const toggleHistory = () => setHistoryOpen((current) => !current)
   const resetFilters = () => {
     setStatusFilter('all')
     setProviderFilter('all')
@@ -196,35 +192,51 @@ export function RechargeHistory({
         tabIndex={0}
         aria-expanded={historyOpen}
         aria-controls="recharge-history-body"
-        onClick={() => setHistoryOpen((v) => !v)}
-        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setHistoryOpen((v) => !v) } }}
-      ><div><span className="billing-eyebrow">{pageText('billing.rechargeHistory.ownerRecords')}</span><h2 id="recharge-history-title">{pageText('billing.rechargeHistory.rechargeHistory')}</h2></div><ChevronDown className="recharge-history__fold" size={18} aria-hidden="true" />{/* DESIGN HANDOFF: VERIFIED pill removed. */}</header>
+        onClick={toggleHistory}
+        onKeyDown={(event) => {
+          if (event.key !== 'Enter' && event.key !== ' ') return
+          event.preventDefault()
+          toggleHistory()
+        }}
+      >
+        <div>
+          <span className="billing-eyebrow">{pageText('billing.rechargeHistory.ownerRecords')}</span>
+          <h2 id="recharge-history-title">{pageText('billing.rechargeHistory.rechargeHistory')}</h2>
+        </div>
+        <ChevronDown className="recharge-history__fold" size={18} aria-hidden="true" />
+        {/* DESIGN HANDOFF: VERIFIED pill removed. */}
+      </header>
       <div className="recharge-history__body" id="recharge-history-body" aria-hidden={!historyOpen}>
         <div className="recharge-history__bodyinner">
-      {error ? <SourceRecovery title={pageText('billing.rechargeHistory.paymentHistoryUnavailable')} error={error} retained={history.items.length > 0} otherAvailable={depositEnabled && (depositAvailable || depositActivity.items.length > 0)} loading={loading} onRetry={onRetry} /> : null}
-      {depositEnabled && depositError ? <SourceRecovery title={pageText('billing.rechargeHistory.depositActivityUnavailable')} error={depositError} retained={depositActivity.items.length > 0} otherAvailable={available || history.items.length > 0} loading={depositLoading} onRetry={onDepositRetry} /> : null}
-      {items.length === 0 && anySourceLoading ? (
-        <div className="recharge-history__empty" role="status"><LoaderCircle className="billing-spin" size={24} aria-hidden="true" /><strong>{pageText('billing.rechargeHistory.loadingRechargeHistory')}</strong><span>{pageText('billing.rechargeHistory.checkingPaymentsAndDepositActivity')}</span></div>
-      ) : items.length === 0 && allSourcesAvailable ? (
-        <div className="recharge-history__empty"><History size={24} aria-hidden="true" /><strong>{pageText('billing.rechargeHistory.noRechargeHistoryYet')}</strong><span>{pageText('billing.rechargeHistory.completedAndPendingRechargesWillAppearHere')}</span></div>
-      ) : items.length > 0 ? (
-        <>
-          <div className="recharge-history__filters" role="group" aria-label={pageText('billing.rechargeHistory.filterRechargeHistory')}>
-            <FilterSelect testId="recharge-status-filter" label={pageText('billing.rechargeHistory.status')} value={statusFilter} options={statusOptions()} onChange={setStatusFilter} />
-            <FilterSelect testId="recharge-provider-filter" label={pageText('billing.rechargeHistory.paymentMethod')} value={providerFilter} options={providerOptions()} onChange={setProviderFilter} />
-            <FilterSelect testId="recharge-period-filter" label={pageText('billing.rechargeHistory.eventDate')} value={periodFilter} options={periodOptions()} onChange={setPeriodFilter} />
-            <button className="cs-btn" type="button" onClick={resetFilters} disabled={!filtersActive}>{pageText('billing.rechargeHistory.clearFilters')}</button>
-          </div>
-          <p className="recharge-history__results" role="status" aria-live="polite">{pageText('billing.rechargeHistory.resultCount', { visible: filteredItems.length, total: items.length })}</p>
-          {filteredItems.length === 0 ? <div className="recharge-history__empty"><History size={24} aria-hidden="true" /><strong>{pageText('billing.rechargeHistory.noMatchingRecharges')}</strong><span>{pageText('billing.rechargeHistory.tryChangingOrClearingTheCurrentFilters')}</span><button className="cs-btn" type="button" onClick={resetFilters}>{pageText('billing.rechargeHistory.clearFilters2')}</button></div> : (
+          {error ? <SourceRecovery title={pageText('billing.rechargeHistory.paymentHistoryUnavailable')} error={error} retained={history.items.length > 0} otherAvailable={depositEnabled && (depositAvailable || depositActivity.items.length > 0)} loading={loading} onRetry={onRetry} /> : null}
+          {depositEnabled && depositError ? <SourceRecovery title={pageText('billing.rechargeHistory.depositActivityUnavailable')} error={depositError} retained={depositActivity.items.length > 0} otherAvailable={available || history.items.length > 0} loading={depositLoading} onRetry={onDepositRetry} /> : null}
+          {items.length === 0 && anySourceLoading ? (
+            <div className="recharge-history__empty" role="status"><LoaderCircle className="billing-spin" size={24} aria-hidden="true" /><strong>{pageText('billing.rechargeHistory.loadingRechargeHistory')}</strong><span>{pageText('billing.rechargeHistory.checkingPaymentsAndDepositActivity')}</span></div>
+          ) : items.length === 0 && allSourcesAvailable ? (
+            <div className="recharge-history__empty"><History size={24} aria-hidden="true" /><strong>{pageText('billing.rechargeHistory.noRechargeHistoryYet')}</strong><span>{pageText('billing.rechargeHistory.completedAndPendingRechargesWillAppearHere')}</span></div>
+          ) : items.length > 0 ? (
             <>
-              <div className="rc-txhead" aria-hidden="true"><span>Date</span><span>Amount</span><span>Status</span><span>Actions</span></div>
-              <div className="recharge-history__list">{filteredItems.map((item) => item.source === 'topup_order'
-                ? <TopupHistoryCard key={item.key} presentation={item} />
-                : <CryptoDepositActivityCard key={item.key} presentation={item} />)}</div>
+              <div className="recharge-history__filters" role="group" aria-label={pageText('billing.rechargeHistory.filterRechargeHistory')}>
+                <FilterSelect testId="recharge-status-filter" label={pageText('billing.rechargeHistory.status')} value={statusFilter} options={statusOptions()} onChange={setStatusFilter} />
+                <FilterSelect testId="recharge-provider-filter" label={pageText('billing.rechargeHistory.paymentMethod')} value={providerFilter} options={providerOptions()} onChange={setProviderFilter} />
+                <FilterSelect testId="recharge-period-filter" label={pageText('billing.rechargeHistory.eventDate')} value={periodFilter} options={periodOptions()} onChange={setPeriodFilter} />
+                <button className="cs-btn" type="button" onClick={resetFilters} disabled={!filtersActive}>{pageText('billing.rechargeHistory.clearFilters')}</button>
+              </div>
+              <p className="recharge-history__results" role="status" aria-live="polite">{pageText('billing.rechargeHistory.resultCount', { visible: filteredItems.length, total: items.length })}</p>
+              {filteredItems.length === 0 ? <div className="recharge-history__empty"><History size={24} aria-hidden="true" /><strong>{pageText('billing.rechargeHistory.noMatchingRecharges')}</strong><span>{pageText('billing.rechargeHistory.tryChangingOrClearingTheCurrentFilters')}</span><button className="cs-btn" type="button" onClick={resetFilters}>{pageText('billing.rechargeHistory.clearFilters2')}</button></div> : (
+                <>
+                  <div className="rc-txhead" aria-hidden="true">
+                    <span>{pageText('billing.rechargeHistory.date')}</span>
+                    <span>{pageText('billing.rechargeHistory.amount')}</span>
+                    <span>{pageText('billing.rechargeHistory.status')}</span>
+                    <span>{pageText('billing.rechargeHistory.actions')}</span>
+                  </div>
+                  <div className="recharge-history__list">{filteredItems.map((item) => item.source === 'topup_order'
+                    ? <TopupHistoryCard key={item.key} presentation={item} />
+                    : <CryptoDepositActivityCard key={item.key} presentation={item} />)}</div>
+                </>
+              )}
             </>
-          )}
-        </>
       ) : null}
         </div>
       </div>

@@ -155,6 +155,7 @@ export function BillingPage({
   const [cancelingOrderID, setCancelingOrderID] = useState<string | null>(null)
   const [cancelOrderError, setCancelOrderError] = useState('')
   const addCreditsTriggerRef = useRef<HTMLButtonElement>(null)
+  const addCreditsWasOpen = useRef(addCreditsOpen)
   const depositPendingStartedAt = useRef<number | null>(null)
   const depositImmediateTimer = useRef<number | null>(null)
   const accountOrderID = billing.account?.topup.activeOrderId ?? null
@@ -287,6 +288,15 @@ export function BillingPage({
     if (!addCreditsOpen || orderID === null || decision === 'continue') return
     setAddCreditsOpen(false)
   }, [addCreditsOpen, decision, orderID])
+
+  useEffect(() => {
+    if (addCreditsWasOpen.current && !addCreditsOpen) {
+      const focusTrigger = () => addCreditsTriggerRef.current?.focus()
+      focusTrigger()
+      window.requestAnimationFrame(focusTrigger)
+    }
+    addCreditsWasOpen.current = addCreditsOpen
+  }, [addCreditsOpen])
 
   useEffect(() => {
     const terminalOrderID = polling.status && ['expired', 'canceled', 'failed'].includes(polling.status.status)
@@ -483,7 +493,6 @@ export function BillingPage({
       <RechargeOverview
         account={billing.account}
         available={billing.available}
-        fresh={billing.fresh}
         loading={billing.loading}
         addCreditsDisabled={!billing.account?.ledgerConfigured || (billing.account?.topup.allowed !== true && readableCryptoNetworks.length === 0)}
         addCreditsTriggerRef={addCreditsTriggerRef}
@@ -581,13 +590,11 @@ export function BillingPage({
       <RechargeHistory
         history={history.history}
         available={history.available}
-        fresh={history.fresh}
         loading={history.loading}
         error={history.error}
         onRetry={() => void refreshHistory()}
         depositActivity={cryptoActivity.activity}
         depositAvailable={cryptoActivity.available}
-        depositFresh={cryptoActivity.fresh}
         depositLoading={cryptoActivity.loading}
         depositError={cryptoActivity.error}
         onDepositRetry={() => void refreshCryptoActivity()}

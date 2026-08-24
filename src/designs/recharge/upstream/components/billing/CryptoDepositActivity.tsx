@@ -52,7 +52,7 @@ export function CryptoDepositActivityCard({ presentation }: {
       <span className="rc-txrow__amount">{creditedLabel}</span>
       <span className={`rc-txrow__status billing-state billing-state--${item.status}`}>{statusLabel(item)}</span>
       <a className="rc-txrow__action" href={item.transactionUrl} target="_blank" rel="noopener noreferrer" aria-label={explorerLabel}>
-        View
+        {pageText('billing.rechargeHistory.view')}
       </a>
     </div>
   )

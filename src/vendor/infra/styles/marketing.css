@@ -7,6 +7,545 @@
   color: #f4f2ec;
 }
 
+.logos-marketing-root .login-gate {
+  align-items: center;
+  background: rgba(9, 9, 9, 0.94);
+  box-sizing: border-box;
+  color: #f4f2ec;
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  min-height: 100svh;
+  overflow: auto;
+  padding: 72px 32px;
+  position: fixed;
+  z-index: 850;
+  -webkit-backdrop-filter: blur(12px) saturate(1.02);
+  backdrop-filter: blur(12px) saturate(1.02);
+}
+
+.logos-marketing-root .mp-light .login-gate {
+  background: rgba(244, 242, 236, 0.94);
+  color: #1a1916;
+}
+
+.logos-marketing-root .login-gate__back,
+.logos-marketing-root .login-gate__mode {
+  align-items: center;
+  border: 1px solid rgba(244, 242, 236, 0.2);
+  border-radius: 999px;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  height: 42px;
+  justify-content: center;
+  position: fixed;
+  top: 28px;
+  transition: background .2s ease, border-color .2s ease, color .2s ease, transform .2s ease;
+  width: 42px;
+  z-index: 2;
+}
+
+.logos-marketing-root .login-gate__back {
+  left: 32px;
+}
+
+.logos-marketing-root .login-gate__mode {
+  right: 32px;
+}
+
+.logos-marketing-root .login-gate__back svg {
+  height: 16px;
+  width: 28px;
+}
+
+.logos-marketing-root .login-gate__mode svg {
+  height: 19px;
+  width: 19px;
+}
+
+.logos-marketing-root .login-gate__back:hover,
+.logos-marketing-root .login-gate__mode:hover {
+  background: #f4f2ec;
+  border-color: #f4f2ec;
+  color: #0e0e0e;
+  transform: translateY(-1px);
+}
+
+.logos-marketing-root .mp-light .login-gate__back,
+.logos-marketing-root .mp-light .login-gate__mode {
+  border-color: rgba(26, 25, 22, 0.22);
+}
+
+.logos-marketing-root .mp-light .login-gate__back:hover,
+.logos-marketing-root .mp-light .login-gate__mode:hover {
+  background: #1a1916;
+  border-color: #1a1916;
+  color: #f4f2ec;
+}
+
+.logos-marketing-root .login-gate__panel {
+  background: rgba(12, 12, 12, 0.7);
+  border: 1px solid rgba(244, 242, 236, 0.16);
+  border-radius: 8px;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.36);
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) 1px minmax(280px, 1fr);
+  max-width: 920px;
+  min-height: 540px;
+  overflow: hidden;
+  width: min(920px, calc(100vw - 64px));
+}
+
+.logos-marketing-root .mp-light .login-gate__panel {
+  background: rgba(255, 255, 255, 0.58);
+  border-color: rgba(26, 25, 22, 0.14);
+  box-shadow: 0 30px 80px rgba(26, 25, 22, 0.12);
+}
+
+.logos-marketing-root .login-gate__form,
+.logos-marketing-root .login-gate__brand {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 48px 52px;
+}
+
+.logos-marketing-root .login-gate__form {
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: center;
+}
+
+.logos-marketing-root .login-gate__form-head {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.logos-marketing-root .login-gate__form-head img {
+  height: 34px;
+  width: 34px;
+}
+
+.logos-marketing-root .login-gate__form-head p,
+.logos-marketing-root .login-gate__brand small,
+.logos-marketing-root .login-gate__note {
+  color: rgba(244, 242, 236, 0.58);
+  font-family: "Jost", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.logos-marketing-root .mp-light .login-gate__form-head p,
+.logos-marketing-root .mp-light .login-gate__brand small,
+.logos-marketing-root .mp-light .login-gate__note {
+  color: rgba(26, 25, 22, 0.58);
+}
+
+.logos-marketing-root .login-gate__form-head h1 {
+  color: inherit;
+  font-family: "Jost", sans-serif;
+  font-size: 25px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  line-height: 1.18;
+  margin: 0;
+  max-width: 14ch;
+  text-transform: uppercase;
+}
+
+.logos-marketing-root .login-gate__error {
+  background: rgba(255, 102, 102, 0.08);
+  border: 1px solid rgba(255, 151, 151, 0.22);
+  border-radius: 8px;
+  color: rgba(255, 198, 198, 0.94);
+  font-family: "Jost", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  line-height: 1.45;
+  padding: 10px 12px;
+}
+
+.logos-marketing-root .mp-light .login-gate__error {
+  background: rgba(164, 32, 32, 0.08);
+  border-color: rgba(164, 32, 32, 0.22);
+  color: #8a2525;
+}
+
+.logos-marketing-root .login-gate__socials,
+.logos-marketing-root .login-gate__fields,
+.logos-marketing-root .login-gate__reserved {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.logos-marketing-root .login-gate__social,
+.logos-marketing-root .login-gate__button,
+.logos-marketing-root .login-gate__input {
+  border-radius: 999px;
+  box-sizing: border-box;
+  font-family: "Jost", sans-serif;
+  min-height: 42px;
+  width: 100%;
+}
+
+.logos-marketing-root .login-gate__social {
+  align-items: center;
+  border: 1px solid rgba(244, 242, 236, 0.22);
+  color: inherit;
+  display: flex;
+  font-size: 13px;
+  gap: 12px;
+  justify-content: flex-start;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  padding: 0 16px;
+  text-decoration: none;
+  transition: background .2s ease, border-color .2s ease, color .2s ease, transform .2s ease;
+}
+
+.logos-marketing-root .login-gate__social img {
+  flex: 0 0 auto;
+  height: 18px;
+  width: 18px;
+}
+
+.logos-marketing-root .login-gate__social:hover {
+  background: #f4f2ec;
+  border-color: #f4f2ec;
+  color: #0e0e0e;
+  transform: translateY(-1px);
+}
+
+.logos-marketing-root .mp-light .login-gate__social {
+  border-color: rgba(26, 25, 22, 0.2);
+}
+
+.logos-marketing-root .mp-light .login-gate__social:hover {
+  background: #1a1916;
+  border-color: #1a1916;
+  color: #f4f2ec;
+}
+
+.logos-marketing-root .login-gate__input {
+  background: rgba(244, 242, 236, 0.035);
+  border: 1px solid rgba(244, 242, 236, 0.24);
+  color: inherit;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  outline: 0;
+  padding: 0 16px;
+  transition: background .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+.logos-marketing-root .login-gate__input::placeholder {
+  color: rgba(244, 242, 236, 0.42);
+}
+
+.logos-marketing-root .login-gate__input:focus {
+  border-color: rgba(244, 242, 236, 0.74);
+  box-shadow: 0 0 0 3px rgba(244, 242, 236, 0.08);
+}
+
+.logos-marketing-root .mp-light .login-gate__input {
+  background: rgba(255, 255, 255, 0.42);
+  border-color: rgba(26, 25, 22, 0.2);
+}
+
+.logos-marketing-root .mp-light .login-gate__input::placeholder {
+  color: rgba(26, 25, 22, 0.42);
+}
+
+.logos-marketing-root .mp-light .login-gate__input:focus {
+  border-color: rgba(26, 25, 22, 0.62);
+  box-shadow: 0 0 0 3px rgba(26, 25, 22, 0.08);
+}
+
+.logos-marketing-root .login-gate__button {
+  background: #f4f2ec;
+  border: 1px solid #f4f2ec;
+  color: #0e0e0e;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  line-height: 1.2;
+  padding: 0 18px 0 calc(18px + 0.2em);
+  text-align: center;
+  text-transform: uppercase;
+  transition: background .2s ease, border-color .2s ease, color .2s ease, opacity .2s ease, transform .2s ease;
+}
+
+.logos-marketing-root .login-gate__button:hover:not(:disabled) {
+  border-color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.logos-marketing-root .login-gate__button:disabled {
+  cursor: default;
+  opacity: 0.56;
+}
+
+.logos-marketing-root .login-gate__button--ghost {
+  background: transparent;
+  border-color: rgba(244, 242, 236, 0.26);
+  color: inherit;
+}
+
+.logos-marketing-root .login-gate__button--ghost:hover:not(:disabled) {
+  background: rgba(244, 242, 236, 0.1);
+  border-color: rgba(244, 242, 236, 0.48);
+}
+
+.logos-marketing-root .mp-light .login-gate__button {
+  background: #1a1916;
+  border-color: #1a1916;
+  color: #f4f2ec;
+}
+
+.logos-marketing-root .mp-light .login-gate__button--ghost {
+  background: transparent;
+  border-color: rgba(26, 25, 22, 0.24);
+  color: #1a1916;
+}
+
+.logos-marketing-root .mp-light .login-gate__button--ghost:hover:not(:disabled) {
+  background: rgba(26, 25, 22, 0.08);
+  border-color: rgba(26, 25, 22, 0.42);
+}
+
+.logos-marketing-root .login-gate__divider {
+  align-items: center;
+  color: rgba(244, 242, 236, 0.42);
+  display: flex;
+  font-family: "Jost", sans-serif;
+  font-size: 10px;
+  gap: 10px;
+  letter-spacing: 0.24em;
+  line-height: 1;
+  margin: 2px 0;
+  text-transform: uppercase;
+}
+
+.logos-marketing-root .login-gate__divider::before,
+.logos-marketing-root .login-gate__divider::after {
+  border-top: 1px solid rgba(244, 242, 236, 0.18);
+  content: "";
+  flex: 1;
+}
+
+.logos-marketing-root .login-gate__divider span {
+  padding-left: 0.24em;
+}
+
+.logos-marketing-root .mp-light .login-gate__divider {
+  color: rgba(26, 25, 22, 0.42);
+}
+
+.logos-marketing-root .mp-light .login-gate__divider::before,
+.logos-marketing-root .mp-light .login-gate__divider::after {
+  border-color: rgba(26, 25, 22, 0.16);
+}
+
+.logos-marketing-root .login-gate__reserved {
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.logos-marketing-root .login-gate__reserved p,
+.logos-marketing-root .login-gate__reserved small {
+  color: rgba(244, 242, 236, 0.66);
+  font-family: "Jost", sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.logos-marketing-root .mp-light .login-gate__reserved p,
+.logos-marketing-root .mp-light .login-gate__reserved small {
+  color: rgba(26, 25, 22, 0.62);
+}
+
+.logos-marketing-root .login-gate__check {
+  border: 1px solid rgba(244, 242, 236, 0.42);
+  border-radius: 50%;
+  display: block;
+  height: 34px;
+  position: relative;
+  width: 34px;
+}
+
+.logos-marketing-root .login-gate__check::after {
+  border-bottom: 1px solid currentColor;
+  border-right: 1px solid currentColor;
+  content: "";
+  height: 13px;
+  left: 12px;
+  position: absolute;
+  top: 8px;
+  transform: rotate(42deg);
+  width: 7px;
+}
+
+.logos-marketing-root .mp-light .login-gate__check {
+  border-color: rgba(26, 25, 22, 0.36);
+}
+
+.logos-marketing-root .login-gate__rule {
+  background: linear-gradient(to bottom, transparent, rgba(244, 242, 236, 0.18), transparent);
+  min-width: 1px;
+}
+
+.logos-marketing-root .mp-light .login-gate__rule {
+  background: linear-gradient(to bottom, transparent, rgba(26, 25, 22, 0.16), transparent);
+}
+
+.logos-marketing-root .login-gate__brand {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.logos-marketing-root .login-gate__brand p {
+  color: inherit;
+  font-family: "Julius Sans One", "Jost", sans-serif;
+  font-size: 33px;
+  font-weight: 400;
+  line-height: 1.22;
+  margin: 0 0 36px;
+  max-width: 11ch;
+  text-transform: uppercase;
+}
+
+.logos-marketing-root .login-gate__brand-lockup {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  margin-bottom: 18px;
+  max-width: 100%;
+}
+
+.logos-marketing-root .login-gate__brand-lockup img {
+  height: 24px;
+  max-width: 142px;
+  object-fit: contain;
+}
+
+.logos-marketing-root .login-gate__brand-lockup span {
+  color: rgba(244, 242, 236, 0.46);
+  font-family: "Jost", sans-serif;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.logos-marketing-root .mp-light .login-gate__brand-lockup {
+  filter: invert(1) brightness(0.22);
+}
+
+.logos-marketing-root .login-gate__brand small {
+  max-width: 28ch;
+}
+
+.logos-marketing-root .login-gate__brand strong {
+  color: #f4f2ec;
+  font-weight: 500;
+}
+
+.logos-marketing-root .mp-light .login-gate__brand strong {
+  color: #1a1916;
+}
+
+@media (max-width: 860px) {
+  .logos-marketing-root .login-gate {
+    align-items: flex-start;
+    padding: 86px 20px 28px;
+  }
+
+  .logos-marketing-root .login-gate__back {
+    left: 20px;
+    top: 22px;
+  }
+
+  .logos-marketing-root .login-gate__mode {
+    right: 20px;
+    top: 22px;
+  }
+
+  .logos-marketing-root .login-gate__panel {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    width: min(460px, calc(100vw - 40px));
+  }
+
+  .logos-marketing-root .login-gate__form,
+  .logos-marketing-root .login-gate__brand {
+    padding: 32px 26px;
+  }
+
+  .logos-marketing-root .login-gate__rule {
+    display: none;
+  }
+
+  .logos-marketing-root .login-gate__brand {
+    border-top: 1px solid rgba(244, 242, 236, 0.12);
+    padding-top: 28px;
+  }
+
+  .logos-marketing-root .mp-light .login-gate__brand {
+    border-color: rgba(26, 25, 22, 0.12);
+  }
+
+  .logos-marketing-root .login-gate__form-head h1 {
+    font-size: 22px;
+    max-width: 16ch;
+  }
+
+  .logos-marketing-root .login-gate__brand p {
+    font-size: 26px;
+    margin-bottom: 24px;
+    max-width: 13ch;
+  }
+}
+
+@media (max-width: 420px) {
+  .logos-marketing-root .login-gate {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .logos-marketing-root .login-gate__panel {
+    width: calc(100vw - 28px);
+  }
+
+  .logos-marketing-root .login-gate__form,
+  .logos-marketing-root .login-gate__brand {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .logos-marketing-root .login-gate__brand-lockup {
+    gap: 10px;
+  }
+
+  .logos-marketing-root .login-gate__brand-lockup img {
+    height: 20px;
+    max-width: 112px;
+  }
+}
+
 @media (min-width: 901px) {
   .logos-marketing-root .mp-hero {
     overflow: visible;
@@ -882,5 +1421,381 @@
 
   .logos-marketing-root .mp-hero.mp-hero-reserved .rl-brands span {
     font-size: 13px;
+  }
+}
+
+/* DESIGN HANDOFF: login overlay refinement. */
+.logos-marketing-root .login-gate {
+  overscroll-behavior: contain;
+  z-index: 2200;
+}
+
+.logos-marketing-root .login-gate__panel {
+  isolation: isolate;
+  max-height: calc(100svh - 144px);
+  position: relative;
+}
+
+.logos-marketing-root .login-gate__form,
+.logos-marketing-root .login-gate__brand {
+  position: relative;
+  z-index: 1;
+}
+
+.logos-marketing-root .login-gate__social,
+.logos-marketing-root .login-gate__button,
+.logos-marketing-root .login-gate__input {
+  min-height: 44px;
+}
+
+.logos-marketing-root .login-gate__social,
+.logos-marketing-root .login-gate__button {
+  min-width: 0;
+}
+
+.logos-marketing-root .login-gate__input {
+  font-size: 14px;
+}
+
+.logos-marketing-root .login-gate__brand {
+  pointer-events: none;
+}
+
+@media (max-width: 860px) {
+  .logos-marketing-root .login-gate {
+    padding-bottom: calc(28px + env(safe-area-inset-bottom));
+    padding-top: calc(86px + env(safe-area-inset-top));
+  }
+
+  .logos-marketing-root .login-gate__panel {
+    max-height: calc(100svh - 118px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 540px) {
+  .logos-marketing-root .login-gate {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .logos-marketing-root .login-gate__back {
+    left: 14px;
+  }
+
+  .logos-marketing-root .login-gate__mode {
+    right: 14px;
+  }
+
+  .logos-marketing-root .login-gate__panel {
+    width: calc(100vw - 28px);
+  }
+
+  .logos-marketing-root .login-gate__form {
+    padding: 30px 22px 32px;
+  }
+
+  .logos-marketing-root .login-gate__brand,
+  .logos-marketing-root .login-gate__rule {
+    display: none;
+  }
+
+  .logos-marketing-root .login-gate__form-head h1 {
+    font-size: 21px;
+    max-width: 17ch;
+  }
+}
+
+/* DESIGN HANDOFF: final Login/Auth parity with logos-design@5fc5242. */
+.logos-marketing-root .login-gate {
+  background-color: #0e0e0e;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"),
+    radial-gradient(140% 78% at 50% 100%, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.02) 18%, rgba(255,255,255,0.012) 34%, rgba(255,255,255,0.006) 50%, rgba(255,255,255,0.002) 66%, rgba(255,255,255,0) 80%);
+  background-repeat: repeat, no-repeat;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.logos-marketing-root .mp-light .login-gate {
+  background-color: #f6f4ee;
+  background-image: radial-gradient(140% 78% at 50% 100%, rgba(26,25,22,0.035) 0%, rgba(26,25,22,0.018) 32%, rgba(26,25,22,0) 80%);
+}
+
+.logos-marketing-root .login-gate__panel {
+  background: rgba(13,13,13,0.66);
+  border-color: rgba(244,242,236,0.09);
+  border-radius: 8px;
+  box-shadow: 0 22px 56px rgba(0,0,0,0.28), 0 3px 14px rgba(0,0,0,0.16);
+}
+
+.logos-marketing-root .mp-light .login-gate__panel {
+  background: rgba(252,250,247,0.72);
+  border-color: rgba(26,25,22,0.08);
+  box-shadow: 0 34px 90px rgba(0,0,0,0.16), 0 6px 22px rgba(0,0,0,0.08);
+}
+
+.logos-marketing-root button.login-gate__back,
+.logos-marketing-root button.login-gate__mode {
+  appearance: none;
+  background: transparent;
+  border: 1px solid rgba(244,242,236,0.25);
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(255,255,255,0.6), 0 0 26px rgba(255,255,255,0.35);
+}
+
+.logos-marketing-root button.login-gate__back {
+  gap: 12px;
+  height: 42px;
+  min-width: 42px;
+  padding: 0 15px;
+  width: auto;
+}
+
+.logos-marketing-root .login-gate__back span {
+  font-family: "Jost", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  line-height: 1;
+  padding-left: 0.3em;
+  text-transform: uppercase;
+}
+
+.logos-marketing-root button.login-gate__back:hover,
+.logos-marketing-root button.login-gate__mode:hover {
+  background: #f4f2ec;
+  border-color: #f4f2ec;
+  color: #0e0e0e;
+  text-shadow: none;
+}
+
+.logos-marketing-root .mp-light button.login-gate__back,
+.logos-marketing-root .mp-light button.login-gate__mode {
+  border-color: rgba(26,25,22,0.24);
+  color: #1a1916;
+  text-shadow: none;
+}
+
+.logos-marketing-root .mp-light button.login-gate__back:hover,
+.logos-marketing-root .mp-light button.login-gate__mode:hover {
+  background: #1a1916;
+  border-color: #1a1916;
+  color: #f4f2ec;
+}
+
+.logos-marketing-root .login-gate__form-head {
+  align-items: center;
+  text-align: center;
+}
+
+.logos-marketing-root .login-gate__form-head img {
+  filter: brightness(1.2) drop-shadow(0 0 10px rgba(255,255,255,0.45)) drop-shadow(0 0 26px rgba(255,255,255,0.25));
+  height: 42px;
+  width: 42px;
+}
+
+.logos-marketing-root .mp-light .login-gate__form-head img {
+  filter: invert(1) brightness(0.7) contrast(1.15) drop-shadow(0 0 10px rgba(0,0,0,0.2));
+}
+
+.logos-marketing-root .login-gate__form-head p {
+  color: rgba(244,242,236,0.5);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.logos-marketing-root .mp-light .login-gate__form-head p {
+  color: rgba(26,25,22,0.58);
+}
+
+.logos-marketing-root .login-gate__form-head h1 {
+  font-family: "Julius Sans One", "Jost", sans-serif;
+  font-size: 30px;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  line-height: 1.35;
+  max-width: 16ch;
+  text-align: center;
+  text-shadow: 0 0 8px rgba(255,255,255,0.42), 0 0 22px rgba(255,255,255,0.22);
+  text-indent: 0.16em;
+}
+
+.logos-marketing-root .mp-light .login-gate__form-head h1 {
+  text-shadow: none;
+}
+
+.logos-marketing-root .login-gate__social {
+  border-color: rgba(244,242,236,0.25);
+  font-size: 12px;
+  font-weight: 400;
+  justify-content: center;
+  letter-spacing: 0.18em;
+  min-height: 45px;
+  padding: 0 18px;
+  text-transform: uppercase;
+}
+
+.logos-marketing-root .login-gate__social img {
+  height: 16px;
+  width: 16px;
+}
+
+.logos-marketing-root .login-gate__social:hover img {
+  filter: invert(1);
+}
+
+.logos-marketing-root .mp-light .login-gate__social {
+  border-color: rgba(26,25,22,0.34);
+}
+
+.logos-marketing-root .mp-light .login-gate__social:hover img {
+  filter: none;
+}
+
+.logos-marketing-root .login-gate__input {
+  background: transparent !important;
+  border: 0;
+  border-bottom: 1px solid rgba(244,242,236,0.28);
+  border-radius: 0;
+  box-shadow: none;
+  color: #f4f2ec;
+  font-size: 15px;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  min-height: 40px;
+  padding: 7px 0;
+}
+
+.logos-marketing-root .login-gate__input::placeholder {
+  color: rgba(244,242,236,0.4);
+}
+
+.logos-marketing-root .login-gate__input:focus {
+  border-bottom-color: #ffffff;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.35);
+}
+
+.logos-marketing-root .mp-light .login-gate__input {
+  background: transparent !important;
+  border-bottom-color: rgba(26,25,22,0.28);
+  color: #1a1916;
+}
+
+.logos-marketing-root .mp-light .login-gate__input::placeholder {
+  color: rgba(26,25,22,0.42);
+}
+
+.logos-marketing-root .mp-light .login-gate__input:focus {
+  border-bottom-color: rgba(26,25,22,0.72);
+  box-shadow: 0 1px 0 rgba(26,25,22,0.22);
+}
+
+.logos-marketing-root button.login-gate__button {
+  appearance: none;
+  background: #f4f2ec;
+  border: 1px solid #f4f2ec;
+  border-radius: 999px;
+  color: #0e0e0e;
+  cursor: pointer;
+  font-family: "Jost", sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  min-height: 42px;
+  padding: 0 18px 0 calc(18px + 0.24em);
+  text-transform: uppercase;
+  transition: opacity .25s, transform .25s, background .25s, border-color .25s, color .25s;
+}
+
+.logos-marketing-root button.login-gate__button:hover:not(:disabled) {
+  border-color: #ffffff;
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.logos-marketing-root button.login-gate__button:disabled {
+  cursor: default;
+  opacity: 0.56;
+}
+
+.logos-marketing-root button.login-gate__button--ghost {
+  background: transparent;
+  border-color: rgba(244,242,236,0.28);
+  color: #f4f2ec;
+}
+
+.logos-marketing-root button.login-gate__button--ghost:hover:not(:disabled) {
+  background: rgba(244,242,236,0.1);
+  border-color: rgba(244,242,236,0.5);
+  color: #f4f2ec;
+}
+
+.logos-marketing-root .mp-light button.login-gate__button {
+  background: #1a1916;
+  border-color: #1a1916;
+  color: #f4f2ec;
+}
+
+.logos-marketing-root .mp-light button.login-gate__button--ghost {
+  background: transparent;
+  border-color: rgba(26,25,22,0.28);
+  color: #1a1916;
+}
+
+.logos-marketing-root .mp-light button.login-gate__button--ghost:hover:not(:disabled) {
+  background: rgba(26,25,22,0.08);
+  border-color: rgba(26,25,22,0.48);
+  color: #1a1916;
+}
+
+.logos-marketing-root .login-gate__error {
+  background: transparent;
+  border-color: rgba(255,151,151,0.24);
+  border-radius: 2px;
+  color: rgba(255,190,190,0.94);
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+}
+
+.logos-marketing-root .login-gate__brand p {
+  font-size: 34px;
+  letter-spacing: 0.18em;
+  text-indent: 0.18em;
+  text-shadow: 0 0 10px rgba(255,255,255,0.35), 0 0 26px rgba(255,255,255,0.18);
+}
+
+.logos-marketing-root .mp-light .login-gate__brand p {
+  text-shadow: none;
+}
+
+@media (max-width: 860px) {
+  .logos-marketing-root .login-gate__form-head h1 {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 540px) {
+  .logos-marketing-root button.login-gate__back {
+    padding: 0;
+    width: 42px;
+  }
+
+  .logos-marketing-root .login-gate__back span {
+    display: none;
+  }
+
+  .logos-marketing-root .login-gate__form-head h1 {
+    font-size: 21px;
+    letter-spacing: 0.12em;
+    max-width: 17ch;
+    text-indent: 0.12em;
+  }
+
+  .logos-marketing-root .login-gate__social,
+  .logos-marketing-root button.login-gate__button {
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
   }
 }

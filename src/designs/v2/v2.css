@@ -588,9 +588,9 @@
   --color-bg: #0a0a0a;
   --side-bg: #0a0a0a;
 }
-.v2-root:not(.light) .sidebar {
-  border-right: 1px solid rgba(255, 255, 255, 0.07);
-}
+/* no border here — the tapered ::after is the only division, and a border cannot fade
+   or narrow along its run. This rule outranked the later `border-right: none` because of
+   :not(.light), which is why the line kept running corner to corner. */
 
 /* ===== Hero: bigger lockup, no watermark ===== */
 /* The oversized enso behind the hero doubled up with the mark that now sits in the
@@ -1776,13 +1776,9 @@
 .v2-root .sidebar:hover #recent-list::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.16);
 }
-.v2-root #recent-list {
-  scrollbar-width: thin;
-  scrollbar-color: transparent transparent;
-}
-.v2-root .sidebar:hover #recent-list {
-  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
-}
+/* deliberately not setting scrollbar-width: once it is set, Chromium sizes the bar
+   itself and ignores ::-webkit-scrollbar, which is why the thumb was 11px rather than
+   the 3px asked for. */
 
 /* ===== One continuous falloff, no join ===== */
 /* The column was painting its own flat tone against a gradient page, so however close
@@ -1837,9 +1833,38 @@
 .v2-root:not(.light) .sidebar:hover #recent-list::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.3);
 }
-.v2-root:not(.light) #recent-list {
-  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+
+
+/* ===== The thumb is a thin white line in the seam ===== */
+.v2-root #recent-list::-webkit-scrollbar {
+  width: 3px;
 }
-.v2-root:not(.light) .sidebar:hover #recent-list {
-  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+.v2-root #recent-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.v2-root:not(.light) #recent-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 999px;
+}
+.v2-root:not(.light) .sidebar:hover #recent-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+/* ===== The seam glows rather than rules ===== */
+/* An illumination: brightest across the middle and gone at either end, with a soft
+   bloom either side of the line so it reads as light on the edge rather than a drawn
+   border. */
+.v2-root:not(.light) .sidebar::after {
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 18%,
+    rgba(255, 255, 255, 0.26) 40%,
+    rgba(255, 255, 255, 0.32) 50%,
+    rgba(255, 255, 255, 0.26) 60%,
+    rgba(255, 255, 255, 0) 82%
+  );
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  filter: blur(0.4px);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.14);
 }

@@ -582,8 +582,11 @@
    true black; the column's border is what keeps the seam readable now that the two
    surfaces no longer differ (#0e0e0e vs #0d0d0d before). */
 .v2-root:not(.light) {
-  --color-bg: #000000;
-  --side-bg: #000000;
+  /* the console's own ground, #0e0e0e — true black turned out to be the single biggest
+     reason the two surfaces did not look related, and it is also what killed the
+     selected-row highlight, since that panel is darker than its surface */
+  --color-bg: #0e0e0e;
+  --side-bg: #0e0e0e;
 }
 .v2-root:not(.light) .sidebar {
   border-right: 1px solid rgba(255, 255, 255, 0.07);
@@ -1525,4 +1528,24 @@
 .v2-root:not(.light).sidebar-collapsed .sidebar-nav .nav-btn,
 .v2-root:not(.light).sidebar-collapsed .proj-picker-btn {
   color: transparent;
+}
+
+/* ===== The last of the type differences ===== */
+/* Both columns are already MiSans — the font was never the difference. What was left:
+     console item   15px / 500 / 2.40px      agent nav    14px / 500 / 2.24px
+     console group  12.5px / 700 / 3.25px    agent label  11.5px / 500 / 3.90px
+   The group label was the bigger gap: lighter, smaller and wider than the console's,
+   which is why it read as a faint caption rather than a section heading. */
+.v2-root .sidebar-nav .nav-btn,
+.v2-root .proj-picker-btn {
+  font-size: 15px;
+  letter-spacing: 0.16em;
+}
+.v2-root .sidebar-section .section-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.26em;
+}
+.v2-root:not(.light) .sidebar-section .section-label {
+  color: #ffffff;
 }

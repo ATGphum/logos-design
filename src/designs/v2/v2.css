@@ -2429,3 +2429,16 @@
 .v2-root.light .v2-goal-label {
   color: rgba(26, 25, 22, 0.5);
 }
+
+/* ===== Binary, and rounder ===== */
+/* The dots came from the reference, where the control is stepped. This one is on or
+   off, so markers along the track suggest positions that do not exist. Plain channel.
+   The tray also takes the composer's own 26px radius rather than a squared 16 — it is
+   made of the same surface, so it should have the same corner. */
+.v2-root .v2-goal-track {
+  background-image: none;
+}
+.v2-root .v2-goal {
+  border-radius: 26px;
+  padding: 14px 18px 16px;
+}

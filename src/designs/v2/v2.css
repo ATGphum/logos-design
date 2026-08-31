@@ -1376,3 +1376,29 @@
 .v2-root.sidebar-collapsed .rail-logo-box:hover::after {
   opacity: 0.9;
 }
+
+/* ===== The lockup changes on the press, not at the end ===== */
+/* The nav glyphs hand over at the ends of the fold because they must never be seen
+   twice. The lockup is different: the mark and the word are not the same shape, so
+   there is nothing to double — and holding the mark until the fold finished meant the
+   word appeared as a pop after the column had already opened. Swapping on the press
+   lets the word wipe in with the column instead. */
+.v2-root .sidebar > .sidebar-logo {
+  transition: opacity 0s;
+}
+.v2-root .rail-logo-box {
+  opacity: 0;
+  transition: opacity 0s;
+}
+.v2-root.sidebar-collapsed .rail-logo-box {
+  opacity: 1;
+  transition: opacity 0s;
+}
+
+/* the chevron is part of the lockup's hit area, so pressing it opens the column */
+.v2-root.sidebar-collapsed .rail-logo-box::after {
+  pointer-events: none;
+}
+.v2-root.sidebar-collapsed .rail-expand {
+  inset: -6px -14px -6px -6px;
+}

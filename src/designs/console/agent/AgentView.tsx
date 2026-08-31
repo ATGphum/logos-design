@@ -74,6 +74,8 @@ export interface AgentViewProps {
    * for them to act on. Omitted elsewhere, where both are always present.
    */
   contextualTools?: boolean
+  /** V2: an account control directly under the sidebar lockup. Omitted elsewhere. */
+  accountSlot?: ReactNode
 }
 
 export function AgentView(props: AgentViewProps) {
@@ -94,6 +96,7 @@ export function AgentView(props: AgentViewProps) {
     projectsAsPicker,
     shortModelName,
     contextualTools,
+    accountSlot,
   } = props
 
   const [chats, setChats] = useState<ChatItem[]>(initialRecentChats)
@@ -385,6 +388,7 @@ export function AgentView(props: AgentViewProps) {
         onOpenSearch={() => setSearchOpen(true)}
         onOpenConsole={onOpenConsole}
         projectsAsPicker={projectsAsPicker}
+        accountSlot={accountSlot}
         onOpenSettings={openSettings}
         onToggleSidebar={onToggleSidebar}
       />

@@ -24,6 +24,7 @@ import { isMobileViewport } from "../console/state"
 import ensoWhite from "../console/assets/enso.svg"
 import ensoInk from "../console/assets/enso-ink.svg"
 import { LoginGate, type AuthMode } from "./LoginGate"
+import { AccountChip } from "./AccountChip"
 
 export default function V2Design() {
   const { resolvedMode } = useTheme()
@@ -104,6 +105,9 @@ export default function V2Design() {
         projectsAsPicker
         shortModelName
         contextualTools
+        accountSlot={
+          <AccountChip onOpenBilling={openConsole} onOpenSettings={openConsole} />
+        }
         heroGreetingNode={
           <span className="v2-hero-mark">
             <img src={light ? ensoInk : ensoWhite} alt="" aria-hidden="true" />

@@ -3,7 +3,7 @@
  * Ported from marketing/llm-interface.html lines 4212-4410 plus the sidebar
  * behaviors in the chat script (pin/delete, section fold, resize, flash).
  */
-import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from "react"
+import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent, type ReactNode } from "react"
 import ensoWhite from "../assets/enso.svg"
 import ensoInk from "../assets/enso-ink.svg"
 import type { ChatItem, Project } from "../state"
@@ -18,6 +18,8 @@ export interface AgentSidebarProps {
    * unfolds a tree. Off everywhere else, which leaves the section exactly as it was.
    */
   projectsAsPicker?: boolean
+  /** V2: an account control directly under the lockup. Omitted elsewhere. */
+  accountSlot?: ReactNode
   activeChatId: string | null
   newChatActive: boolean
   isMobile: boolean
@@ -141,6 +143,7 @@ export function AgentSidebar(props: AgentSidebarProps) {
     chats,
     projects,
     projectsAsPicker,
+    accountSlot,
     activeChatId,
     newChatActive,
     isMobile,
@@ -229,6 +232,7 @@ export function AgentSidebar(props: AgentSidebarProps) {
           <SidebarFoldIcon />
         </button>
       </div>
+      {accountSlot}
       <div className="sidebar-resizer" id="sidebar-resizer" title="Drag to resize" ref={resizerRef}></div>
 
       <nav className="sidebar-nav">

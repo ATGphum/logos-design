@@ -610,3 +610,178 @@
   overflow: visible;
   text-overflow: clip;
 }
+
+/* ===== Account chip, top of the chats column ===== */
+.v2-root .v2-acct {
+  position: relative;
+  padding: 0 10px 6px;
+}
+
+.v2-root .v2-acct-chip {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 7px 9px;
+  border: none;
+  border-radius: 11px;
+  background: none;
+  color: var(--side-fg);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 510;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.v2-root .v2-acct-chip:hover,
+.v2-root .v2-acct.open .v2-acct-chip {
+  background: var(--side-hover);
+  color: var(--side-fg-strong);
+}
+
+.v2-root .v2-acct-ava {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--color-surface, #2a2825);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: var(--side-fg-strong);
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.v2-root .v2-acct-ava.lg {
+  width: 36px;
+  height: 36px;
+  font-size: 14px;
+}
+
+.v2-root .v2-acct-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.v2-root .v2-acct-caret {
+  flex: none;
+  display: flex;
+  opacity: 0.5;
+  transition: transform 0.18s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+.v2-root .v2-acct-caret svg {
+  width: 14px;
+  height: 14px;
+}
+.v2-root .v2-acct.open .v2-acct-caret {
+  transform: rotate(180deg);
+}
+
+.v2-root .v2-acct-menu {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: calc(100% - 2px);
+  z-index: 40;
+  padding: 8px;
+  border-radius: 14px;
+  background: var(--color-surface, #1a1a1a);
+  border: 1px solid var(--side-border, rgba(255, 255, 255, 0.12));
+  box-shadow: 0 20px 50px -18px rgba(0, 0, 0, 0.75);
+  animation: v2-pick-in 0.16s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+
+.v2-root .v2-acct-head {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 6px 7px 10px;
+}
+.v2-root .v2-acct-who {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.v2-root .v2-acct-who b {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--side-fg-strong);
+}
+.v2-root .v2-acct-who span {
+  font-size: 11.5px;
+  font-family: var(--font-mono);
+  opacity: 0.5;
+}
+
+.v2-root .v2-acct-tag {
+  margin: 0 7px 8px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  display: inline-block;
+}
+
+.v2-root .v2-acct-credit {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 0 7px 4px;
+  padding: 8px 0 2px;
+}
+.v2-root .v2-acct-credit-l {
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+.v2-root .v2-acct-credit-v {
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--side-fg-strong);
+}
+
+.v2-root .v2-acct-sep {
+  height: 1px;
+  margin: 8px 0;
+  background: var(--side-border, rgba(255, 255, 255, 0.1));
+}
+
+.v2-root .v2-acct-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 11px;
+  border: none;
+  border-radius: 9px;
+  background: none;
+  color: var(--side-fg);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 510;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.v2-root .v2-acct-row:hover {
+  background: var(--side-hover);
+  color: var(--side-fg-strong);
+}
+.v2-root .v2-acct-row svg {
+  width: 17px;
+  height: 17px;
+  flex: none;
+}
+.v2-root .v2-acct-out {
+  opacity: 0.6;
+}

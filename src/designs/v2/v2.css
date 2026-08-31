@@ -1245,3 +1245,45 @@
   margin-right: -13px;
   padding-right: 7px;
 }
+
+/* ===== Hero bar: one flat grey ===== */
+/* The fill was a blurred white rectangle sitting behind a translucent bar — a blur is
+   brightest at its centre and falls away at the edges, so the bar read as a gradient
+   that thinned toward both ends. A solid fill and no backdrop gives one even grey. */
+.v2-root .input-bar-wrap.in-hero .input-bar::before {
+  display: none;
+}
+.v2-root .input-bar-wrap.in-hero .input-bar {
+  background: #131313;
+  box-shadow: none;
+}
+.v2-root .input-bar-wrap.in-hero .input-bar:focus-within {
+  background: #171717;
+}
+.v2-root.light .input-bar-wrap.in-hero .input-bar {
+  background: #f0eee6;
+  box-shadow: none;
+}
+
+/* ===== Glyphs hand over instantly, so they never double ===== */
+/* The column and the rail cross-faded, and since their glyphs now sit in exactly the
+   same places, both were drawn at partial opacity over one another mid-fold. Two half-
+   opaque copies do not sum to one opaque one, so the pair brightened and dipped as they
+   crossed — the flicker, and the difference in brightness between them.
+   With the positions coincident a fade buys nothing: switching outright is invisible,
+   and only ever one copy is on screen. The chat list keeps its fade, since it has no
+   counterpart in the rail and would otherwise vanish abruptly. */
+.v2-root .collapsed-rail,
+.v2-root.sidebar-collapsed .collapsed-rail,
+.v2-root .collapsed-settings,
+.v2-root.sidebar-collapsed .collapsed-settings {
+  transition: opacity 0s, visibility 0s;
+}
+.v2-root .sidebar > .sidebar-logo,
+.v2-root .sidebar > .sidebar-nav,
+.v2-root .sidebar > .sidebar-footer {
+  transition: opacity 0s;
+}
+.v2-root .sidebar > .sidebar-section {
+  transition: opacity 0.16s ease;
+}

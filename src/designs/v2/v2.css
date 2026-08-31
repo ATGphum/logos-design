@@ -1837,17 +1837,19 @@
 
 /* ===== The thumb is a thin white line in the seam ===== */
 .v2-root #recent-list::-webkit-scrollbar {
-  width: 3px;
+  width: 2px;
 }
 .v2-root #recent-list::-webkit-scrollbar-track {
   background: transparent;
 }
+/* full radius on a 2px bar rounds the ends to a point, which is as close as a native
+   thumb gets to tapering — its width cannot vary along its own length */
 .v2-root:not(.light) #recent-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.92);
   border-radius: 999px;
 }
 .v2-root:not(.light) .sidebar:hover #recent-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.75);
+  background: #ffffff;
 }
 
 /* ===== The seam glows rather than rules ===== */
@@ -1866,5 +1868,7 @@
   );
   clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
   filter: blur(0.4px);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.14);
+  /* biased left and tighter, so the bloom sits on the column's edge instead of spilling
+     out across the page */
+  box-shadow: -2px 0 6px rgba(255, 255, 255, 0.13);
 }

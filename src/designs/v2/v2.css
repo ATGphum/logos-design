@@ -1809,13 +1809,37 @@
   top: 0;
   bottom: 0;
   width: 3px;
+  /* Measured against the column: the nav ends at 19% and the chat list at 95%, so the
+     seam is nothing beside New chat / Search / Console / Projects, comes up through the
+     first chats, and is gone again before the last of them. */
   background: linear-gradient(
     to bottom,
     rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.05) 18%,
-    rgba(255, 255, 255, 0.13) 50%,
-    rgba(255, 255, 255, 0.05) 82%,
+    rgba(255, 255, 255, 0) 20%,
+    rgba(255, 255, 255, 0.13) 34%,
+    rgba(255, 255, 255, 0.13) 72%,
+    rgba(255, 255, 255, 0) 88%,
     rgba(255, 255, 255, 0) 100%
   );
-  clip-path: polygon(0% 50%, 100% 6%, 100% 94%, 0% 50%);
+  /* a true vertical lens — the earlier polygon was a horizontal wedge, full height at the
+     right edge and pointed at the left, which tapers across the width rather than along
+     the run. This one is 0 wide at both ends and 3px across the middle. */
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+/* ===== The scroll thumb rides in the seam ===== */
+/* Both already sit at x=245-248; the thumb was just invisible until hover. Standing
+   visible and toned to match, it reads as the seam thickening where you are in the list
+   rather than as a second line beside it. */
+.v2-root:not(.light) #recent-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+}
+.v2-root:not(.light) .sidebar:hover #recent-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+}
+.v2-root:not(.light) #recent-list {
+  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+}
+.v2-root:not(.light) .sidebar:hover #recent-list {
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
 }

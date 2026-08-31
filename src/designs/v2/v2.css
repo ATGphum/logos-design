@@ -378,6 +378,13 @@
    labels use max-width. */
 .v2-root .sidebar {
   max-width: var(--sidebar-width);
+  /* min-width has to go, not just be animated. The column carries
+     min-width: var(--sidebar-width), and the collapsed rule drops it to 0 with
+     !important — so on the way *out* it springs back to 292px the instant the class is
+     removed, and min-width beats max-width. The result was max-width easing 0 -> 292
+     over 280ms behind a box that was already fully open: the fold-in animated and the
+     fold-out did not. Pinning it to 0 leaves max-width in sole charge of both. */
+  min-width: 0;
   transition: max-width var(--v2-fold), opacity 0.14s ease;
 }
 .v2-root.sidebar-collapsed .sidebar {
@@ -611,10 +618,10 @@
   text-overflow: clip;
 }
 
-/* ===== Account chip, top of the chats column ===== */
+/* ===== Account chip, chats column footer ===== */
 .v2-root .v2-acct {
   position: relative;
-  padding: 0 10px 6px;
+  width: 100%;
 }
 
 .v2-root .v2-acct-chip {
@@ -681,19 +688,31 @@
 .v2-root .v2-acct.open .v2-acct-caret {
   transform: rotate(180deg);
 }
+.v2-root .v2-acct-caret {
+  transform: rotate(180deg);
+}
+.v2-root .v2-acct.open .v2-acct-caret {
+  transform: rotate(0deg);
+}
 
 .v2-root .v2-acct-menu {
   position: absolute;
-  left: 10px;
-  right: 10px;
-  top: calc(100% - 2px);
+  left: 0;
+  right: 0;
+  bottom: calc(100% + 6px);
   z-index: 40;
   padding: 8px;
   border-radius: 14px;
   background: var(--color-surface, #1a1a1a);
   border: 1px solid var(--side-border, rgba(255, 255, 255, 0.12));
   box-shadow: 0 20px 50px -18px rgba(0, 0, 0, 0.75);
-  animation: v2-pick-in 0.16s cubic-bezier(0.33, 0.45, 0.25, 1);
+  animation: v2-acct-in 0.16s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+@keyframes v2-acct-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
 }
 
 .v2-root .v2-acct-head {

@@ -18,7 +18,7 @@ export interface AgentSidebarProps {
    * unfolds a tree. Off everywhere else, which leaves the section exactly as it was.
    */
   projectsAsPicker?: boolean
-  /** V2: an account control directly under the lockup. Omitted elsewhere. */
+  /** V2: an account control in the footer, in the Settings button's place. */
   accountSlot?: ReactNode
   activeChatId: string | null
   newChatActive: boolean
@@ -232,7 +232,6 @@ export function AgentSidebar(props: AgentSidebarProps) {
           <SidebarFoldIcon />
         </button>
       </div>
-      {accountSlot}
       <div className="sidebar-resizer" id="sidebar-resizer" title="Drag to resize" ref={resizerRef}></div>
 
       <nav className="sidebar-nav">
@@ -430,10 +429,14 @@ export function AgentSidebar(props: AgentSidebarProps) {
       </div>
 
       <div className="sidebar-footer">
-        <button className="nav-btn" onClick={onOpenSettings}>
-          <GearIcon />
-          Settings
-        </button>
+        {/* V2 puts the account here and folds Settings into its menu; without the slot
+            the footer is the Settings button, as before. */}
+        {accountSlot ?? (
+          <button className="nav-btn" onClick={onOpenSettings}>
+            <GearIcon />
+            Settings
+          </button>
+        )}
         {/* mobile: new-chat bubble next to the settings bubble */}
         {isMobile ? (
           <button className="nav-btn mfoot-new" title="New chat" onClick={onNewChat}>

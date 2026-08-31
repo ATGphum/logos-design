@@ -106,7 +106,12 @@ export default function V2Design() {
         shortModelName
         contextualTools
         accountSlot={
-          <AccountChip onOpenBilling={openConsole} onOpenSettings={openConsole} />
+          <AccountChip
+            onOpenBilling={openConsole}
+            onOpenSettings={openConsole}
+            light={light}
+            onToggleLight={() => setLight((v) => !v)}
+          />
         }
         heroGreetingNode={
           <span className="v2-hero-mark">

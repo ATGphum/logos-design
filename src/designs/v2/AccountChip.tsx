@@ -20,23 +20,39 @@ const Chevron = () => (
   </svg>
 )
 
+const SunGlyph = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="4.2" />
+    <path d="M12 2v2.4M12 19.6V22M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2 12h2.4M19.6 12H22M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7" />
+  </svg>
+)
+
+const MoonGlyph = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+  </svg>
+)
+
 interface AccountChipProps {
   /** the console's Billing panel, so the two surfaces reach the same place */
   onOpenBilling: () => void
   onOpenSettings: () => void
+  light: boolean
+  onToggleLight: () => void
 }
 
 /**
- * V2: the signed-in user, at the top of the chats column.
+ * V2: the signed-in user, in the chats column footer where Settings used to sit.
  *
  * Identity matches the console's Profile drawer on purpose — same name, org and credit —
  * so the agent and the control plane never disagree about who you are. Settings and
  * Billing are the two places you actually go from an account menu, so they are here
- * rather than only in the console's nav.
+ * rather than only in the console's nav. Theme is a preference, so it lives here too
+ * and leaves the topbar.
  *
  * Fixture data; no real account is involved.
  */
-export function AccountChip({ onOpenBilling, onOpenSettings }: AccountChipProps) {
+export function AccountChip({ onOpenBilling, onOpenSettings, light, onToggleLight }: AccountChipProps) {
   const [open, setOpen] = useState(false)
   const wrapRef = useRef<HTMLDivElement>(null)
 
@@ -100,6 +116,13 @@ export function AccountChip({ onOpenBilling, onOpenSettings }: AccountChipProps)
           >
             <CardIcon />
             Billing
+          </button>
+
+          {/* the theme control lives here rather than in the topbar — it is a preference,
+              which is what this menu is for */}
+          <button className="v2-acct-row" role="menuitem" onClick={onToggleLight}>
+            {light ? <MoonGlyph /> : <SunGlyph />}
+            {light ? "Dark mode" : "Light mode"}
           </button>
 
           <div className="v2-acct-sep" />

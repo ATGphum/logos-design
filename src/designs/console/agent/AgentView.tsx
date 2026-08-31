@@ -74,7 +74,7 @@ export interface AgentViewProps {
    * for them to act on. Omitted elsewhere, where both are always present.
    */
   contextualTools?: boolean
-  /** V2: an account control directly under the sidebar lockup. Omitted elsewhere. */
+  /** V2: an account control in the sidebar footer. Omitted elsewhere. */
   accountSlot?: ReactNode
 }
 
@@ -444,11 +444,14 @@ export function AgentView(props: AgentViewProps) {
                 </button>
               </>
             )}
+            {/* V2 moves this into the account menu */}
+            {accountSlot ? null : (
             <button id="mode-toggle" onClick={onToggleLight} title="Toggle light / dark">
               <svg id="mode-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 {light ? <SunPaths /> : <MoonPath />}
               </svg>
             </button>
+            )}
           </div>
         </div>
 

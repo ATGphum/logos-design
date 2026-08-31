@@ -1088,3 +1088,49 @@
 .v2-root:not(.light) .section-item.active:hover {
   background: rgba(255, 255, 255, 0.1);
 }
+
+/* ===== Brighter hero bar outline ===== */
+.v2-root .input-bar-wrap.in-hero .input-bar {
+  border-color: rgba(255, 255, 255, 0.17);
+}
+.v2-root .input-bar-wrap.in-hero .input-bar:focus-within {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ===== Fold control is a plain left chevron ===== */
+/* The panel glyph read as a diagram of the sidebar rather than an instruction. The
+   chevron already existed as a hover hint; it becomes the control itself, in place,
+   rather than an ornament that slides in beside one. */
+.v2-root .sidebar-fold > svg {
+  display: none;
+}
+.v2-root .fold-arrow {
+  position: static;
+  opacity: 0.65;
+  transform: none;
+  pointer-events: auto;
+  transition: opacity 0.15s ease;
+}
+.v2-root .sidebar-fold:hover .fold-arrow {
+  opacity: 1;
+  transform: none;
+}
+.v2-root .fold-arrow svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 1.6;
+}
+
+/* ===== Open, the lockup is the word; folded, it is the mark ===== */
+/* The rail has no room for type, so the mark carries it there — but with the column
+   open there is space for the wordmark, and it says more than the glyph does. */
+.v2-root .sidebar-logo img.logo-img {
+  display: none;
+}
+.v2-root .sidebar-logo .logo-word {
+  display: block;
+  /* onto the glyph axis: the nav icons start their box at x=21 */
+  margin-left: 5px;
+  font-size: 20px;
+  letter-spacing: 0.34em;
+}

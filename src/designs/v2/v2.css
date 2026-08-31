@@ -1715,3 +1715,40 @@
 .v2-root .sidebar-footer {
   padding-top: 18px;
 }
+
+/* ===== The column's edge stops short of the corners ===== */
+/* A full-height rule reads as a frame; inset top and bottom it reads as a seam between
+   two surfaces, which is what it is. */
+.v2-root .sidebar {
+  position: relative;
+  border-right: none;
+}
+.v2-root:not(.light) .sidebar::after {
+  content: "";
+  position: absolute;
+  top: 22px;
+  bottom: 22px;
+  right: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+
+/* ===== The page darkens away from the column ===== */
+/* The column keeps its tone and the page falls off to true black on the right, so the
+   two surfaces are read as lit from the same side rather than as one flat field. The
+   gradient's first 14% sits under the column, hence starting it at the column's own
+   value — the visible part begins already stepping down. */
+.v2-root:not(.light) {
+  --color-bg: #000000;
+}
+.v2-root:not(.light) {
+  background-color: #000000;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"),
+    linear-gradient(90deg, #0a0a0a 0%, #060606 26%, #020202 52%, #000000 74%);
+  background-repeat: repeat, no-repeat;
+}
+/* the column stays the brighter of the two */
+.v2-root:not(.light) {
+  --side-bg: #0c0c0c;
+}

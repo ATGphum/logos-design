@@ -3,12 +3,16 @@ import { useState } from "react"
 /**
  * Goal mode — the long-thinking toggle, under the composer.
  *
- * A slab that nearly fills its channel and swooshes end to end: grey and parked left
- * when off, violet and parked right when on. The travel and the colour change carry the
- * state together, so there is nothing to read and nothing to infer.
+ * Off, the bulb sits left in an empty channel; on, it travels right and the whole pane
+ * takes the violet. Both the position and the colour carry the state, so it is never
+ * ambiguous which way it is set.
  *
- * Violet is the only colour in V2 — that is deliberate. Nothing else competes with it,
- * so it reads as a state rather than as decoration.
+ * The stretch during travel is done entirely in CSS by transitioning the bulb's two
+ * horizontal insets on different delays — see the geometry note in v2.css. Nothing here
+ * animates anything.
+ *
+ * Violet is the only colour in V2, deliberately: it reads as a mode the agent is in
+ * rather than as decoration.
  */
 export function GoalMode() {
   const [on, setOn] = useState(false)
@@ -22,31 +26,9 @@ export function GoalMode() {
       title={on ? "Goal mode is on — the agent will think longer" : "Goal mode — let the agent think longer"}
     >
       <span className="v2-goal-track" aria-hidden="true">
-        {/* Both blobs live inside the filtered layer, so their alpha is blurred and then
-            hard-clipped: where they overlap they read as one body, and as the bulb pulls
-            away a neck stretches between them and snaps. That merge is the whole effect —
-            shadows and gradients cannot produce it. */}
-        <span className="v2-goal-goo">
-          <span className="v2-goal-fill" />
-          <span className="v2-goal-knob" />
-        </span>
+        <span className="v2-goal-knob" />
       </span>
       <span className="v2-goal-label">Goal mode</span>
-
-      {/* the goo filter itself: blur the alpha, then push it through a steep ramp so the
-          soft edges resolve back to a crisp silhouette */}
-      <svg className="v2-goal-defs" aria-hidden="true" focusable="false">
-        <defs>
-          <filter id="v2-goo">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="4.5" result="blur" />
-            <feColorMatrix
-              in="blur"
-              type="matrix"
-              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -11"
-            />
-          </filter>
-        </defs>
-      </svg>
     </button>
   )
 }

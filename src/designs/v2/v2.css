@@ -1995,722 +1995,181 @@
       border-box;
 }
 
-/* ===== Goal mode ===== */
-/* A switch you could press, not a pill that changes colour. The knob parks hard left
-   against an empty track when off — that gap is the whole point, since a toggle whose
-   two states differ only in tint is guessable rather than obvious.
-   Violet is the only colour in V2, deliberately, so it reads as a mode the agent is in
-   rather than decoration. */
+/* ===== Goal mode =====
+ *
+ * One block. This control had eight generations of stacked overrides appended to it, each
+ * partially defeating the last — which is why nothing lined up. Everything below is the
+ * only description of it.
+ *
+ * Depth comes from the hero bar's method, not from gloss: a translucent fill on
+ * padding-box under a gradient on border-box, so the rim is lit along the top and falls
+ * away toward the bottom. Nothing is painted onto the face. An inset shadow under the top
+ * rim sinks the channel, and the bulb casts into it — the control reads as a recess with
+ * something sitting in it rather than as a shape with a highlight drawn on.
+ *
+ * Still matte and still transparent: the fill is a few percent white over a 16px backdrop
+ * blur, so the ground shows through and moves under it.
+ *
+ * The liquid is in the travel, not in a filter. The bulb is pinned by BOTH insets, and
+ * they transition on different delays: the leading edge leaves immediately, the trailing
+ * edge follows 0.1s later. Mid-travel the circle is a stretched lozenge; at rest it is a
+ * circle again. Which edge leads is swapped between the two rules, so the stretch reads
+ * the same going out and coming back.
+ *
+ * Geometry — track 94x38 border-box (2.47:1, the reference's proportion), 1px border, so
+ * the padding box is 92x36. Bulb inset 3px all round => 30px circle: left 3/right 59 off,
+ * left 59/right 3 on, 56px of travel. Resizing the track means moving the far inset by
+ * the same amount or the bulb stops being round.
+ */
 .v2-root .v2-goal {
   --v2-violet: 150, 122, 255;
   display: inline-flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
-  /* .hero-scale is a flex column with a 38px gap, so a positive margin here lands the
-     switch 49px under the bar. Negative margin pulls it back to sitting with the bar
-     rather than with the page. */
-  margin: -24px auto 0;
-  padding: 6px 4px;
-  border: none;
-  background: none;
-  color: rgba(255, 255, 255, 0.5);
-  font-family: var(--app-font-sans);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: color 0.3s cubic-bezier(0.33, 0.45, 0.25, 1);
-}
-.v2-root .v2-goal:hover {
-  color: rgba(255, 255, 255, 0.78);
-}
-.v2-root .v2-goal.on {
-  color: rgb(214, 205, 255);
-}
-
-/* the track: recessed, with a lip of light along its top edge */
-.v2-root .v2-goal-track {
-  position: relative;
-  flex: none;
-  width: 46px;
-  height: 26px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, #0a0a0a 0%, #171717 100%);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9), inset 0 -1px 0 rgba(255, 255, 255, 0.05),
-    0 1px 0 rgba(255, 255, 255, 0.05);
-  overflow: hidden;
-  transition: box-shadow 0.34s cubic-bezier(0.33, 0.45, 0.25, 1);
-}
-
-/* the violet floods in behind the knob rather than appearing all at once */
-.v2-root .v2-goal-fill {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(180deg, rgba(var(--v2-violet), 0.95) 0%, rgba(110, 86, 214, 0.95) 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 -2px 6px rgba(0, 0, 0, 0.35);
-  opacity: 0;
-  transform: scale(0.86);
-  transition: opacity 0.3s cubic-bezier(0.33, 0.45, 0.25, 1),
-    transform 0.42s cubic-bezier(0.34, 1.4, 0.64, 1);
-}
-.v2-root .v2-goal.on .v2-goal-fill {
-  opacity: 1;
-  transform: scale(1);
-}
-
-/* the knob: domed, lit from above, with a shadow under it so it sits proud of the track */
-.v2-root .v2-goal-knob {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 20px;
-  height: 20px;
-  border-radius: 999px;
-  background: radial-gradient(120% 120% at 50% 18%, #ffffff 0%, #e8e6f2 46%, #b9b6c6 100%);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6), 0 0 0 0.5px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 2px rgba(0, 0, 0, 0.18);
-  /* a touch of overshoot as it lands — the part that makes it feel like a switch */
-  transition: transform 0.4s cubic-bezier(0.34, 1.45, 0.64, 1),
-    box-shadow 0.34s cubic-bezier(0.33, 0.45, 0.25, 1);
-}
-.v2-root .v2-goal.on .v2-goal-knob {
-  transform: translateX(20px);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.55), 0 0 0 0.5px rgba(60, 40, 140, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 2px rgba(60, 40, 140, 0.2);
-}
-.v2-root .v2-goal:active .v2-goal-knob {
-  width: 23px;
-}
-.v2-root .v2-goal.on {
-  --lift: 1;
-}
-.v2-root .v2-goal.on .v2-goal-track {
-  box-shadow: inset 0 1px 2px rgba(40, 24, 110, 0.7), 0 0 20px -3px rgba(var(--v2-violet), 0.55),
-    0 1px 0 rgba(255, 255, 255, 0.06);
-}
-
-.v2-root.light .v2-goal {
-  color: rgba(26, 25, 22, 0.58);
-}
-.v2-root.light .v2-goal-track {
-  background: linear-gradient(180deg, #dedbd0 0%, #efece2 100%);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.18), 0 1px 0 rgba(255, 255, 255, 0.6);
-}
-.v2-root.light .v2-goal.on {
-  color: rgb(72, 50, 176);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .v2-root .v2-goal,
-  .v2-root .v2-goal-knob,
-  .v2-root .v2-goal-fill,
-  .v2-root .v2-goal-track {
-    transition: none;
-  }
-}
-
-/* ===== Goal mode: its own plate, engraved, lit by a sweep ===== */
-/* The switch was floating loose on the page. It sits in a plate of its own now — a
-   recessed panel with the label cut into it, so the control reads as a discrete object
-   rather than two elements that happen to be adjacent. */
-.v2-root .v2-goal {
-  position: relative;
-  padding: 7px 20px 7px 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.035) 0%, rgba(255, 255, 255, 0.012) 55%, rgba(0, 0, 0, 0.2) 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), inset 0 -1px 0 rgba(0, 0, 0, 0.5),
-    0 1px 0 rgba(255, 255, 255, 0.04);
-  overflow: hidden;
-  transition: color 0.3s cubic-bezier(0.33, 0.45, 0.25, 1),
-    border-color 0.34s cubic-bezier(0.33, 0.45, 0.25, 1),
-    box-shadow 0.34s cubic-bezier(0.33, 0.45, 0.25, 1);
-}
-
-/* the label is cut in rather than printed on: a dark edge above, a light one below */
-.v2-root .v2-goal-label {
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.85), 0 1px 0 rgba(255, 255, 255, 0.07);
-}
-
-.v2-root .v2-goal.on {
-  border-color: rgba(var(--v2-violet), 0.45);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 -1px 0 rgba(0, 0, 0, 0.5),
-    inset 0 0 18px -8px rgba(var(--v2-violet), 0.9), 0 0 24px -6px rgba(var(--v2-violet), 0.5);
-}
-.v2-root .v2-goal.on .v2-goal-label {
-  text-shadow: 0 -1px 0 rgba(20, 10, 60, 0.9), 0 0 12px rgba(var(--v2-violet), 0.55);
-}
-
-/* switching on, light runs across the plate once and leaves it lit */
-.v2-root .v2-goal::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  opacity: 0;
-  background: linear-gradient(
-    104deg,
-    transparent 28%,
-    rgba(255, 255, 255, 0.16) 45%,
-    rgba(var(--v2-violet), 0.42) 53%,
-    rgba(255, 255, 255, 0.1) 61%,
-    transparent 78%
-  );
-}
-.v2-root .v2-goal.on::after {
-  animation: v2-goal-sweep 0.7s cubic-bezier(0.33, 0.45, 0.25, 1);
-}
-@keyframes v2-goal-sweep {
-  0% {
-    opacity: 0;
-    transform: translateX(-70%);
-  }
-  18% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(70%);
-  }
-}
-
-.v2-root.light .v2-goal {
-  border-color: rgba(26, 25, 22, 0.14);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(26, 25, 22, 0.03) 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 -1px 0 rgba(26, 25, 22, 0.12);
-}
-.v2-root.light .v2-goal-label {
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .v2-root .v2-goal.on::after {
-    animation: none;
-  }
-}
-
-/* ===== Goal mode: a long throw, not a phone toggle ===== */
-/* A 46x26 pill with a domed round knob is the iOS switch, so that is what it read as.
-   This is a channel: wide, squared off, with a slab that travels its whole length. The
-   distance is the point — a long throw makes the two states unmistakable and turning it
-   on feel like a deliberate act rather than a tap. Label sits under it. */
-.v2-root .v2-goal {
-  flex-direction: column;
-  gap: 9px;
-  padding: 0;
-  border: none;
-  background: none;
-  box-shadow: none;
-  overflow: visible;
-}
-.v2-root .v2-goal::after {
-  display: none;
-}
-
-.v2-root .v2-goal-track {
-  width: 188px;
-  height: 30px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: linear-gradient(180deg, #070707 0%, #131313 100%);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.95), inset 0 -1px 0 rgba(255, 255, 255, 0.05),
-    0 1px 0 rgba(255, 255, 255, 0.05);
-}
-
-.v2-root .v2-goal-fill {
-  border-radius: 7px;
-  background: linear-gradient(180deg, rgba(var(--v2-violet), 0.9) 0%, rgba(104, 80, 208, 0.92) 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -2px 6px rgba(0, 0, 0, 0.4);
-  transform: scaleX(0);
-  transform-origin: left center;
-  opacity: 1;
-  transition: transform 0.52s cubic-bezier(0.33, 0.45, 0.25, 1);
-}
-.v2-root .v2-goal.on .v2-goal-fill {
-  transform: scaleX(1);
-}
-
-/* a slab with a milled grip, not a dome */
-.v2-root .v2-goal-knob {
-  top: 3px;
-  left: 3px;
-  width: 58px;
-  height: 22px;
-  border-radius: 5px;
-  background: linear-gradient(180deg, #f4f3f7 0%, #d9d7e2 52%, #b3b0c0 100%);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.7), 0 0 0 0.5px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 1px rgba(0, 0, 0, 0.22);
-  transition: transform 0.52s cubic-bezier(0.33, 0.45, 0.25, 1),
-    box-shadow 0.34s cubic-bezier(0.33, 0.45, 0.25, 1);
-}
-/* three milled lines down the middle of the slab */
-.v2-root .v2-goal-knob::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: repeating-linear-gradient(
-    90deg,
-    transparent 0 26px,
-    rgba(0, 0, 0, 0.22) 26px 27px,
-    rgba(255, 255, 255, 0.7) 27px 28px,
-    transparent 28px 32px
-  );
-  opacity: 0.9;
-}
-.v2-root .v2-goal.on .v2-goal-knob {
-  transform: translateX(124px);
-}
-.v2-root .v2-goal:active .v2-goal-knob {
-  width: 58px;
-}
-
-.v2-root .v2-goal.on .v2-goal-track {
-  border-color: rgba(var(--v2-violet), 0.5);
-  box-shadow: inset 0 2px 4px rgba(30, 18, 90, 0.7), 0 0 22px -4px rgba(var(--v2-violet), 0.5),
-    0 1px 0 rgba(255, 255, 255, 0.06);
-}
-
-/* label under the channel, cut into the page */
-.v2-root .v2-goal-label {
-  font-size: 10.5px;
-  letter-spacing: 0.26em;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 255, 255, 0.06);
-}
-
-.v2-root.light .v2-goal-track {
-  border-color: rgba(26, 25, 22, 0.16);
-  background: linear-gradient(180deg, #dcd9ce 0%, #f0ede3 100%);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.16), 0 1px 0 rgba(255, 255, 255, 0.7);
-}
-
-/* ===== Goal mode, flat ===== */
-/* The gloss was the problem: gradients, a milled grip, deep inner shadows — skeuomorphic
-   detailing that reads as dated however well it is drawn. This is flat, the way the
-   reference is: a pill channel with position dots, a plain white disc, a solid fill. No
-   highlight, no bevel, one shadow under the knob and nothing else. */
-.v2-root .v2-goal-track {
-  width: 184px;
-  height: 14px;
-  border: none;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.09);
-  background-image: radial-gradient(circle at 24% 50%, rgba(255, 255, 255, 0.3) 1.4px, transparent 1.5px),
-    radial-gradient(circle at 44% 50%, rgba(255, 255, 255, 0.3) 1.4px, transparent 1.5px),
-    radial-gradient(circle at 64% 50%, rgba(255, 255, 255, 0.3) 1.4px, transparent 1.5px),
-    radial-gradient(circle at 84% 50%, rgba(255, 255, 255, 0.3) 1.4px, transparent 1.5px);
-  box-shadow: none;
-  overflow: visible;
-  transition: background-color 0.3s cubic-bezier(0.33, 0.45, 0.25, 1);
-}
-
-/* the fill is solid and stops under the knob, so the dots ahead of it stay visible */
-.v2-root .v2-goal-fill {
-  border-radius: 999px;
-  background: rgb(var(--v2-violet));
-  box-shadow: none;
-  transform-origin: left center;
-  transform: scaleX(0.12);
-  transition: transform 0.46s cubic-bezier(0.33, 0.45, 0.25, 1);
-}
-.v2-root .v2-goal.on .v2-goal-fill {
-  transform: scaleX(1);
-}
-
-/* a plain disc, riding proud of the channel */
-.v2-root .v2-goal-knob {
-  top: -4px;
-  left: 0;
-  width: 22px;
-  height: 22px;
-  border-radius: 999px;
-  background: #ffffff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
-  transition: transform 0.46s cubic-bezier(0.33, 0.45, 0.25, 1);
-}
-.v2-root .v2-goal-knob::after {
-  display: none;
-}
-.v2-root .v2-goal.on .v2-goal-knob {
-  transform: translateX(162px);
-}
-.v2-root .v2-goal:active .v2-goal-knob {
-  width: 22px;
-}
-.v2-root .v2-goal.on .v2-goal-track {
-  border-color: transparent;
-  background-color: rgba(var(--v2-violet), 0.22);
-  box-shadow: none;
-}
-
-/* the label stops pretending to be stamped metal */
-.v2-root .v2-goal-label {
-  font-size: 10.5px;
-  letter-spacing: 0.24em;
-  text-shadow: none;
-}
-
-.v2-root.light .v2-goal-track {
-  border: none;
-  background-color: rgba(26, 25, 22, 0.12);
-  box-shadow: none;
-}
-.v2-root.light .v2-goal-knob {
-  background: #ffffff;
-  box-shadow: 0 1px 3px rgba(26, 25, 22, 0.35);
-}
-
-/* ===== Goal mode sits in the bar's own surface ===== */
-/* It was a control floating on the page under the composer. It belongs to the composer,
-   so it lives in a tray of the same material — same fill, same lit top edge — tucked
-   directly beneath and narrower, so it reads as part of that object rather than a
-   neighbour of it. */
-.v2-root .v2-goal {
-  flex-direction: column;
-  align-items: flex-start;
   gap: 10px;
-  width: 236px;
-  margin: -30px auto 0;
-  padding: 13px 16px 15px;
-  border-radius: 16px;
+  margin: -14px auto 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.v2-root .v2-goal-track {
+  position: relative;
+  display: block;
+  width: 94px;
+  height: 38px;
+  border-radius: 999px;
   border: 1px solid transparent;
-  background:
-    linear-gradient(#131313, #131313) padding-box,
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018)) padding-box,
     linear-gradient(
-        to bottom,
-        rgba(255, 255, 255, 0.16) 0%,
-        rgba(255, 255, 255, 0.07) 40%,
+        180deg,
+        rgba(255, 255, 255, 0.26) 0%,
+        rgba(255, 255, 255, 0.11) 34%,
+        rgba(255, 255, 255, 0.05) 70%,
         rgba(255, 255, 255, 0.04) 100%
       )
       border-box;
-  box-shadow: none;
-  transition: background 0.34s cubic-bezier(0.33, 0.45, 0.25, 1);
-}
-.v2-root .v2-goal-label {
-  align-self: flex-start;
-  font-size: 10px;
-  letter-spacing: 0.26em;
-  color: rgba(255, 255, 255, 0.42);
-  transition: color 0.34s cubic-bezier(0.33, 0.45, 0.25, 1);
-}
-.v2-root .v2-goal.on .v2-goal-label {
-  color: rgba(var(--v2-violet), 0.95);
-}
-.v2-root .v2-goal-track {
-  width: 204px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  /* the recess: dark under the top rim, easing out by half depth */
+  box-shadow: inset 0 2px 5px -2px rgba(0, 0, 0, 0.65), inset 0 -1px 1px rgba(255, 255, 255, 0.04);
+  transition: background 0.42s cubic-bezier(0.33, 0.45, 0.25, 1),
+    box-shadow 0.42s cubic-bezier(0.33, 0.45, 0.25, 1);
 }
 
-/* ===== Liquid ===== */
-/* The knob leads on a curve with a little overshoot and the fill follows on a longer,
-   softer one, so the violet runs in behind it rather than moving with it. That lag is
-   what makes it read as fluid rather than as two things translating together. */
-.v2-root .v2-goal-knob {
-  transition: transform 0.44s cubic-bezier(0.34, 1.32, 0.64, 1);
-}
-.v2-root .v2-goal.on .v2-goal-knob {
-  transform: translateX(182px);
-}
-.v2-root .v2-goal-fill {
-  transition: transform 0.66s cubic-bezier(0.19, 1, 0.32, 1);
-}
-/* and the channel brightens as it fills */
+/* on: the pane takes the tint and the glow sits on the TRACK — concentric with it and
+   sharing its radius. It used to be on the button, which also contains the label, so the
+   halo was a rounded box drawn around the pair. That was the misalignment. */
 .v2-root .v2-goal.on .v2-goal-track {
-  background-color: rgba(var(--v2-violet), 0.2);
+  background: linear-gradient(180deg, rgba(var(--v2-violet), 0.2), rgba(var(--v2-violet), 0.09)) padding-box,
+    linear-gradient(
+        180deg,
+        rgba(var(--v2-violet), 0.6) 0%,
+        rgba(var(--v2-violet), 0.34) 34%,
+        rgba(var(--v2-violet), 0.2) 70%,
+        rgba(var(--v2-violet), 0.16) 100%
+      )
+      border-box;
+  box-shadow: inset 0 2px 5px -2px rgba(0, 0, 0, 0.45), inset 0 -1px 1px rgba(255, 255, 255, 0.05),
+    0 0 22px -6px rgba(var(--v2-violet), 0.55);
 }
 
-.v2-root.light .v2-goal {
-  background:
-    linear-gradient(#f0eee6, #f0eee6) padding-box,
-    linear-gradient(to bottom, rgba(26, 25, 22, 0.16) 0%, rgba(26, 25, 22, 0.08) 100%) border-box;
-}
-.v2-root.light .v2-goal-label {
-  color: rgba(26, 25, 22, 0.5);
-}
-
-/* ===== Binary, and rounder ===== */
-/* The dots came from the reference, where the control is stepped. This one is on or
-   off, so markers along the track suggest positions that do not exist. Plain channel.
-   The tray also takes the composer's own 26px radius rather than a squared 16 — it is
-   made of the same surface, so it should have the same corner. */
-.v2-root .v2-goal-track {
-  background-image: none;
-}
-.v2-root .v2-goal {
-  border-radius: 26px;
-  padding: 14px 18px 16px;
-}
-
-/* ===== Goal mode, small ===== */
-/* The tray was a 236px card wrapping a slider — far more furniture than an on/off needs.
-   The channel is the whole control now: short, embedded in the bar's surface, with a
-   slab that nearly fills it and swooshes end to end. Grey parked left, violet parked
-   right. The label sits outside and under it. */
-.v2-root .v2-goal {
-  flex-direction: column;
-  align-items: center;
-  gap: 7px;
-  width: auto;
-  margin: -26px auto 0;
-  padding: 0;
-  border: none;
-  background: none;
-  box-shadow: none;
-}
-
-.v2-root .v2-goal-track {
-  width: 124px;
-  height: 26px;
-  border-radius: 999px;
-  border: 1px solid transparent;
-  background:
-    linear-gradient(#101010, #101010) padding-box,
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.04) 100%) border-box;
-  background-image: none;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.8);
-  overflow: hidden;
-  transition: box-shadow 0.36s cubic-bezier(0.33, 0.45, 0.25, 1);
-}
-.v2-root .v2-goal-fill {
-  display: none;
-}
-
-/* the slab: half the channel, nearly its full height */
 .v2-root .v2-goal-knob {
+  position: absolute;
   top: 3px;
+  bottom: 3px;
   left: 3px;
-  width: 58px;
-  height: 18px;
+  right: 59px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.22);
-  box-shadow: none;
-  transition: transform 0.5s cubic-bezier(0.22, 1.02, 0.32, 1),
-    background 0.4s cubic-bezier(0.33, 0.45, 0.25, 1),
-    box-shadow 0.4s cubic-bezier(0.33, 0.45, 0.25, 1);
+  /* matte: a 6% top-to-bottom shift is form, not gloss — no specular, no bevel */
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.33), rgba(255, 255, 255, 0.26));
+  box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.75), 0 0 0 0.5px rgba(255, 255, 255, 0.06);
+  /* off state: on the way back `left` is the leading edge, so it goes first */
+  transition: left 0.5s cubic-bezier(0.42, 0.02, 0.18, 1),
+    right 0.5s cubic-bezier(0.42, 0.02, 0.18, 1) 0.1s,
+    background 0.42s cubic-bezier(0.33, 0.45, 0.25, 1),
+    box-shadow 0.42s cubic-bezier(0.33, 0.45, 0.25, 1);
 }
-.v2-root .v2-goal-knob::after {
-  display: none;
-}
+
 .v2-root .v2-goal.on .v2-goal-knob {
-  transform: translateX(60px);
-  background: rgb(var(--v2-violet));
-  box-shadow: 0 0 14px -2px rgba(var(--v2-violet), 0.85);
+  left: 59px;
+  right: 3px;
+  background: linear-gradient(180deg, rgba(168, 143, 255, 0.95), rgba(134, 104, 248, 0.92));
+  box-shadow: 0 2px 7px -2px rgba(0, 0, 0, 0.6), 0 0 14px -3px rgba(var(--v2-violet), 0.7),
+    0 0 0 0.5px rgba(255, 255, 255, 0.1);
+  /* going out `right` leads and `left` trails — mirror of the rule above */
+  transition: right 0.5s cubic-bezier(0.42, 0.02, 0.18, 1),
+    left 0.5s cubic-bezier(0.42, 0.02, 0.18, 1) 0.1s,
+    background 0.42s cubic-bezier(0.33, 0.45, 0.25, 1),
+    box-shadow 0.42s cubic-bezier(0.33, 0.45, 0.25, 1);
 }
-.v2-root .v2-goal.on .v2-goal-track {
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.8), 0 0 18px -6px rgba(var(--v2-violet), 0.6);
-}
+
+/* pressing settles the bulb deeper into the recess */
 .v2-root .v2-goal:active .v2-goal-knob {
-  width: 58px;
+  top: 4px;
+  bottom: 4px;
+  box-shadow: 0 1px 3px -1px rgba(0, 0, 0, 0.8);
 }
 
 .v2-root .v2-goal-label {
-  align-self: center;
-  font-size: 9.5px;
-  letter-spacing: 0.26em;
-  color: rgba(255, 255, 255, 0.38);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+  transition: color 0.42s cubic-bezier(0.33, 0.45, 0.25, 1);
 }
 .v2-root .v2-goal.on .v2-goal-label {
   color: rgba(var(--v2-violet), 0.9);
 }
 
+/* the goo filter is gone — the merge was one frame of the reference's animation, not the
+   thing it was showing. This keeps the leftover nodes from occupying space. */
+.v2-root .v2-goal-goo {
+  display: contents;
+}
+.v2-root .v2-goal-fill,
+.v2-root .v2-goal-defs {
+  display: none;
+}
+
 .v2-root.light .v2-goal-track {
-  background:
-    linear-gradient(#e6e3d9, #e6e3d9) padding-box,
-    linear-gradient(to bottom, rgba(26, 25, 22, 0.18) 0%, rgba(26, 25, 22, 0.06) 100%) border-box;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.14);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.3)) padding-box,
+    linear-gradient(180deg, rgba(26, 25, 22, 0.2) 0%, rgba(26, 25, 22, 0.1) 100%) border-box;
+  box-shadow: inset 0 2px 5px -2px rgba(26, 25, 22, 0.25);
 }
 .v2-root.light .v2-goal-knob {
-  background: rgba(26, 25, 22, 0.22);
+  background: linear-gradient(180deg, rgba(26, 25, 22, 0.38), rgba(26, 25, 22, 0.3));
 }
 .v2-root.light .v2-goal-label {
-  color: rgba(26, 25, 22, 0.45);
+  color: rgba(26, 25, 22, 0.42);
 }
 
-/* ===== The embedding is the button ===== */
-/* No slider inside a slider: the pill itself is the control. Off it is an empty recess;
-   switching it on, violet floods across from the left and fills it. The label stays
-   outside, under it. */
-.v2-root .v2-goal-knob {
-  display: none;
-}
-.v2-root .v2-goal-track {
-  width: 132px;
-  height: 28px;
-}
-.v2-root .v2-goal-fill {
-  display: block;
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: rgb(var(--v2-violet));
-  box-shadow: none;
-  opacity: 1;
-  transform: scaleX(0);
-  transform-origin: left center;
-  /* long and soft, so it reads as flooding rather than growing */
-  transition: transform 0.62s cubic-bezier(0.19, 1, 0.32, 1);
-}
-.v2-root .v2-goal.on .v2-goal-fill {
-  transform: scaleX(1);
-}
-.v2-root .v2-goal.on .v2-goal-track {
-  box-shadow: inset 0 1px 3px rgba(30, 18, 90, 0.6), 0 0 20px -5px rgba(var(--v2-violet), 0.65);
-}
-.v2-root .v2-goal:active .v2-goal-track {
-  transform: scale(0.985);
-}
-.v2-root .v2-goal-track {
-  transition: box-shadow 0.36s cubic-bezier(0.33, 0.45, 0.25, 1),
-    transform 0.18s cubic-bezier(0.33, 0.45, 0.25, 1);
+@media (prefers-reduced-motion: reduce) {
+  .v2-root .v2-goal-knob,
+  .v2-root .v2-goal-track,
+  .v2-root .v2-goal-label {
+    transition-duration: 0.01ms;
+    transition-delay: 0ms;
+  }
 }
 
-/* ===== Goal mode: a bulb travelling the channel ===== *
- * Final geometry, stated once so nothing drifts:
- *   channel  132 x 28, border-box, 1px border  -> 130 x 26 inside
- *   bulb     22px, inset 3px from the left     -> travel 130 - 22 - 6 = 102px
- * The bulb is centred with translateY(-50%) rather than a top offset, so the border can
- * change without knocking it off axis — that is what was misaligning it.
- * The glow is layered: a tight core, a mid halo and a wide bloom, each at low alpha.
- * A single large shadow is what reads as cheap; three stops falls off like light.
+/* ===== The open lockup sits on the glyph axis ===== *
+ * Measured: the wordmark's box started at x=21 and the nav glyphs at x=23, so LOGOS hung
+ * two pixels past the column of icons under it. The margin carries it onto their axis and
+ * the extra allowance below covers the font's own left side bearing, which is not part of
+ * the box. Bigger and lit harder — it is the one piece of type at the top of the column.
  */
-.v2-root .v2-goal-track {
-  position: relative;
-  box-sizing: border-box;
-  width: 132px;
-  height: 28px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: #0c0c0c;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.85);
-  overflow: hidden;
-  transition: border-color 0.4s cubic-bezier(0.33, 0.45, 0.25, 1),
-    box-shadow 0.4s cubic-bezier(0.33, 0.45, 0.25, 1);
+.v2-root .sidebar-logo .logo-word {
+  margin-left: 7px;
+  font-size: 23px;
+  color: #ffffff;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.75), 0 0 30px rgba(255, 255, 255, 0.42),
+    0 0 62px rgba(255, 255, 255, 0.2);
 }
-.v2-root .v2-goal-fill {
-  display: none;
-}
-
-.v2-root .v2-goal-knob {
-  display: block;
-  position: absolute;
-  left: 3px;
-  top: 50%;
-  width: 22px;
-  height: 22px;
-  border-radius: 999px;
-  background: radial-gradient(circle at 50% 44%, #6f6f78 0%, #4a4a52 58%, #35353c 100%);
-  box-shadow: 0 0 6px 0 rgba(255, 255, 255, 0.06);
-  transform: translate(0, -50%);
-  transition: transform 0.66s cubic-bezier(0.4, 0.02, 0.2, 1),
-    background 0.44s cubic-bezier(0.33, 0.45, 0.25, 1),
-    box-shadow 0.5s cubic-bezier(0.33, 0.45, 0.25, 1);
-}
-.v2-root .v2-goal-knob::after {
-  display: none;
-}
-
-.v2-root .v2-goal.on .v2-goal-knob {
-  transform: translate(102px, -50%);
-  background: radial-gradient(circle at 50% 40%, #ffffff 0%, #cdc0ff 26%, rgb(var(--v2-violet)) 62%, #6f55d8 100%);
-  box-shadow: 0 0 6px 0 rgba(var(--v2-violet), 0.95), 0 0 16px 2px rgba(var(--v2-violet), 0.5),
-    0 0 34px 6px rgba(var(--v2-violet), 0.22);
-}
-.v2-root .v2-goal.on .v2-goal-track {
-  border-color: rgba(var(--v2-violet), 0.32);
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.85), 0 0 20px -8px rgba(var(--v2-violet), 0.55);
-}
-
-/* label centred under the channel, on the same axis */
-.v2-root .v2-goal {
-  align-items: center;
-  gap: 8px;
-}
-.v2-root .v2-goal-label {
-  align-self: center;
-}
-
-.v2-root.light .v2-goal-track {
-  border-color: rgba(26, 25, 22, 0.16);
-  background: #e4e1d7;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.12);
-}
-.v2-root.light .v2-goal-knob {
-  background: radial-gradient(circle at 50% 44%, #ffffff 0%, #c9c6bb 60%, #adaa9f 100%);
-}
-
-/* ===== Goal mode: metaball ===== *
- * Geometry, stated once:
- *   channel  132 x 28 border-box, 1px border   -> 130 x 26 inside
- *   blobs    22px, both centred with translateY(-50%) so the border cannot shift them
- *   reservoir parked at left: 3px
- *   bulb travels 130 - 22 - 6 = 102px
- * The two sit inside a filtered layer whose alpha is blurred and then clipped hard, so
- * they merge into one body when close and draw a neck as the bulb pulls away. The glow
- * lives on the track, outside the filter — inside it, a shadow is just more alpha for
- * the ramp to crush.
- */
-.v2-root .v2-goal-defs {
-  position: absolute;
-  width: 0;
-  height: 0;
-  pointer-events: none;
-}
-
-.v2-root .v2-goal-goo {
-  position: absolute;
-  inset: 0;
-  filter: url(#v2-goo);
-}
-
-.v2-root .v2-goal-fill,
-.v2-root .v2-goal-knob {
-  display: block;
-  position: absolute;
-  top: 50%;
-  width: 22px;
-  height: 22px;
-  border-radius: 999px;
-  background: #55555e;
-  box-shadow: none;
-  transform: translate(0, -50%);
-  transition: transform 0.72s cubic-bezier(0.45, 0.03, 0.22, 1),
-    background 0.5s cubic-bezier(0.33, 0.45, 0.25, 1);
-}
-/* the reservoir stays home; only the bulb travels */
-.v2-root .v2-goal-fill {
-  left: 3px;
-}
-.v2-root .v2-goal-knob {
-  left: 3px;
-}
-.v2-root .v2-goal-knob::after {
-  display: none;
-}
-
-.v2-root .v2-goal.on .v2-goal-knob {
-  transform: translate(102px, -50%);
-}
-.v2-root .v2-goal.on .v2-goal-fill,
-.v2-root .v2-goal.on .v2-goal-knob {
-  background: rgb(var(--v2-violet));
-}
-
-/* light comes from the housing, so the filter never sees it */
-.v2-root .v2-goal-track {
-  overflow: visible;
-}
-.v2-root .v2-goal.on .v2-goal-track {
-  border-color: rgba(var(--v2-violet), 0.34);
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.85), 0 0 22px -7px rgba(var(--v2-violet), 0.6);
-}
-
-.v2-root.light .v2-goal-fill,
-.v2-root.light .v2-goal-knob {
-  background: #b6b3a8;
-}
-.v2-root.light .v2-goal.on .v2-goal-fill,
-.v2-root.light .v2-goal.on .v2-goal-knob {
-  background: rgb(var(--v2-violet));
+.v2-root.light .sidebar-logo .logo-word {
+  color: #1a1916;
+  text-shadow: none;
 }

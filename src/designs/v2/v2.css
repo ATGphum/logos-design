@@ -877,10 +877,7 @@
 }
 .v2-root .v2-hero-mark img {
   /* the mark had almost none — its glow was tuned for a 36px lockup, not a 140px one */
-  /* a sub-pixel blur before the glow: the mark's fine spatter aliases into speckle at
-     this size on a 1x screen, and 0.3px is enough to average those stray pixels without
-     touching the stroke edges. Undo this line if it reads soft rather than smooth. */
-  filter: blur(0.3px) brightness(1.3) drop-shadow(0 0 10px rgba(255, 255, 255, 0.45))
+  filter: brightness(1.3) drop-shadow(0 0 10px rgba(255, 255, 255, 0.45))
     drop-shadow(0 0 34px rgba(255, 255, 255, 0.28))
     drop-shadow(0 0 72px rgba(255, 255, 255, 0.15));
 }

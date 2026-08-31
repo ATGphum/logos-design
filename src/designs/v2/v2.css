@@ -1996,80 +1996,117 @@
 }
 
 /* ===== Goal mode ===== */
-/* The only colour in V2, so it reads as a state rather than decoration. Off it is a
-   quiet outline in the page's own greys; on it lifts into violet with a lit rim, a fill
-   and a glow — three things moving together, which is what makes a binary feel
-   deliberate rather than switch-like. */
+/* A switch you could press, not a pill that changes colour. The knob parks hard left
+   against an empty track when off — that gap is the whole point, since a toggle whose
+   two states differ only in tint is guessable rather than obvious.
+   Violet is the only colour in V2, deliberately, so it reads as a mode the agent is in
+   rather than decoration. */
 .v2-root .v2-goal {
   --v2-violet: 150, 122, 255;
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  margin: 18px auto 0;
-  padding: 9px 18px 9px 15px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.13);
-  background: rgba(255, 255, 255, 0.02);
-  color: rgba(255, 255, 255, 0.62);
+  gap: 12px;
+  /* .hero-scale is a flex column with a 38px gap, so a positive margin here lands the
+     switch 49px under the bar. Negative margin pulls it back to sitting with the bar
+     rather than with the page. */
+  margin: -24px auto 0;
+  padding: 6px 4px;
+  border: none;
+  background: none;
+  color: rgba(255, 255, 255, 0.5);
   font-family: var(--app-font-sans);
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 500;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: color 0.28s cubic-bezier(0.33, 0.45, 0.25, 1),
-    border-color 0.28s cubic-bezier(0.33, 0.45, 0.25, 1),
-    background 0.28s cubic-bezier(0.33, 0.45, 0.25, 1),
-    box-shadow 0.32s cubic-bezier(0.33, 0.45, 0.25, 1);
+  transition: color 0.3s cubic-bezier(0.33, 0.45, 0.25, 1);
 }
 .v2-root .v2-goal:hover {
-  color: rgba(255, 255, 255, 0.85);
-  border-color: rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.78);
 }
-
-/* the dot carries the state on its own: dim and hollow, then filled and lit */
-.v2-root .v2-goal-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.28);
-  box-shadow: 0 0 0 0 rgba(var(--v2-violet), 0);
-  transition: background 0.28s cubic-bezier(0.33, 0.45, 0.25, 1),
-    box-shadow 0.42s cubic-bezier(0.33, 0.45, 0.25, 1);
-}
-
 .v2-root .v2-goal.on {
-  color: rgb(216, 208, 255);
-  border-color: rgba(var(--v2-violet), 0.55);
-  background: rgba(var(--v2-violet), 0.13);
-  box-shadow: 0 0 22px -4px rgba(var(--v2-violet), 0.5),
-    inset 0 0 14px -6px rgba(var(--v2-violet), 0.7);
+  color: rgb(214, 205, 255);
 }
-.v2-root .v2-goal.on:hover {
-  border-color: rgba(var(--v2-violet), 0.75);
-  box-shadow: 0 0 28px -3px rgba(var(--v2-violet), 0.62),
-    inset 0 0 16px -6px rgba(var(--v2-violet), 0.8);
+
+/* the track: recessed, with a lip of light along its top edge */
+.v2-root .v2-goal-track {
+  position: relative;
+  flex: none;
+  width: 46px;
+  height: 26px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #0a0a0a 0%, #171717 100%);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9), inset 0 -1px 0 rgba(255, 255, 255, 0.05),
+    0 1px 0 rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  transition: box-shadow 0.34s cubic-bezier(0.33, 0.45, 0.25, 1);
 }
-.v2-root .v2-goal.on .v2-goal-dot {
-  background: rgb(var(--v2-violet));
-  box-shadow: 0 0 12px 1px rgba(var(--v2-violet), 0.8);
+
+/* the violet floods in behind the knob rather than appearing all at once */
+.v2-root .v2-goal-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(var(--v2-violet), 0.95) 0%, rgba(110, 86, 214, 0.95) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 -2px 6px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  transform: scale(0.86);
+  transition: opacity 0.3s cubic-bezier(0.33, 0.45, 0.25, 1),
+    transform 0.42s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+.v2-root .v2-goal.on .v2-goal-fill {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* the knob: domed, lit from above, with a shadow under it so it sits proud of the track */
+.v2-root .v2-goal-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: radial-gradient(120% 120% at 50% 18%, #ffffff 0%, #e8e6f2 46%, #b9b6c6 100%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6), 0 0 0 0.5px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 2px rgba(0, 0, 0, 0.18);
+  /* a touch of overshoot as it lands — the part that makes it feel like a switch */
+  transition: transform 0.4s cubic-bezier(0.34, 1.45, 0.64, 1),
+    box-shadow 0.34s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+.v2-root .v2-goal.on .v2-goal-knob {
+  transform: translateX(20px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.55), 0 0 0 0.5px rgba(60, 40, 140, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 2px rgba(60, 40, 140, 0.2);
+}
+.v2-root .v2-goal:active .v2-goal-knob {
+  width: 23px;
+}
+.v2-root .v2-goal.on {
+  --lift: 1;
+}
+.v2-root .v2-goal.on .v2-goal-track {
+  box-shadow: inset 0 1px 2px rgba(40, 24, 110, 0.7), 0 0 20px -3px rgba(var(--v2-violet), 0.55),
+    0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .v2-root.light .v2-goal {
-  border-color: rgba(26, 25, 22, 0.16);
-  background: rgba(26, 25, 22, 0.02);
-  color: rgba(26, 25, 22, 0.6);
+  color: rgba(26, 25, 22, 0.58);
+}
+.v2-root.light .v2-goal-track {
+  background: linear-gradient(180deg, #dedbd0 0%, #efece2 100%);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.18), 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 .v2-root.light .v2-goal.on {
-  color: rgb(78, 56, 180);
-  border-color: rgba(var(--v2-violet), 0.6);
-  background: rgba(var(--v2-violet), 0.12);
-  box-shadow: 0 0 18px -6px rgba(var(--v2-violet), 0.45);
+  color: rgb(72, 50, 176);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .v2-root .v2-goal,
-  .v2-root .v2-goal-dot {
+  .v2-root .v2-goal-knob,
+  .v2-root .v2-goal-fill,
+  .v2-root .v2-goal-track {
     transition: none;
   }
 }

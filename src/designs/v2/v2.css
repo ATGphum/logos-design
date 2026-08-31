@@ -470,9 +470,15 @@
 .v2-root.light .v2-hero-mark img {
   filter: none;
 }
-.v2-root .v2-hero-mark > span {
+.v2-root .v2-hero-word {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.v2-root .v2-hero-name {
   letter-spacing: 0.3em;
   padding-left: 0.1em;
+  line-height: 1;
 }
 
 /* ===== Sidebar lockup: mark only, aligned to the nav icons ===== */
@@ -897,9 +903,10 @@
 .v2-root .v2-hero-def {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 14px;
-  margin-top: 14px;
+  justify-content: flex-start;
+  gap: 11px;
+  /* .1em matches the wordmark's optical inset, so the gloss starts on the L's stem */
+  margin: 12px 0 0 0.1em;
   font-family: var(--app-font-sans);
   font-size: 15px;
   font-weight: 300;
@@ -916,7 +923,7 @@
   opacity: 0.85;
 }
 .v2-root .v2-hero-arrow {
-  width: 44px;
+  width: 28px;
   height: 8px;
   flex: none;
   opacity: 0.55;

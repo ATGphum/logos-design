@@ -117,17 +117,21 @@ export default function V2Design() {
           <>
             <span className="v2-hero-mark">
               <img src={light ? ensoInk : ensoWhite} alt="" aria-hidden="true" />
-              <span>LOGOS</span>
-            </span>
-            {/* set like a dictionary entry, but as ornament rather than reference —
-                the pronunciation, then the sense the product is named for */}
-            <span className="v2-hero-def">
-              <i>/ˈlɒɡɒs/</i>
-              <svg className="v2-hero-arrow" viewBox="0 0 44 8" fill="none" aria-hidden="true">
-                <path d="M0 4h39" stroke="currentColor" strokeWidth="1" />
-                <path d="M35.5 1.2 39.4 4l-3.9 2.8" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <em>reason</em>
+              {/* wordmark and its gloss share a column, so the gloss hangs off the L
+                  rather than centring under the lockup as a whole */}
+              <span className="v2-hero-word">
+                <span className="v2-hero-name">LOGOS</span>
+                {/* set like a dictionary entry, but as ornament rather than reference —
+                    the pronunciation, then the sense the product is named for */}
+                <span className="v2-hero-def">
+                  <i>/ˈlɒɡɒs/</i>
+                  <svg className="v2-hero-arrow" viewBox="0 0 28 8" fill="none" aria-hidden="true">
+                    <path d="M0 4h23" stroke="currentColor" strokeWidth="1" />
+                    <path d="M19.6 1.4 23.2 4l-3.6 2.6" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <em>reason</em>
+                </span>
+              </span>
             </span>
           </>
         }

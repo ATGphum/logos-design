@@ -1,33 +1,50 @@
 import { useState } from "react"
 import ensoInk from "../console/assets/enso-ink.svg"
 
+export type AuthMode = "login" | "signup"
+
 interface LoginGateProps {
+  mode: AuthMode
+  onSwitchMode: (mode: AuthMode) => void
   onSignIn: () => void
-  /** sandbox escape hatch — lets a reviewer get past the gate to look around */
-  onSkip: () => void
+  /** the large X — dismiss and carry on looking around */
+  onClose: () => void
 }
 
 /**
- * V2's login is a small window docked to the right of the agent page — not a screen of
- * its own, and not built into the page. The agent page renders and behaves normally
- * underneath; this just sits on it until you are signed in.
+ * V2's auth pop-out. It appears once on opening the site and can be dismissed with the
+ * large X; the Login / Sign up buttons in the agent page's top right bring it back.
  *
- * Inert by design. Nothing is validated, stored, or sent anywhere — this is a design
- * fixture, and the real gate lives in logos-webui's auth surface (see #/login for the
- * full-screen treatment this replaces).
+ * Inert by design: nothing is validated, stored or sent. This is a design fixture — the
+ * real auth surface lives in logos-webui, and #/login is the full-screen treatment this
+ * is an alternative to.
  */
-export function LoginGate({ onSignIn, onSkip }: LoginGateProps) {
+export function LoginGate({ mode, onSwitchMode, onSignIn, onClose }: LoginGateProps) {
   const [email, setEmail] = useState("")
+  const signup = mode === "signup"
 
   return (
-    <div className="v2-gate" aria-labelledby="v2-gate-title">
-      <div className="v2-gate-card" role="dialog" aria-labelledby="v2-gate-title">
+    <div className="v2-gate">
+      {/* clicking off the card dismisses it too — the X is the obvious way, not the only one */}
+      <div className="v2-gate-scrim" onClick={onClose} />
+
+      <div className="v2-gate-card" role="dialog" aria-modal="true" aria-labelledby="v2-gate-title">
+        <button className="v2-gate-x" type="button" onClick={onClose} aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+            <path d="M5 5l14 14M19 5L5 19" />
+          </svg>
+        </button>
+
         <img className="v2-gate-mark" src={ensoInk} alt="" aria-hidden="true" />
 
         <h1 className="v2-gate-title" id="v2-gate-title">
-          Sign in to LOGOS
+          {signup ? "Create an account" : "Sign in to LOGOS"}
         </h1>
-        <p className="v2-gate-sub">Your agents and instances, wherever you left them.</p>
+        <p className="v2-gate-sub">
+          {signup
+            ? "Spin up your first instance in a couple of minutes."
+            : "Your agents and instances, wherever you left them."}
+        </p>
 
         <form
           className="v2-gate-form"
@@ -48,7 +65,7 @@ export function LoginGate({ onSignIn, onSkip }: LoginGateProps) {
           </label>
 
           <button className="v2-gate-go" type="submit">
-            Continue
+            {signup ? "Create account" : "Continue"}
           </button>
         </form>
 
@@ -60,9 +77,12 @@ export function LoginGate({ onSignIn, onSkip }: LoginGateProps) {
           Continue with wallet
         </button>
 
-        <button className="v2-gate-skip" type="button" onClick={onSkip}>
-          Skip — look around first
-        </button>
+        <p className="v2-gate-switch">
+          {signup ? "Already have an account?" : "No account yet?"}{" "}
+          <button type="button" onClick={() => onSwitchMode(signup ? "login" : "signup")}>
+            {signup ? "Sign in" : "Sign up"}
+          </button>
+        </p>
       </div>
     </div>
   )

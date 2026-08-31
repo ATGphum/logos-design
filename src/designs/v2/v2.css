@@ -4,30 +4,36 @@
  * and check both. Prefix every rule v2- and scope to .v2-root.
  */
 
-/* ===== The login window ===== */
-/* A small window sitting on the right of the agent page — no scrim, no blur, nothing
-   merged into the page itself. The agent page renders and reads exactly as it always
-   does; this is just parked on top of it until you sign in.
-   The container spans the viewport only so the card can be positioned against its edge,
-   so it must not swallow clicks — pointer-events are handed back on the card alone. */
+/* ===== The auth pop-out ===== */
+/* Shows once on opening the site and is dismissable — the agent page underneath is
+   never modified, only covered. */
 .v2-root .v2-gate {
   position: fixed;
   inset: 0;
   z-index: 900;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  padding: 24px 26px;
-  pointer-events: none;
+  justify-content: center;
+  padding: 24px;
+}
+
+.v2-root .v2-gate-scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 10, 0.68);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.v2-root.light .v2-gate-scrim {
+  background: rgba(246, 244, 238, 0.76);
 }
 
 .v2-root .v2-gate-card {
   position: relative;
-  pointer-events: auto;
   width: 100%;
-  max-width: 320px;
+  max-width: 352px;
   box-sizing: border-box;
-  padding: 30px 30px 22px;
+  padding: 34px 30px 24px;
   border-radius: 18px;
   background: #131313;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -47,13 +53,65 @@
 @keyframes v2-gate-in {
   from {
     opacity: 0;
-    transform: translateX(14px);
+    transform: translateY(10px) scale(0.985);
   }
 }
 @media (prefers-reduced-motion: reduce) {
   .v2-root .v2-gate-card {
     animation: none;
   }
+}
+
+/* deliberately large: it is the way out of the pop-out, so it should be the easiest
+   thing on the card to hit */
+.v2-root .v2-gate-x {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 12px;
+  background: none;
+  color: inherit;
+  opacity: 0.5;
+  cursor: pointer;
+  transition: opacity 0.18s ease, background 0.18s ease;
+}
+.v2-root .v2-gate-x svg {
+  width: 24px;
+  height: 24px;
+}
+.v2-root .v2-gate-x:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.07);
+}
+.v2-root.light .v2-gate-x:hover {
+  background: rgba(26, 25, 22, 0.06);
+}
+
+.v2-root .v2-gate-switch {
+  margin: 18px 0 0;
+  font-size: 12px;
+  font-weight: 300;
+  opacity: 0.55;
+}
+.v2-root .v2-gate-switch button {
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.v2-root .v2-gate-switch button:hover {
+  opacity: 1;
 }
 
 .v2-root .v2-gate-mark {
@@ -198,25 +256,6 @@
   opacity: 0.35;
 }
 
-/* sandbox-only: a reviewer needs to get past the gate to look at anything */
-.v2-root .v2-gate-skip {
-  margin-top: 16px;
-  padding: 6px;
-  border: none;
-  background: none;
-  color: inherit;
-  font-family: inherit;
-  font-size: 11.5px;
-  font-weight: 300;
-  letter-spacing: 0.04em;
-  opacity: 0.45;
-  cursor: pointer;
-  transition: opacity 0.18s ease;
-}
-.v2-root .v2-gate-skip:hover {
-  opacity: 0.8;
-}
-
 /* ===== Mainpage is a button here, so it has to look like one ===== */
 /* In V1 the marketing site is where you come from, and .chat-home is a quiet way back.
    In V2 it is the only route there, so it reads as a control rather than a hint. */
@@ -227,4 +266,71 @@
 .v2-root .chat-home:hover {
   opacity: 1;
   transform: translateY(-1px);
+}
+
+/* ===== Login / Sign up, top right of the agent page ===== */
+/* Sits to the left of the agent's own three controls, which end 24px from the right
+   edge and are 27px tall — these are deliberately bigger, since they are the primary
+   thing to do while signed out. */
+.v2-root .v2-auth {
+  position: fixed;
+  top: 13px;
+  right: 130px;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.v2-root .v2-auth-btn {
+  padding: 11px 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: #fff;
+  font-family: var(--app-font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.16s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s ease,
+    border-color 0.2s ease, box-shadow 0.22s ease;
+}
+.v2-root.light .v2-auth-btn {
+  border-color: rgba(26, 25, 22, 0.22);
+  color: #1a1916;
+}
+.v2-root .v2-auth-btn:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.07);
+}
+.v2-root.light .v2-auth-btn:hover {
+  background: rgba(26, 25, 22, 0.05);
+}
+
+.v2-root .v2-auth-primary {
+  border-color: transparent;
+  background: #fff;
+  color: #0e0e0e;
+  box-shadow: 0 0 18px -6px rgba(255, 255, 255, 0.5);
+}
+.v2-root.light .v2-auth-primary {
+  background: #1a1916;
+  color: #f6f4ee;
+  box-shadow: 0 3px 14px -7px rgba(26, 25, 22, 0.5);
+}
+.v2-root .v2-auth-primary:hover {
+  background: #fff;
+}
+.v2-root.light .v2-auth-primary:hover {
+  background: #1a1916;
+}
+
+/* the agent's own controls crowd in below ~1100px — drop the auth pair under them */
+@media (max-width: 1100px) {
+  .v2-root .v2-auth {
+    top: 56px;
+    right: 24px;
+  }
 }

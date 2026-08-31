@@ -5,8 +5,8 @@
  * ("Access LOGOS"). V2 inverts that:
  *
  *  - the agent page is the product, and is what loads
- *  - login is a small window docked to the right of that page while signed out —
- *    not a screen of its own, and not built into the page
+ *  - login pops out once on opening, is dismissable, and is reachable afterwards from
+ *    Login / Sign up in the top right — not a screen of its own
  *  - Mainpage and Console are buttons *on* the agent page, not places you start from
  *
  * Deliberately built by composing the existing AgentView/ConsoleView rather than
@@ -21,7 +21,7 @@ import "./v2.css"
 import { AgentView } from "../console/agent/AgentView"
 import { ConsoleView } from "../console/shell/ConsoleView"
 import { isMobileViewport } from "../console/state"
-import { LoginGate } from "./LoginGate"
+import { LoginGate, type AuthMode } from "./LoginGate"
 
 export default function V2Design() {
   const { resolvedMode } = useTheme()
@@ -30,8 +30,16 @@ export default function V2Design() {
   const [light, setLight] = useState(startLight)
   const [night, setNight] = useState(!startLight)
 
-  /* the login window sits on the agent page; the page itself stays untouched */
+  /* the pop-out shows once on opening and is dismissable with its X; the Login / Sign up
+     buttons in the top right bring it back. The agent page itself stays untouched. */
   const [signedIn, setSignedIn] = useState(false)
+  const [gateOpen, setGateOpen] = useState(true)
+  const [authMode, setAuthMode] = useState<AuthMode>("login")
+
+  const openAuth = (mode: AuthMode) => {
+    setAuthMode(mode)
+    setGateOpen(true)
+  }
 
   /* V2's inversion, in three lines: the console starts closed and the agent is what
      you land on. V1 starts these true/false the other way round. */
@@ -106,8 +114,24 @@ export default function V2Design() {
       ) : null}
 
       {signedIn ? null : (
-        <LoginGate onSignIn={() => setSignedIn(true)} onSkip={() => setSignedIn(true)} />
+        <div className="v2-auth">
+          <button className="v2-auth-btn" type="button" onClick={() => openAuth("login")}>
+            Login
+          </button>
+          <button className="v2-auth-btn v2-auth-primary" type="button" onClick={() => openAuth("signup")}>
+            Sign up
+          </button>
+        </div>
       )}
+
+      {!signedIn && gateOpen ? (
+        <LoginGate
+          mode={authMode}
+          onSwitchMode={setAuthMode}
+          onSignIn={() => setSignedIn(true)}
+          onClose={() => setGateOpen(false)}
+        />
+      ) : null}
     </div>
   )
 }

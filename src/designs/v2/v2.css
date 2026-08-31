@@ -1752,3 +1752,34 @@
 .v2-root:not(.light) {
   --side-bg: #0c0c0c;
 }
+
+/* ===== Falloff reaches black sooner, and the right is untextured ===== */
+/* The noise was lifting the whole page by a few values, so "black" was never quite
+   black. The page drops the texture and keeps it on the column, which is the surface
+   that should read as lit. */
+.v2-root:not(.light) {
+  background-image: linear-gradient(90deg, #0b0b0b 0%, #050505 18%, #000000 36%);
+  background-repeat: no-repeat;
+}
+
+/* ===== The scrollbar is not the column's edge ===== */
+/* Inset the seam and the scrollbar becomes the long vertical line instead — it runs the
+   full list. Idle it is invisible; it appears on hover over the column. */
+.v2-root #recent-list::-webkit-scrollbar {
+  width: 3px;
+}
+.v2-root #recent-list::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 999px;
+  transition: background 0.2s ease;
+}
+.v2-root .sidebar:hover #recent-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+}
+.v2-root #recent-list {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+.v2-root .sidebar:hover #recent-list {
+  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+}

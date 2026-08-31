@@ -1672,14 +1672,46 @@
 /* rail re-registered after the glyphs shrank — smaller icons shortened the rows, so the
    fixed copies drifted low by up to 9px down the list */
 .v2-root .rail-newchat {
-  top: 68.3px;
+  top: 67.3px;
 }
 .v2-root .rail-search {
-  top: 111.8px;
+  top: 110.8px;
 }
 .v2-root .rail-console {
-  top: 155.3px;
+  top: 154.3px;
 }
 .v2-root .rail-projects {
-  top: 200.8px;
+  top: 199.8px;
+}
+
+/* ===== Glyphs on the enso's axis, a touch larger ===== */
+/* The rail's mark centres on x=34 (13px in, 42px wide). At 20px the nav glyphs centred
+   on 31 — three pixels left of it — because their box starts at 21 (10 nav + 11 button).
+   22px glyphs starting at 23 centre on 34, under the mark. Column and rail take the same
+   numbers, since the fold depends on them being identical. */
+.v2-root .sidebar-nav .nav-btn svg,
+.v2-root .proj-picker-btn svg,
+.v2-root .collapsed-rail .rail-nav svg,
+.v2-root .v2-acct-ico,
+.v2-root .v2-acct-ico svg {
+  width: 22px;
+  height: 22px;
+}
+.v2-root .sidebar-nav .nav-btn,
+.v2-root .proj-picker-btn {
+  padding-left: 13px;
+}
+.v2-root .collapsed-rail .rail-nav {
+  left: 13px;
+}
+.v2-root .v2-acct-chip {
+  padding-left: 13px;
+}
+
+/* ===== The list keeps clear of the account ===== */
+.v2-root #recent-list {
+  padding-bottom: 34px;
+}
+.v2-root .sidebar-footer {
+  padding-top: 18px;
 }

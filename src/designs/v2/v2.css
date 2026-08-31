@@ -1883,16 +1883,29 @@
   width: 2px;
   pointer-events: none;
   border-radius: 999px;
-  background: linear-gradient(
+  /* A mask, not a clip. The polygon had six corners, and every one of them was a visible
+     facet in a 2px-wide bar — that is what made the taper look stepped. A mask fades
+     continuously and needs no geometry. */
+  background: #ffffff;
+  -webkit-mask-image: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.95) 26%,
-    rgba(255, 255, 255, 1) 50%,
-    rgba(255, 255, 255, 0.95) 74%,
-    rgba(255, 255, 255, 0) 100%
+    transparent 0%,
+    rgba(0, 0, 0, 0.6) 12%,
+    #000 32%,
+    #000 68%,
+    rgba(0, 0, 0, 0.6) 88%,
+    transparent 100%
   );
-  clip-path: polygon(50% 0%, 100% 22%, 100% 78%, 50% 100%, 0% 78%, 0% 22%);
-  box-shadow: -1px 0 8px rgba(255, 255, 255, 0.35);
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.6) 12%,
+    #000 32%,
+    #000 68%,
+    rgba(0, 0, 0, 0.6) 88%,
+    transparent 100%
+  );
+  box-shadow: -1px 0 8px rgba(255, 255, 255, 0.3);
 }
 .console-root.light .v2-seam-scroll {
   background: linear-gradient(
@@ -1980,4 +1993,83 @@
         rgba(255, 255, 255, 0.08) 100%
       )
       border-box;
+}
+
+/* ===== Goal mode ===== */
+/* The only colour in V2, so it reads as a state rather than decoration. Off it is a
+   quiet outline in the page's own greys; on it lifts into violet with a lit rim, a fill
+   and a glow — three things moving together, which is what makes a binary feel
+   deliberate rather than switch-like. */
+.v2-root .v2-goal {
+  --v2-violet: 150, 122, 255;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px auto 0;
+  padding: 9px 18px 9px 15px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  background: rgba(255, 255, 255, 0.02);
+  color: rgba(255, 255, 255, 0.62);
+  font-family: var(--app-font-sans);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.28s cubic-bezier(0.33, 0.45, 0.25, 1),
+    border-color 0.28s cubic-bezier(0.33, 0.45, 0.25, 1),
+    background 0.28s cubic-bezier(0.33, 0.45, 0.25, 1),
+    box-shadow 0.32s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+.v2-root .v2-goal:hover {
+  color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+/* the dot carries the state on its own: dim and hollow, then filled and lit */
+.v2-root .v2-goal-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 0 0 0 rgba(var(--v2-violet), 0);
+  transition: background 0.28s cubic-bezier(0.33, 0.45, 0.25, 1),
+    box-shadow 0.42s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+
+.v2-root .v2-goal.on {
+  color: rgb(216, 208, 255);
+  border-color: rgba(var(--v2-violet), 0.55);
+  background: rgba(var(--v2-violet), 0.13);
+  box-shadow: 0 0 22px -4px rgba(var(--v2-violet), 0.5),
+    inset 0 0 14px -6px rgba(var(--v2-violet), 0.7);
+}
+.v2-root .v2-goal.on:hover {
+  border-color: rgba(var(--v2-violet), 0.75);
+  box-shadow: 0 0 28px -3px rgba(var(--v2-violet), 0.62),
+    inset 0 0 16px -6px rgba(var(--v2-violet), 0.8);
+}
+.v2-root .v2-goal.on .v2-goal-dot {
+  background: rgb(var(--v2-violet));
+  box-shadow: 0 0 12px 1px rgba(var(--v2-violet), 0.8);
+}
+
+.v2-root.light .v2-goal {
+  border-color: rgba(26, 25, 22, 0.16);
+  background: rgba(26, 25, 22, 0.02);
+  color: rgba(26, 25, 22, 0.6);
+}
+.v2-root.light .v2-goal.on {
+  color: rgb(78, 56, 180);
+  border-color: rgba(var(--v2-violet), 0.6);
+  background: rgba(var(--v2-violet), 0.12);
+  box-shadow: 0 0 18px -6px rgba(var(--v2-violet), 0.45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v2-root .v2-goal,
+  .v2-root .v2-goal-dot {
+    transition: none;
+  }
 }

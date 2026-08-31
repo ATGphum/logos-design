@@ -26,6 +26,7 @@ import ensoInk from "../console/assets/enso-ink.svg"
 import { LoginGate, type AuthMode } from "./LoginGate"
 import { AccountChip } from "./AccountChip"
 import { SeamScroll } from "./SeamScroll"
+import { GoalMode } from "./GoalMode"
 
 export default function V2Design() {
   const { resolvedMode } = useTheme()
@@ -110,6 +111,7 @@ export default function V2Design() {
         freshOnOpen
         logoFolds
         v2Icons
+        heroBelow={<GoalMode />}
         consoleActive={csDisplayed && !csHidden}
         accountSlot={
           <AccountChip

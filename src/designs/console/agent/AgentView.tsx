@@ -84,6 +84,8 @@ export interface AgentViewProps {
   consoleActive?: boolean
   /** V2: use the leaner nav glyphs, in the rail as well as the column */
   v2Icons?: boolean
+  /** V2: sits under the composer in the hero — the Goal mode toggle. */
+  heroBelow?: ReactNode
 }
 
 export function AgentView(props: AgentViewProps) {
@@ -109,6 +111,7 @@ export function AgentView(props: AgentViewProps) {
     logoFolds,
     consoleActive,
     v2Icons,
+    heroBelow,
   } = props
 
   const [chats, setChats] = useState<ChatItem[]>(initialRecentChats)
@@ -500,6 +503,7 @@ export function AgentView(props: AgentViewProps) {
                 </div>
                 <div className="hero-greeting">{heroGreetingNode ?? heroGreeting}</div>
                 <div id="hero-input-slot">{inputBar}</div>
+                {heroBelow}
                 <div className="hero-suggestions">
                   <button className="suggestion-pill" onClick={() => startProject("Coding project", "What shall we code?")}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

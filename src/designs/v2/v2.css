@@ -2442,3 +2442,88 @@
   border-radius: 26px;
   padding: 14px 18px 16px;
 }
+
+/* ===== Goal mode, small ===== */
+/* The tray was a 236px card wrapping a slider — far more furniture than an on/off needs.
+   The channel is the whole control now: short, embedded in the bar's surface, with a
+   slab that nearly fills it and swooshes end to end. Grey parked left, violet parked
+   right. The label sits outside and under it. */
+.v2-root .v2-goal {
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  width: auto;
+  margin: -26px auto 0;
+  padding: 0;
+  border: none;
+  background: none;
+  box-shadow: none;
+}
+
+.v2-root .v2-goal-track {
+  width: 124px;
+  height: 26px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(#101010, #101010) padding-box,
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.04) 100%) border-box;
+  background-image: none;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+  transition: box-shadow 0.36s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+.v2-root .v2-goal-fill {
+  display: none;
+}
+
+/* the slab: half the channel, nearly its full height */
+.v2-root .v2-goal-knob {
+  top: 3px;
+  left: 3px;
+  width: 58px;
+  height: 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
+  box-shadow: none;
+  transition: transform 0.5s cubic-bezier(0.22, 1.02, 0.32, 1),
+    background 0.4s cubic-bezier(0.33, 0.45, 0.25, 1),
+    box-shadow 0.4s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+.v2-root .v2-goal-knob::after {
+  display: none;
+}
+.v2-root .v2-goal.on .v2-goal-knob {
+  transform: translateX(60px);
+  background: rgb(var(--v2-violet));
+  box-shadow: 0 0 14px -2px rgba(var(--v2-violet), 0.85);
+}
+.v2-root .v2-goal.on .v2-goal-track {
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.8), 0 0 18px -6px rgba(var(--v2-violet), 0.6);
+}
+.v2-root .v2-goal:active .v2-goal-knob {
+  width: 58px;
+}
+
+.v2-root .v2-goal-label {
+  align-self: center;
+  font-size: 9.5px;
+  letter-spacing: 0.26em;
+  color: rgba(255, 255, 255, 0.38);
+}
+.v2-root .v2-goal.on .v2-goal-label {
+  color: rgba(var(--v2-violet), 0.9);
+}
+
+.v2-root.light .v2-goal-track {
+  background:
+    linear-gradient(#e6e3d9, #e6e3d9) padding-box,
+    linear-gradient(to bottom, rgba(26, 25, 22, 0.18) 0%, rgba(26, 25, 22, 0.06) 100%) border-box;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.14);
+}
+.v2-root.light .v2-goal-knob {
+  background: rgba(26, 25, 22, 0.22);
+}
+.v2-root.light .v2-goal-label {
+  color: rgba(26, 25, 22, 0.45);
+}

@@ -142,3 +142,21 @@ export const UserIconV2 = () => (
     <path d="M5.4 19.5a6.6 6.6 0 0 1 13.2 0" />
   </svg>
 )
+
+/* Composer glyphs. The stock mic runs its paths to y=1 and y=23 inside a 24 box, so at
+ * 17px it touches both edges and the base clips; it also has no round caps, which is why
+ * it reads as broken rather than drawn. This one is inset and capped. */
+export const MicIconV2 = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="9.2" y="3" width="5.6" height="10.4" rx="2.8" />
+    <path d="M6 11.4v1a6 6 0 0 0 12 0v-1" />
+    <line x1="12" y1="19.4" x2="12" y2="21.4" />
+  </svg>
+)
+
+/** The model marker, drawn rather than the character ✦ set as text. */
+export const SparkIconV2 = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 4.5c0 4.1 3.4 7.5 7.5 7.5-4.1 0-7.5 3.4-7.5 7.5 0-4.1-3.4-7.5-7.5-7.5 4.1 0 7.5-3.4 7.5-7.5z" />
+  </svg>
+)

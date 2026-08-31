@@ -9,7 +9,7 @@ import ensoWhite from "../assets/enso.svg"
 import ensoInk from "../assets/enso-ink.svg"
 import { initialRecentChats, isMobileViewport, MODELS, PROJECTS, type ChatItem, type Project } from "../state"
 import { AgentSidebar } from "./AgentSidebar"
-import { ConsoleIcon, ConsoleIconV2, FolderIcon, GearIcon, NewChatIcon, NewChatIconV2, ProjectsIconV2, SearchIcon, SearchIconV2, SidebarFoldIcon } from "./icons"
+import { ConsoleIcon, ConsoleIconV2, FolderIcon, GearIcon, MicIconV2, NewChatIcon, NewChatIconV2, ProjectsIconV2, SearchIcon, SearchIconV2, SidebarFoldIcon, SparkIconV2 } from "./icons"
 import { SearchOverlay } from "./SearchOverlay"
 import { SettingsView } from "./SettingsView"
 
@@ -287,7 +287,7 @@ export function AgentView(props: AgentViewProps) {
 
         <div className={"model-wrap" + (modelMenuOpen ? " mm-open" : "")}>
           <button className="model-selector" ref={modelBtnRef} onClick={toggleModelMenu} title="Select model">
-            <span className="model-icon">✦</span>
+            <span className="model-icon">{v2Icons ? <SparkIconV2 /> : "✦"}</span>
             <span id="model-name">
               {shortModelName ? headlineModel(model) : isMobile ? prettyModel(model) : model}
             </span>
@@ -329,12 +329,16 @@ export function AgentView(props: AgentViewProps) {
         </div>
 
         <button className="icon-btn mic-btn" title="Voice input">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
-            <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-            <line x1="12" y1="19" x2="12" y2="23" />
-            <line x1="8" y1="23" x2="16" y2="23" />
-          </svg>
+          {v2Icons ? (
+            <MicIconV2 />
+          ) : (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+              <line x1="12" y1="19" x2="12" y2="23" />
+              <line x1="8" y1="23" x2="16" y2="23" />
+            </svg>
+          )}
         </button>
 
         <button className={"send-btn" + (input.trim() === "" ? " hidden" : "")} id="send-btn" onClick={sendMessage} title="Send">

@@ -1942,17 +1942,15 @@
   stroke-width: 1.5;
 }
 
-/* the model marker was the character ✦ set as text — a drawn diamond instead, so it
-   scales and aligns with the type rather than with whatever font resolves it */
+/* the marker is a real glyph now, not a restyled text character */
 .v2-root .model-icon {
-  font-size: 0;
-  width: 7px;
-  height: 7px;
-  display: inline-block;
-  border: 1px solid currentColor;
-  border-radius: 1px;
-  transform: rotate(45deg);
-  opacity: 0.75;
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.8;
+}
+.v2-root .model-icon svg {
+  width: 13px;
+  height: 13px;
 }
 
 /* ===== A lit edge rather than an outline ===== */

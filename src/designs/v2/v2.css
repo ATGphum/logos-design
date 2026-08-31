@@ -2191,3 +2191,98 @@
     animation: none;
   }
 }
+
+/* ===== Goal mode: a long throw, not a phone toggle ===== */
+/* A 46x26 pill with a domed round knob is the iOS switch, so that is what it read as.
+   This is a channel: wide, squared off, with a slab that travels its whole length. The
+   distance is the point — a long throw makes the two states unmistakable and turning it
+   on feel like a deliberate act rather than a tap. Label sits under it. */
+.v2-root .v2-goal {
+  flex-direction: column;
+  gap: 9px;
+  padding: 0;
+  border: none;
+  background: none;
+  box-shadow: none;
+  overflow: visible;
+}
+.v2-root .v2-goal::after {
+  display: none;
+}
+
+.v2-root .v2-goal-track {
+  width: 188px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(180deg, #070707 0%, #131313 100%);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.95), inset 0 -1px 0 rgba(255, 255, 255, 0.05),
+    0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.v2-root .v2-goal-fill {
+  border-radius: 7px;
+  background: linear-gradient(180deg, rgba(var(--v2-violet), 0.9) 0%, rgba(104, 80, 208, 0.92) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -2px 6px rgba(0, 0, 0, 0.4);
+  transform: scaleX(0);
+  transform-origin: left center;
+  opacity: 1;
+  transition: transform 0.52s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+.v2-root .v2-goal.on .v2-goal-fill {
+  transform: scaleX(1);
+}
+
+/* a slab with a milled grip, not a dome */
+.v2-root .v2-goal-knob {
+  top: 3px;
+  left: 3px;
+  width: 58px;
+  height: 22px;
+  border-radius: 5px;
+  background: linear-gradient(180deg, #f4f3f7 0%, #d9d7e2 52%, #b3b0c0 100%);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.7), 0 0 0 0.5px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 1px rgba(0, 0, 0, 0.22);
+  transition: transform 0.52s cubic-bezier(0.33, 0.45, 0.25, 1),
+    box-shadow 0.34s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+/* three milled lines down the middle of the slab */
+.v2-root .v2-goal-knob::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0 26px,
+    rgba(0, 0, 0, 0.22) 26px 27px,
+    rgba(255, 255, 255, 0.7) 27px 28px,
+    transparent 28px 32px
+  );
+  opacity: 0.9;
+}
+.v2-root .v2-goal.on .v2-goal-knob {
+  transform: translateX(124px);
+}
+.v2-root .v2-goal:active .v2-goal-knob {
+  width: 58px;
+}
+
+.v2-root .v2-goal.on .v2-goal-track {
+  border-color: rgba(var(--v2-violet), 0.5);
+  box-shadow: inset 0 2px 4px rgba(30, 18, 90, 0.7), 0 0 22px -4px rgba(var(--v2-violet), 0.5),
+    0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* label under the channel, cut into the page */
+.v2-root .v2-goal-label {
+  font-size: 10.5px;
+  letter-spacing: 0.26em;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.v2-root.light .v2-goal-track {
+  border-color: rgba(26, 25, 22, 0.16);
+  background: linear-gradient(180deg, #dcd9ce 0%, #f0ede3 100%);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.16), 0 1px 0 rgba(255, 255, 255, 0.7);
+}

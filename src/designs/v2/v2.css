@@ -2286,3 +2286,79 @@
   background: linear-gradient(180deg, #dcd9ce 0%, #f0ede3 100%);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.16), 0 1px 0 rgba(255, 255, 255, 0.7);
 }
+
+/* ===== Goal mode, flat ===== */
+/* The gloss was the problem: gradients, a milled grip, deep inner shadows — skeuomorphic
+   detailing that reads as dated however well it is drawn. This is flat, the way the
+   reference is: a pill channel with position dots, a plain white disc, a solid fill. No
+   highlight, no bevel, one shadow under the knob and nothing else. */
+.v2-root .v2-goal-track {
+  width: 184px;
+  height: 14px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.09);
+  background-image: radial-gradient(circle at 24% 50%, rgba(255, 255, 255, 0.3) 1.4px, transparent 1.5px),
+    radial-gradient(circle at 44% 50%, rgba(255, 255, 255, 0.3) 1.4px, transparent 1.5px),
+    radial-gradient(circle at 64% 50%, rgba(255, 255, 255, 0.3) 1.4px, transparent 1.5px),
+    radial-gradient(circle at 84% 50%, rgba(255, 255, 255, 0.3) 1.4px, transparent 1.5px);
+  box-shadow: none;
+  overflow: visible;
+  transition: background-color 0.3s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+
+/* the fill is solid and stops under the knob, so the dots ahead of it stay visible */
+.v2-root .v2-goal-fill {
+  border-radius: 999px;
+  background: rgb(var(--v2-violet));
+  box-shadow: none;
+  transform-origin: left center;
+  transform: scaleX(0.12);
+  transition: transform 0.46s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+.v2-root .v2-goal.on .v2-goal-fill {
+  transform: scaleX(1);
+}
+
+/* a plain disc, riding proud of the channel */
+.v2-root .v2-goal-knob {
+  top: -4px;
+  left: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+  transition: transform 0.46s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+.v2-root .v2-goal-knob::after {
+  display: none;
+}
+.v2-root .v2-goal.on .v2-goal-knob {
+  transform: translateX(162px);
+}
+.v2-root .v2-goal:active .v2-goal-knob {
+  width: 22px;
+}
+.v2-root .v2-goal.on .v2-goal-track {
+  border-color: transparent;
+  background-color: rgba(var(--v2-violet), 0.22);
+  box-shadow: none;
+}
+
+/* the label stops pretending to be stamped metal */
+.v2-root .v2-goal-label {
+  font-size: 10.5px;
+  letter-spacing: 0.24em;
+  text-shadow: none;
+}
+
+.v2-root.light .v2-goal-track {
+  border: none;
+  background-color: rgba(26, 25, 22, 0.12);
+  box-shadow: none;
+}
+.v2-root.light .v2-goal-knob {
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(26, 25, 22, 0.35);
+}

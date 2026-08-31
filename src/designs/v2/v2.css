@@ -1340,3 +1340,34 @@
   color: transparent;
   transition: color var(--v2-fold), background 0.12s;
 }
+
+/* ===== The lockup folds the column ===== */
+.v2-root .logo-word-btn {
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+.v2-root .logo-word-btn:hover {
+  opacity: 0.72;
+}
+
+/* ===== Folded, a chevron beside the mark says it opens ===== */
+/* Drawn rather than added to the markup, since it is a hint and not a control — the
+   whole lockup is already the hit area. It only exists in the rail. */
+.v2-root.sidebar-collapsed .rail-logo-box::after {
+  content: "";
+  position: absolute;
+  left: 46px;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid currentColor;
+  border-top: 1.5px solid currentColor;
+  transform: translateY(-50%) rotate(45deg);
+  color: var(--side-fg-strong);
+  opacity: 0.42;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+.v2-root.sidebar-collapsed .rail-logo-box:hover::after {
+  opacity: 0.9;
+}

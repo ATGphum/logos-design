@@ -20,6 +20,8 @@ export interface AgentSidebarProps {
   projectsAsPicker?: boolean
   /** V2: an account control in the footer, in the Settings button's place. */
   accountSlot?: ReactNode
+  /** V2: the lockup itself folds the column, as well as the arrow beside it. */
+  logoFolds?: boolean
   activeChatId: string | null
   newChatActive: boolean
   isMobile: boolean
@@ -144,6 +146,7 @@ export function AgentSidebar(props: AgentSidebarProps) {
     projects,
     projectsAsPicker,
     accountSlot,
+    logoFolds,
     activeChatId,
     newChatActive,
     isMobile,
@@ -222,7 +225,13 @@ export function AgentSidebar(props: AgentSidebarProps) {
       <div className="sidebar-logo">
         {/* Logo icon: enso mark, swapped to ink in light mode (prototype ensoURI) */}
         <img className="logo-img" alt="LOGOS" src={light ? ensoInk : ensoWhite} />
-        <span className="logo-word">LOGOS</span>
+        <span
+          className={"logo-word" + (logoFolds ? " logo-word-btn" : "")}
+          onClick={logoFolds ? onToggleSidebar : undefined}
+          title={logoFolds ? "Collapse sidebar" : undefined}
+        >
+          LOGOS
+        </span>
         <button className="sidebar-fold" onClick={onToggleSidebar} title="Collapse sidebar">
           <span className="fold-arrow">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">

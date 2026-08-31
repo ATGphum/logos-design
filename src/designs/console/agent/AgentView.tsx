@@ -78,6 +78,8 @@ export interface AgentViewProps {
   accountSlot?: ReactNode
   /** V2: open on a new chat rather than an existing conversation. */
   freshOnOpen?: boolean
+  /** V2: the lockup folds the column too. Omitted elsewhere. */
+  logoFolds?: boolean
 }
 
 export function AgentView(props: AgentViewProps) {
@@ -99,6 +101,7 @@ export function AgentView(props: AgentViewProps) {
     shortModelName,
     contextualTools,
     accountSlot,
+    logoFolds,
   } = props
 
   const [chats, setChats] = useState<ChatItem[]>(initialRecentChats)
@@ -402,6 +405,7 @@ export function AgentView(props: AgentViewProps) {
         onOpenConsole={onOpenConsole}
         projectsAsPicker={projectsAsPicker}
         accountSlot={accountSlot}
+        logoFolds={logoFolds}
         onOpenSettings={openSettings}
         onToggleSidebar={onToggleSidebar}
       />

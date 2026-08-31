@@ -107,6 +107,7 @@ export default function V2Design() {
         shortModelName
         contextualTools
         freshOnOpen
+        logoFolds
         accountSlot={
           <AccountChip
             onOpenBilling={openConsole}

@@ -1414,3 +1414,9 @@
 .v2-root .rail-expand {
   transition: none;
 }
+
+/* the mark is dimmed to 0.1 on hover, not hidden, so it sat visible behind the expand
+   icon — the two overlap exactly, so anything above zero reads as a ghost */
+.v2-root .rail-logo-box:hover .rail-logo {
+  opacity: 0;
+}

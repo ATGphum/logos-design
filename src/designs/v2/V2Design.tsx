@@ -84,7 +84,8 @@ export default function V2Design() {
     (sidebarCollapsed ? " sidebar-collapsed" : "") +
     (terminalOpen ? " terminal-open" : "") +
     (chatReveal ? " chat-reveal" : "") +
-    (!watermarkOn ? " hide-watermark" : "")
+    (!watermarkOn ? " hide-watermark" : "") +
+    (signedIn ? "" : " v2-signedout")
 
   return (
     <div className={rootClass}>

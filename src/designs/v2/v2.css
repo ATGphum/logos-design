@@ -1004,3 +1004,58 @@
   right: auto;
   width: 248px;
 }
+
+/* ===== Auth pair sits at the edge now the topbar icons have gone ===== */
+/* It was held 130px in to clear three controls that no longer exist on the landing
+   state. The terminal and side-panel toggles still appear once a chat starts, though,
+   and you can start one without signing in — so the tools step aside while the pair is
+   showing rather than the pair being permanently inset for them. */
+.v2-root .v2-auth {
+  right: 24px;
+}
+.v2-root.v2-signedout .topbar-tools {
+  margin-right: 214px;
+}
+
+/* ===== New chat leads ===== */
+/* Ordered in CSS rather than moved in the markup, so V1's nav keeps its own order. */
+.v2-root .sidebar-nav #new-chat-btn {
+  order: 1;
+}
+.v2-root .sidebar-nav .nav-btn:nth-of-type(1) {
+  order: 2;
+}
+.v2-root .sidebar-nav .nav-btn:nth-of-type(3) {
+  order: 3;
+}
+.v2-root .sidebar-nav .proj-picker-wrap {
+  order: 4;
+}
+/* the rail follows, or the two stop coinciding and the fold seams again */
+.v2-root .rail-newchat {
+  top: 69px;
+}
+.v2-root .rail-search {
+  top: 116px;
+}
+
+/* ===== Chats a little lower still ===== */
+.v2-root .sidebar-section {
+  padding-top: 22px;
+}
+
+/* ===== A darker hero bar ===== */
+/* It sat lighter than the page; against true black that made it the brightest thing
+   under the lockup. */
+.v2-root .input-bar-wrap.in-hero .input-bar {
+  background: rgba(255, 255, 255, 0.022);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.v2-root .input-bar-wrap.in-hero .input-bar:focus-within {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+.v2-root.light .input-bar-wrap.in-hero .input-bar {
+  background: rgba(26, 25, 22, 0.03);
+  border-color: rgba(26, 25, 22, 0.12);
+}

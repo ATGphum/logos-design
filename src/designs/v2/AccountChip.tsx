@@ -14,6 +14,16 @@ const GearGlyph = () => (
   </svg>
 )
 
+/** The trigger reads as a nav glyph, not an avatar — everything else in that column and
+ *  rail is a 26px line icon, and a filled letter-disc sat oddly among them. The lettered
+ *  disc stays inside the menu, where it is genuinely an avatar. */
+const UserGlyph = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="8" r="3.6" />
+    <path d="M4.8 20a7.2 7.2 0 0 1 14.4 0" />
+  </svg>
+)
+
 const Chevron = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="6 9 12 15 18 9" />
@@ -69,7 +79,9 @@ export function AccountChip({ onOpenBilling, onOpenSettings, light, onToggleLigh
   return (
     <div className={"v2-acct" + (open ? " open" : "")} ref={wrapRef}>
       <button className="v2-acct-chip" onClick={() => setOpen((v) => !v)} title="Account">
-        <span className="v2-acct-ava">S</span>
+        <span className="v2-acct-ico">
+          <UserGlyph />
+        </span>
         <span className="v2-acct-name">scout tesy</span>
         <span className="v2-acct-caret">
           <Chevron />

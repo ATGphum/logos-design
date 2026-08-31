@@ -1189,3 +1189,59 @@
   padding-right: 4px;
   scrollbar-gutter: auto;
 }
+
+/* ===== Account trigger matches the other glyphs ===== */
+.v2-root .v2-acct-ico {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  color: var(--side-fg-strong);
+}
+.v2-root .v2-acct-ico svg {
+  width: 26px;
+  height: 26px;
+}
+.v2-root .collapsed-settings .v2-acct-ico {
+  color: var(--side-fg-strong);
+}
+
+/* ===== Rail glyphs: the last 2px ===== */
+/* The nav sits 2px higher than it did when these were set, so every rail glyph was that
+   much low. Same correction to all four keeps them coincident. */
+.v2-root .rail-newchat {
+  top: 67px;
+}
+.v2-root .rail-search {
+  top: 114px;
+}
+.v2-root .rail-console {
+  top: 161px;
+}
+.v2-root .rail-projects {
+  top: 210px;
+}
+
+/* ===== A slower fold ===== */
+/* .28s was tuned against the console's, whose column is 96px wide. This one travels
+   248px in the same time, which is why it reads as instant by comparison. */
+.v2-root {
+  --v2-fold: 0.42s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+.v2-root .sidebar {
+  transition: max-width var(--v2-fold), opacity 0.2s ease;
+}
+.v2-root .sidebar > .sidebar-logo,
+.v2-root .sidebar > .sidebar-nav,
+.v2-root .sidebar > .sidebar-section,
+.v2-root .sidebar > .sidebar-footer {
+  transition: opacity 0.16s ease;
+}
+
+/* ===== Scrollbar hard against the edge ===== */
+.v2-root #recent-list {
+  margin-right: -13px;
+  padding-right: 7px;
+}

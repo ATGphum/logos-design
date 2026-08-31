@@ -1265,25 +1265,44 @@
   box-shadow: none;
 }
 
-/* ===== Glyphs hand over instantly, so they never double ===== */
-/* The column and the rail cross-faded, and since their glyphs now sit in exactly the
-   same places, both were drawn at partial opacity over one another mid-fold. Two half-
-   opaque copies do not sum to one opaque one, so the pair brightened and dipped as they
-   crossed — the flicker, and the difference in brightness between them.
-   With the positions coincident a fade buys nothing: switching outright is invisible,
-   and only ever one copy is on screen. The chat list keeps its fade, since it has no
-   counterpart in the rail and would otherwise vanish abruptly. */
+/* ===== The glyphs never move, at all ===== */
+/* Two copies exist: the column's, which live inside a box that is narrowing, and the
+   rail's, which are position: fixed and cannot move. They sit at identical coordinates.
+   Cross-fading them doubled their opacity mid-fold (two half-opaque copies do not sum to
+   one), which was the flicker. Switching instantly fixed that but left the column's copy
+   on screen while its box was still narrow, so it got clipped from the right — read as
+   the icons sliding away.
+   So the rail's copy — the one that cannot move or be clipped — is the one shown for the
+   entire transition, in both directions. The handover happens only at the two ends, where
+   the column is fully open, and because the coordinates match it is invisible.
+   Opening: the swap waits for the fold to finish. Closing: it happens immediately. */
 .v2-root .collapsed-rail,
-.v2-root.sidebar-collapsed .collapsed-rail,
-.v2-root .collapsed-settings,
-.v2-root.sidebar-collapsed .collapsed-settings {
-  transition: opacity 0s, visibility 0s;
+.v2-root .collapsed-settings {
+  transition: opacity 0s linear 0.42s, visibility 0s linear 0.42s;
 }
 .v2-root .sidebar > .sidebar-logo,
 .v2-root .sidebar > .sidebar-nav,
 .v2-root .sidebar > .sidebar-footer {
-  transition: opacity 0s;
+  transition: opacity 0s linear 0.42s;
+}
+.v2-root.sidebar-collapsed .collapsed-rail,
+.v2-root.sidebar-collapsed .collapsed-settings,
+.v2-root.sidebar-collapsed .sidebar > .sidebar-logo,
+.v2-root.sidebar-collapsed .sidebar > .sidebar-nav,
+.v2-root.sidebar-collapsed .sidebar > .sidebar-footer {
+  transition: opacity 0s, visibility 0s;
 }
 .v2-root .sidebar > .sidebar-section {
   transition: opacity 0.16s ease;
+}
+
+/* ===== The open lockup carries more light ===== */
+.v2-root .sidebar-logo .logo-word {
+  color: #ffffff;
+  text-shadow: 0 0 14px rgba(255, 255, 255, 0.6), 0 0 34px rgba(255, 255, 255, 0.32),
+    0 0 68px rgba(255, 255, 255, 0.16);
+}
+.v2-root.light .sidebar-logo .logo-word {
+  color: #21221d;
+  text-shadow: none;
 }

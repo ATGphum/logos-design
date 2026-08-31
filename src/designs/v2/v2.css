@@ -1608,3 +1608,78 @@
 .v2-root:not(.light) .section-item.active .chat-action:hover {
   color: #0a0a0a;
 }
+
+/* ===== Search is a window, not a takeover ===== */
+/* It already floated a 740px panel, but behind a 30px blur across the whole page, which
+   is what made it feel like the app had been replaced. Same scrim the console window
+   uses, and the panel gets an edge and a shadow so it reads as an object sitting on the
+   page rather than the page itself changing. */
+.v2-root .search-overlay {
+  padding-top: 14vh;
+  background: rgba(0, 0, 0, 0.62);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+.v2-root .search-inner {
+  width: min(620px, 100%);
+  border-radius: 18px;
+  overflow: hidden;
+  background: #131313;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 34px 90px -26px rgba(0, 0, 0, 0.85);
+}
+.v2-root.light .search-inner {
+  background: #fffefb;
+  border-color: rgba(26, 25, 22, 0.12);
+}
+
+/* ===== Search, Console and Projects stay lit while open ===== */
+/* Same full-white pill the selected chat uses, so "this is the thing you are in" looks
+   the same whether it is a chat, a picker or a window over the page. */
+.v2-root:not(.light) .sidebar-nav .nav-btn.active,
+.v2-root:not(.light) .proj-picker-btn.active {
+  background: #ffffff;
+  color: #0a0a0a;
+  text-shadow: none;
+}
+.v2-root:not(.light) .sidebar-nav .nav-btn.active svg,
+.v2-root:not(.light) .proj-picker-btn.active svg {
+  color: #0a0a0a;
+  filter: none;
+}
+/* and it stops short of the fold, so the page frames it on all four sides */
+.v2-root .search-results {
+  max-height: 46vh;
+  overflow-y: auto;
+}
+
+/* ===== Smaller glyphs ===== */
+/* 26px was set to match the rail when the two were being reconciled; against 15px type
+   it sits heavy. 20px reads with the words rather than over them. Both copies move
+   together — the fold depends on them being identical. */
+.v2-root .sidebar-nav .nav-btn svg,
+.v2-root .proj-picker-btn svg,
+.v2-root .collapsed-rail .rail-nav svg {
+  width: 20px;
+  height: 20px;
+}
+.v2-root .v2-acct-ico,
+.v2-root .v2-acct-ico svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* rail re-registered after the glyphs shrank — smaller icons shortened the rows, so the
+   fixed copies drifted low by up to 9px down the list */
+.v2-root .rail-newchat {
+  top: 68.3px;
+}
+.v2-root .rail-search {
+  top: 111.8px;
+}
+.v2-root .rail-console {
+  top: 155.3px;
+}
+.v2-root .rail-projects {
+  top: 200.8px;
+}

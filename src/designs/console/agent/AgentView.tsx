@@ -9,7 +9,7 @@ import ensoWhite from "../assets/enso.svg"
 import ensoInk from "../assets/enso-ink.svg"
 import { initialRecentChats, isMobileViewport, MODELS, PROJECTS, type ChatItem, type Project } from "../state"
 import { AgentSidebar } from "./AgentSidebar"
-import { ConsoleIcon, FolderIcon, GearIcon, NewChatIcon, SearchIcon, SidebarFoldIcon } from "./icons"
+import { ConsoleIcon, ConsoleIconV2, FolderIcon, GearIcon, NewChatIcon, NewChatIconV2, ProjectsIconV2, SearchIcon, SearchIconV2, SidebarFoldIcon } from "./icons"
 import { SearchOverlay } from "./SearchOverlay"
 import { SettingsView } from "./SettingsView"
 
@@ -80,6 +80,10 @@ export interface AgentViewProps {
   freshOnOpen?: boolean
   /** V2: the lockup folds the column too. Omitted elsewhere. */
   logoFolds?: boolean
+  /** V2: keeps Console lit while the console window is open. */
+  consoleActive?: boolean
+  /** V2: use the leaner nav glyphs, in the rail as well as the column */
+  v2Icons?: boolean
 }
 
 export function AgentView(props: AgentViewProps) {
@@ -103,6 +107,8 @@ export function AgentView(props: AgentViewProps) {
     contextualTools,
     accountSlot,
     logoFolds,
+    consoleActive,
+    v2Icons,
   } = props
 
   const [chats, setChats] = useState<ChatItem[]>(initialRecentChats)
@@ -362,19 +368,19 @@ export function AgentView(props: AgentViewProps) {
           </button>
         </div>
         <button className="rail-nav rail-newchat" onClick={newChat} title="New Chat">
-          <NewChatIcon />
+          {v2Icons ? <NewChatIconV2 /> : <NewChatIcon />}
         </button>
         <button className="rail-nav rail-search" onClick={() => setSearchOpen(true)} title="Search">
-          <SearchIcon />
+          {v2Icons ? <SearchIconV2 /> : <SearchIcon />}
         </button>
         <button className="rail-nav rail-console" onClick={onOpenConsole} title="Console">
-          <ConsoleIcon />
+          {v2Icons ? <ConsoleIconV2 /> : <ConsoleIcon />}
         </button>
         {/* V2 carries Projects in the nav, so the rail needs it too — otherwise that
             glyph has nothing to fold into and simply disappears. */}
         {projectsAsPicker ? (
           <button className="rail-nav rail-projects" title="Projects">
-            <FolderIcon />
+            {v2Icons ? <ProjectsIconV2 /> : <FolderIcon />}
           </button>
         ) : null}
       </div>
@@ -408,6 +414,9 @@ export function AgentView(props: AgentViewProps) {
         accountSlot={accountSlot}
         logoFolds={logoFolds}
         sidebarCollapsed={sidebarCollapsed}
+        searchActive={searchOpen}
+        consoleActive={consoleActive}
+        v2Icons={v2Icons}
         onOpenSettings={openSettings}
         onToggleSidebar={onToggleSidebar}
       />

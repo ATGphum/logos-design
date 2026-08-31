@@ -108,6 +108,8 @@ export default function V2Design() {
         contextualTools
         freshOnOpen
         logoFolds
+        v2Icons
+        consoleActive={csDisplayed && !csHidden}
         accountSlot={
           <AccountChip
             onOpenBilling={openConsole}

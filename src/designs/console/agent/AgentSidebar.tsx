@@ -7,7 +7,7 @@ import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent, type R
 import ensoWhite from "../assets/enso.svg"
 import ensoInk from "../assets/enso-ink.svg"
 import type { ChatItem, Project } from "../state"
-import { ChevronDown, ConsoleIcon, FolderIcon, GearIcon, NewChatIcon, PinIcon, PlusIcon, SearchIcon, SidebarFoldIcon, TrashIcon } from "./icons"
+import { ChevronDown, ConsoleIcon, ConsoleIconV2, FolderIcon, GearIcon, NewChatIcon, NewChatIconV2, PinIcon, PlusIcon, ProjectsIconV2, SearchIcon, SearchIconV2, SidebarFoldIcon, TrashIcon } from "./icons"
 
 export interface AgentSidebarProps {
   light: boolean
@@ -24,6 +24,11 @@ export interface AgentSidebarProps {
   logoFolds?: boolean
   /** folding the column dismisses any open picker — see the effect below */
   sidebarCollapsed?: boolean
+  /** V2: the nav item stays lit while the thing it opened is open */
+  searchActive?: boolean
+  consoleActive?: boolean
+  /** V2: use the leaner nav glyphs */
+  v2Icons?: boolean
   activeChatId: string | null
   newChatActive: boolean
   isMobile: boolean
@@ -150,6 +155,9 @@ export function AgentSidebar(props: AgentSidebarProps) {
     accountSlot,
     logoFolds,
     sidebarCollapsed,
+    searchActive,
+    consoleActive,
+    v2Icons,
     activeChatId,
     newChatActive,
     isMobile,
@@ -168,6 +176,11 @@ export function AgentSidebar(props: AgentSidebarProps) {
   const sidebarRef = useRef<HTMLElement>(null)
   const [openProjects, setOpenProjects] = useState<Record<string, boolean>>({})
   const [pickerOpen, setPickerOpen] = useState(false)
+  /* V2 draws its own, leaner nav set; everything else keeps the stock glyphs */
+  const Search = v2Icons ? SearchIconV2 : SearchIcon
+  const Compose = v2Icons ? NewChatIconV2 : NewChatIcon
+  const Term = v2Icons ? ConsoleIconV2 : ConsoleIcon
+  const Projects = v2Icons ? ProjectsIconV2 : FolderIcon
 
   /* Folding the column leaves the picker open behind it, so the rail shows Projects
      lit as a full white pill with nothing under it. The fold dismisses it. */
@@ -253,16 +266,16 @@ export function AgentSidebar(props: AgentSidebarProps) {
       <div className="sidebar-resizer" id="sidebar-resizer" title="Drag to resize" ref={resizerRef}></div>
 
       <nav className="sidebar-nav">
-        <button className="nav-btn" onClick={onOpenSearch}>
-          <SearchIcon />
+        <button className={"nav-btn" + (searchActive ? " active" : "")} onClick={onOpenSearch}>
+          <Search />
           Search
         </button>
         <button className={"nav-btn" + (newChatActive ? " active" : "")} id="new-chat-btn" onClick={onNewChat}>
-          <NewChatIcon />
+          <Compose />
           New chat
         </button>
-        <button className="nav-btn" onClick={onOpenConsole}>
-          <ConsoleIcon />
+        <button className={"nav-btn" + (consoleActive ? " active" : "")} onClick={onOpenConsole}>
+          <Term />
           Console
         </button>
         {/* PROJECTS — picker form (V2). One control: click it, choose a project. */}
@@ -273,7 +286,7 @@ export function AgentSidebar(props: AgentSidebarProps) {
               onClick={() => setPickerOpen((v) => !v)}
               title="Choose a project"
             >
-              <FolderIcon />
+              <Projects />
               Projects
             </button>
             {pickerOpen ? (

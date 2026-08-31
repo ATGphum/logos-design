@@ -1920,3 +1920,66 @@
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
 }
+
+/* ===== The hero bar, on the column's terms ===== */
+/* Its glyphs were a 31px plus at stroke 2, a text-character star for the model, and
+   16px controls at stroke 2 — three different weights in one bar. They take the nav's
+   weight and a consistent size instead. The plus is the same mark New chat uses, which
+   is the point: attaching and starting are the same gesture. */
+/* .input-plus also carries .icon-btn, so this needs the extra class to outrank the
+   generic control size below it */
+.v2-root .icon-btn.input-plus svg {
+  width: 21px;
+  height: 21px;
+  stroke-width: 1.5;
+}
+.v2-root .icon-btn svg {
+  width: 17px;
+  height: 17px;
+  stroke-width: 1.5;
+}
+.v2-root .model-selector svg {
+  stroke-width: 1.5;
+}
+
+/* the model marker was the character ✦ set as text — a drawn diamond instead, so it
+   scales and aligns with the type rather than with whatever font resolves it */
+.v2-root .model-icon {
+  font-size: 0;
+  width: 7px;
+  height: 7px;
+  display: inline-block;
+  border: 1px solid currentColor;
+  border-radius: 1px;
+  transform: rotate(45deg);
+  opacity: 0.75;
+}
+
+/* ===== A lit edge rather than an outline ===== */
+/* The flat 1px border reads as a drawn box. This is the seam's language: a hairline that
+   is brightest along the top, where light would catch it, falling away down the sides. */
+.v2-root:not(.light) .input-bar-wrap.in-hero .input-bar {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(#131313, #131313) padding-box,
+    linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.22) 0%,
+        rgba(255, 255, 255, 0.1) 34%,
+        rgba(255, 255, 255, 0.05) 70%,
+        rgba(255, 255, 255, 0.04) 100%
+      )
+      border-box;
+}
+.v2-root:not(.light) .input-bar-wrap.in-hero .input-bar:focus-within {
+  background:
+    linear-gradient(#171717, #171717) padding-box,
+    linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.4) 0%,
+        rgba(255, 255, 255, 0.18) 34%,
+        rgba(255, 255, 255, 0.1) 70%,
+        rgba(255, 255, 255, 0.08) 100%
+      )
+      border-box;
+}

@@ -1505,3 +1505,24 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
+
+/* ===== The nav reads at full strength ===== */
+/* It was on --color-text-secondary with the glyphs a step brighter than the words, so
+   the row read as two tones. Both go to white; the chat list below stays at 62%, which
+   is what keeps the nav ahead of it. */
+.v2-root:not(.light) .sidebar-nav .nav-btn,
+.v2-root:not(.light) .proj-picker-btn {
+  color: #ffffff;
+}
+.v2-root:not(.light) .sidebar-nav .nav-btn svg,
+.v2-root:not(.light) .proj-picker-btn svg,
+.v2-root:not(.light) .collapsed-rail .rail-nav svg,
+.v2-root:not(.light) .collapsed-settings .v2-acct-ico,
+.v2-root:not(.light) .v2-acct-chip {
+  color: #ffffff;
+}
+/* collapsed still hands the label off to transparent, so the fade is unaffected */
+.v2-root:not(.light).sidebar-collapsed .sidebar-nav .nav-btn,
+.v2-root:not(.light).sidebar-collapsed .proj-picker-btn {
+  color: transparent;
+}

@@ -1134,3 +1134,46 @@
   font-size: 20px;
   letter-spacing: 0.34em;
 }
+
+/* ===== Room above the account ===== */
+/* The list ran right up to it; the last row and the avatar were touching. */
+.v2-root .sidebar-section {
+  padding-bottom: 22px;
+  /* the space above the heading moves into the heading itself — as container padding it
+     was bare, so rows scrolled up into it and showed above the pinned label */
+  padding-top: 0;
+}
+.v2-root .sidebar-footer {
+  padding-top: 14px;
+}
+
+/* ===== The list scrolls, not the block around it ===== */
+/* .sidebar-section was the scroller and held the heading as well as the rows, so the
+   heading travelled with them and the scrollbar ran the full height of the block —
+   including alongside the heading.
+   Making the list itself the scroller fixes both at once: the heading is outside it and
+   cannot move, rows cannot pass over it because they are clipped by a box that starts
+   below it, and the scrollbar spans only the rows. The fold hook animates this element's
+   max-height and settles on `none`, so it is free to own overflow. */
+.v2-root .sidebar-section {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-top: 18px;
+  padding-bottom: 0;
+}
+.v2-root .sidebar-section .section-label {
+  position: static;
+  flex: none;
+  margin-top: 0 !important;
+  padding-top: 0;
+  padding-bottom: 8px;
+}
+.v2-root #recent-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  /* keeps the last row clear of the account control below */
+  padding-bottom: 20px;
+}

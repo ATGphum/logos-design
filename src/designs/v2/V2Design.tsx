@@ -102,6 +102,7 @@ export default function V2Design() {
         onOpenConsole={openConsole}
         onBackHome={backHome}
         projectsAsPicker
+        shortModelName
         heroGreetingNode={
           <span className="v2-hero-mark">
             <img src={light ? ensoInk : ensoWhite} alt="" aria-hidden="true" />

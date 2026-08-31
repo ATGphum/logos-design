@@ -27,6 +27,19 @@ const SunPaths = () => (
   </>
 )
 
+/**
+ * V2: just the headline — "qwen3.7-max-2026-06-08" -> "Qwen 3.7". Drops the date, the
+ * tier suffix and the hyphenation, so the bar names the model rather than reciting its
+ * full identifier and truncating it to an ellipsis.
+ */
+function headlineModel(label: string): string {
+  const base = label.replace(/-\d{4}-\d{2}-\d{2}.*$/, "").split("-")[0]
+  const parts = base.match(/^([a-zA-Z]+)([\d.]*)$/)
+  if (!parts) return base
+  const name = parts[1].charAt(0).toUpperCase() + parts[1].slice(1)
+  return parts[2] ? name + " " + parts[2] : name
+}
+
 /** friendly model name on mobile: strip date suffixes, dashes to spaces (prettyModel) */
 function prettyModel(label: string): string {
   return label
@@ -54,6 +67,8 @@ export interface AgentViewProps {
   heroGreetingNode?: ReactNode
   /** V2: Projects becomes a picker rather than a folding tree. Omitted elsewhere. */
   projectsAsPicker?: boolean
+  /** V2: the bar shows the model's headline only. Omitted elsewhere. */
+  shortModelName?: boolean
 }
 
 export function AgentView(props: AgentViewProps) {
@@ -72,6 +87,7 @@ export function AgentView(props: AgentViewProps) {
     onBackHome,
     heroGreetingNode,
     projectsAsPicker,
+    shortModelName,
   } = props
 
   const [chats, setChats] = useState<ChatItem[]>(initialRecentChats)
@@ -250,7 +266,9 @@ export function AgentView(props: AgentViewProps) {
         <div className={"model-wrap" + (modelMenuOpen ? " mm-open" : "")}>
           <button className="model-selector" ref={modelBtnRef} onClick={toggleModelMenu} title="Select model">
             <span className="model-icon">✦</span>
-            <span id="model-name">{isMobile ? prettyModel(model) : model}</span>
+            <span id="model-name">
+              {shortModelName ? headlineModel(model) : isMobile ? prettyModel(model) : model}
+            </span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <polyline points="6 9 12 15 18 9" />
             </svg>

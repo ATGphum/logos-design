@@ -574,3 +574,31 @@
 .v2-root:not(.light) .sidebar {
   border-right: 1px solid rgba(255, 255, 255, 0.07);
 }
+
+/* ===== Hero: bigger lockup, no watermark ===== */
+/* The oversized enso behind the hero doubled up with the mark that now sits in the
+   lockup itself — two of the same symbol at two sizes. The lockup keeps it. */
+.v2-root .hero-watermark {
+  display: none;
+}
+.v2-root .hero-greeting {
+  font-size: 58px;
+}
+.v2-root .v2-hero-mark img {
+  width: 1em;
+  height: 1em;
+}
+
+/* ===== Model chip: the headline, in the UI face ===== */
+/* It was set in the display font and capped at 118px, so a full identifier got cut to
+   an ellipsis. The name is short now, so neither is needed. */
+.v2-root .model-selector {
+  font-family: var(--app-font-sans);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+.v2-root #model-name {
+  max-width: none;
+  overflow: visible;
+  text-overflow: clip;
+}

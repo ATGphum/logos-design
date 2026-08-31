@@ -1420,3 +1420,42 @@
 .v2-root .rail-logo-box:hover .rail-logo {
   opacity: 0;
 }
+
+/* ===== The console is a window over the agent, not a second site ===== */
+/* V1 opens it full-bleed, which reads as having left the product. Inset with the agent
+   page visible around it, it reads as something you opened and can close — which is
+   what V2 is arguing the control plane is. */
+.v2-cs-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 449;
+  background: rgba(0, 0, 0, 0.62);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  opacity: 1;
+  transition: opacity 0.42s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+.v2-cs-scrim.out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.v2-root #cs-view {
+  inset: 3.4vh 2.6vw;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 44px 130px -34px rgba(0, 0, 0, 0.92), 0 0 0 1px rgba(255, 255, 255, 0.09);
+}
+/* the console's own rounded corners have to clip its chrome too */
+.v2-root #cs-view .cs-wrap,
+.v2-root #cs-view .cs-side {
+  border-bottom-left-radius: 20px;
+}
+
+/* full-bleed below tablet, where an inset window leaves too little room */
+@media (max-width: 900px) {
+  .v2-root #cs-view {
+    inset: 0;
+    border-radius: 0;
+  }
+}

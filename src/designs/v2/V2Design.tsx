@@ -142,6 +142,13 @@ export default function V2Design() {
 
       {/* mounted only once opened, so V2 costs nothing extra on the agent page */}
       {csDisplayed ? (
+        <div
+          className={"v2-cs-scrim" + (csHidden ? " out" : "")}
+          onClick={enterAgent}
+          aria-hidden="true"
+        />
+      ) : null}
+      {csDisplayed ? (
         <ConsoleView
           displayed={csDisplayed}
           hidden={csHidden}

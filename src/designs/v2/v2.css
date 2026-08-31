@@ -1231,7 +1231,11 @@
   --v2-fold: 0.42s cubic-bezier(0.33, 0.45, 0.25, 1);
 }
 .v2-root .sidebar {
-  transition: max-width var(--v2-fold), opacity 0.2s ease;
+  /* the column's own fade has to run the fold's clock too — at 0.2s it emptied the
+     column in the first half and left an empty box to finish closing, which is what
+     made folding in feel instant even though the box itself takes the same 420ms as
+     folding out */
+  transition: max-width var(--v2-fold), opacity var(--v2-fold);
 }
 .v2-root .sidebar > .sidebar-logo,
 .v2-root .sidebar > .sidebar-nav,
@@ -1293,7 +1297,8 @@
   transition: opacity 0s, visibility 0s;
 }
 .v2-root .sidebar > .sidebar-section {
-  transition: opacity 0.16s ease;
+  /* same: the chat list was fully gone by 124ms against a 374ms fold */
+  transition: opacity var(--v2-fold);
 }
 
 /* ===== The open lockup carries more light ===== */

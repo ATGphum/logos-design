@@ -1059,3 +1059,32 @@
   background: rgba(26, 25, 22, 0.03);
   border-color: rgba(26, 25, 22, 0.12);
 }
+
+/* ===== No chat name in the topbar ===== */
+/* The column already says which chat you are in, and the hero says what the product is.
+   A third label between them was the only thing in that corner. */
+.v2-root .topbar-title {
+  display: none;
+}
+
+/* ===== The selected chat reads as a tab ===== */
+/* --color-surface resolves to rgba(0,0,0,0.2) here: a *darker* panel, which worked when
+   the column was #0d0d0d and vanished entirely once it went to true black. All that was
+   left was the text turning white, which is why the highlight looked like it was only on
+   the words. On black it has to be lighter than the surface, not darker.
+   Rows also carry more height so the fill reads as a tab rather than a bar behind text —
+   the tightened pitch is kept by trimming the gap instead. */
+.v2-root:not(.light) .section-item {
+  padding: 8px 11px;
+  margin-bottom: 0;
+}
+.v2-root:not(.light) .section-item:hover {
+  background: rgba(255, 255, 255, 0.045);
+}
+.v2-root:not(.light) .section-item.active {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--side-fg-strong);
+}
+.v2-root:not(.light) .section-item.active:hover {
+  background: rgba(255, 255, 255, 0.1);
+}

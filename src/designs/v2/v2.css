@@ -585,8 +585,8 @@
   /* the console's own ground, #0e0e0e — true black turned out to be the single biggest
      reason the two surfaces did not look related, and it is also what killed the
      selected-row highlight, since that panel is darker than its surface */
-  --color-bg: #0e0e0e;
-  --side-bg: #0e0e0e;
+  --color-bg: #0a0a0a;
+  --side-bg: #0a0a0a;
 }
 .v2-root:not(.light) .sidebar {
   border-right: 1px solid rgba(255, 255, 255, 0.07);
@@ -1548,4 +1548,34 @@
 }
 .v2-root:not(.light) .sidebar-section .section-label {
   color: #ffffff;
+}
+
+/* ===== Page and column are the same surface ===== */
+/* They were both #0e0e0e, but the page carried two extra layers the column did not: a
+   fractal-noise texture and a radial gradient lifting the bottom centre by up to 3%
+   white. That gradient is why the middle of the page read lighter than the column
+   beside it. The gradient goes; the noise stays and is given to the column too, so the
+   two are literally the same surface rather than merely the same colour. */
+.v2-root {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+.v2-root .sidebar {
+  background-color: var(--side-bg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+/* ===== The nav carries light ===== */
+/* Same treatment as the lockup, a step quieter — enough to lift the row off the ground
+   without competing with the wordmark above it. */
+.v2-root:not(.light) .sidebar-nav .nav-btn,
+.v2-root:not(.light) .proj-picker-btn {
+  /* one tight stop rather than two wide ones — the white stays, the halo does not */
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.2);
+}
+.v2-root:not(.light) .sidebar-nav .nav-btn svg,
+.v2-root:not(.light) .proj-picker-btn svg,
+.v2-root:not(.light) .collapsed-rail .rail-nav svg {
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.22));
 }

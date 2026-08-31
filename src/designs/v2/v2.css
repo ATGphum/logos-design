@@ -1306,3 +1306,36 @@
   color: #21221d;
   text-shadow: none;
 }
+
+/* ===== Labels fade; glyphs still switch ===== */
+/* The nav's opacity was carrying both, so the labels inherited the glyphs' instant
+   handover and popped in at the end of the fold. They have to be driven separately.
+   The glyph takes its colour from its own rule (.nav-btn svg sets --side-fg-strong),
+   so the button's `color` reaches the text alone — fading that fades the label and
+   leaves the icon untouched. The glyph keeps switching outright, so there is still only
+   ever one copy of it on screen. */
+.v2-root .sidebar > .sidebar-nav,
+.v2-root.sidebar-collapsed .sidebar > .sidebar-nav {
+  opacity: 1;
+  transition: none;
+}
+.v2-root .sidebar-nav .nav-btn svg,
+.v2-root .proj-picker-btn svg {
+  opacity: 1;
+  transition: opacity 0s linear 0.42s;
+}
+.v2-root.sidebar-collapsed .sidebar-nav .nav-btn svg,
+.v2-root.sidebar-collapsed .proj-picker-btn svg {
+  opacity: 0;
+  transition: opacity 0s;
+}
+/* in late enough that the column has the width to hold them, and quick once it starts */
+.v2-root .sidebar-nav .nav-btn,
+.v2-root .proj-picker-btn {
+  transition: color 0.16s ease 0.2s, background 0.12s;
+}
+.v2-root.sidebar-collapsed .sidebar-nav .nav-btn,
+.v2-root.sidebar-collapsed .proj-picker-btn {
+  color: transparent;
+  transition: color 0.09s ease, background 0.12s;
+}

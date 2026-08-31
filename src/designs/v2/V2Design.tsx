@@ -105,6 +105,7 @@ export default function V2Design() {
         projectsAsPicker
         shortModelName
         contextualTools
+        freshOnOpen
         accountSlot={
           <AccountChip
             onOpenBilling={openConsole}

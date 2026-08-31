@@ -959,3 +959,48 @@
 .v2-root .sidebar-section .section-label {
   margin-top: 6px;
 }
+
+/* ===== Rail glyphs land exactly where the column's are ===== */
+/* The fold cross-fades two separate trees: the column's nav and the fixed rail. If their
+   glyphs do not coincide you watch one set leave and another arrive a few pixels away,
+   which is what stopped it reading as seamless. Measured, the rail sat 1px left and
+   3-7px low of every counterpart. These offsets put each one on its expanded position
+   exactly, so the swap is invisible.
+   Icon centre = rail top + 8px padding + 13px half-glyph, hence top = centre - 21. */
+.v2-root .rail-logo-box {
+  top: 14px;
+  left: 13px;
+}
+.v2-root .collapsed-rail .rail-nav {
+  left: 11px;
+}
+.v2-root .rail-search {
+  top: 69px;
+}
+.v2-root .rail-newchat {
+  top: 116px;
+}
+.v2-root .rail-console {
+  top: 163px;
+}
+.v2-root .rail-projects {
+  top: 212px;
+}
+
+/* the account keeps its place too: avatar only, on the same axis and baseline */
+.v2-root .collapsed-settings {
+  left: 10px;
+  bottom: 13px;
+}
+.v2-root .collapsed-settings .v2-acct-name,
+.v2-root .collapsed-settings .v2-acct-caret {
+  display: none;
+}
+.v2-root .collapsed-settings .v2-acct-chip {
+  width: auto;
+}
+.v2-root .collapsed-settings .v2-acct-menu {
+  left: 0;
+  right: auto;
+  width: 248px;
+}

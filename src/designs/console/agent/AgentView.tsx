@@ -9,7 +9,7 @@ import ensoWhite from "../assets/enso.svg"
 import ensoInk from "../assets/enso-ink.svg"
 import { initialRecentChats, isMobileViewport, MODELS, PROJECTS, type ChatItem, type Project } from "../state"
 import { AgentSidebar } from "./AgentSidebar"
-import { ConsoleIcon, GearIcon, NewChatIcon, SearchIcon, SidebarFoldIcon } from "./icons"
+import { ConsoleIcon, FolderIcon, GearIcon, NewChatIcon, SearchIcon, SidebarFoldIcon } from "./icons"
 import { SearchOverlay } from "./SearchOverlay"
 import { SettingsView } from "./SettingsView"
 
@@ -74,8 +74,10 @@ export interface AgentViewProps {
    * for them to act on. Omitted elsewhere, where both are always present.
    */
   contextualTools?: boolean
-  /** V2: an account control in the sidebar footer. Omitted elsewhere. */
+  /** V2: an account control in the sidebar footer and the rail. Omitted elsewhere. */
   accountSlot?: ReactNode
+  /** V2: open on a new chat rather than an existing conversation. */
+  freshOnOpen?: boolean
 }
 
 export function AgentView(props: AgentViewProps) {
@@ -103,7 +105,8 @@ export function AgentView(props: AgentViewProps) {
   const [projects, setProjects] = useState<Project[]>(PROJECTS)
   const [activeChatId, setActiveChatId] = useState<string | null>("chat-0")
   const [newChatActive, setNewChatActive] = useState(false)
-  const [chatTitle, setChatTitle] = useState("Bittensor TAO explained")
+  /* V2 opens on a fresh chat rather than dropping you into an existing conversation */
+  const [chatTitle, setChatTitle] = useState(props.freshOnOpen ? "New chat" : "Bittensor TAO explained")
   const [heroGreeting, setHeroGreeting] = useState("What shall we reason through?")
   const [messages, setMessages] = useState<Message[]>([])
   const msgKey = useRef(0)
@@ -363,13 +366,23 @@ export function AgentView(props: AgentViewProps) {
         <button className="rail-nav rail-console" onClick={onOpenConsole} title="Console">
           <ConsoleIcon />
         </button>
+        {/* V2 carries Projects in the nav, so the rail needs it too — otherwise that
+            glyph has nothing to fold into and simply disappears. */}
+        {projectsAsPicker ? (
+          <button className="rail-nav rail-projects" title="Projects">
+            <FolderIcon />
+          </button>
+        ) : null}
       </div>
 
-      {/* collapsed settings: gear stays bottom-left when sidebar is folded in */}
+      {/* bottom-left while folded in: whatever the sidebar's footer carries, so the two
+          states show the same thing in the same place */}
       <div className="collapsed-settings" id="collapsed-settings">
-        <button className="rail-btn" onClick={openSettings} title="Settings">
-          <GearIcon />
-        </button>
+        {accountSlot ?? (
+          <button className="rail-btn" onClick={openSettings} title="Settings">
+            <GearIcon />
+          </button>
+        )}
       </div>
 
       <AgentSidebar

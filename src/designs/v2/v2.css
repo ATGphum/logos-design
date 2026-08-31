@@ -1414,12 +1414,3 @@
 .v2-root .rail-expand {
   transition: none;
 }
-
-/* the rail's expand control is the same panel glyph that was replaced on the open side;
-   the chevron already sitting beside the mark does the job, so it brightens instead */
-.v2-root .rail-expand svg {
-  display: none;
-}
-.v2-root.sidebar-collapsed .rail-logo-box:hover .rail-logo {
-  opacity: 0.22;
-}

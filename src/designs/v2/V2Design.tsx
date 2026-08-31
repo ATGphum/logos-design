@@ -21,6 +21,8 @@ import "./v2.css"
 import { AgentView } from "../console/agent/AgentView"
 import { ConsoleView } from "../console/shell/ConsoleView"
 import { isMobileViewport } from "../console/state"
+import ensoWhite from "../console/assets/enso.svg"
+import ensoInk from "../console/assets/enso-ink.svg"
 import { LoginGate, type AuthMode } from "./LoginGate"
 
 export default function V2Design() {
@@ -99,6 +101,13 @@ export default function V2Design() {
         isMobile={isMobile}
         onOpenConsole={openConsole}
         onBackHome={backHome}
+        projectsAsPicker
+        heroGreetingNode={
+          <span className="v2-hero-mark">
+            <img src={light ? ensoInk : ensoWhite} alt="" aria-hidden="true" />
+            <span>LOGOS</span>
+          </span>
+        }
       />
 
       {/* mounted only once opened, so V2 costs nothing extra on the agent page */}

@@ -4,7 +4,7 @@
  * (prototype csEnter() / body.chat-reveal). Ported from
  * marketing/llm-interface.html lines 4186-4882 + chat scripts 4883-5535.
  */
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, type ReactNode } from "react"
 import ensoWhite from "../assets/enso.svg"
 import ensoInk from "../assets/enso-ink.svg"
 import { initialRecentChats, isMobileViewport, MODELS, PROJECTS, type ChatItem, type Project } from "../state"
@@ -50,6 +50,10 @@ export interface AgentViewProps {
   isMobile: boolean
   onOpenConsole: () => void
   onBackHome: () => void
+  /** V2: replaces the hero's greeting line. Omitted elsewhere. */
+  heroGreetingNode?: ReactNode
+  /** V2: Projects becomes a picker rather than a folding tree. Omitted elsewhere. */
+  projectsAsPicker?: boolean
 }
 
 export function AgentView(props: AgentViewProps) {
@@ -66,6 +70,8 @@ export function AgentView(props: AgentViewProps) {
     isMobile,
     onOpenConsole,
     onBackHome,
+    heroGreetingNode,
+    projectsAsPicker,
   } = props
 
   const [chats, setChats] = useState<ChatItem[]>(initialRecentChats)
@@ -354,6 +360,7 @@ export function AgentView(props: AgentViewProps) {
         onNewChat={newChat}
         onOpenSearch={() => setSearchOpen(true)}
         onOpenConsole={onOpenConsole}
+        projectsAsPicker={projectsAsPicker}
         onOpenSettings={openSettings}
         onToggleSidebar={onToggleSidebar}
       />
@@ -421,7 +428,7 @@ export function AgentView(props: AgentViewProps) {
                     <use href={ensoWhite + "#enso"} />
                   </svg>
                 </div>
-                <div className="hero-greeting">{heroGreeting}</div>
+                <div className="hero-greeting">{heroGreetingNode ?? heroGreeting}</div>
                 <div id="hero-input-slot">{inputBar}</div>
                 <div className="hero-suggestions">
                   <button className="suggestion-pill" onClick={() => startProject("Coding project", "What shall we code?")}>

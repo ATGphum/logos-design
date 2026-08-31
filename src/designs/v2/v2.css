@@ -445,3 +445,120 @@
 .v2-root .rail-console {
   top: 170px;
 }
+
+/* ===== Hero: the mark and the name, not a question ===== */
+.v2-root .v2-hero-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42em;
+}
+.v2-root .v2-hero-mark img {
+  width: 1.15em;
+  height: 1.15em;
+  object-fit: contain;
+  /* one tight glow — the stacked wide drop-shadows elsewhere make a small mark read
+     as soft rather than lit */
+  filter: brightness(1.28) drop-shadow(0 0 3px rgba(255, 255, 255, 0.32));
+}
+.v2-root.light .v2-hero-mark img {
+  filter: none;
+}
+.v2-root .v2-hero-mark > span {
+  letter-spacing: 0.3em;
+  padding-left: 0.1em;
+}
+
+/* ===== Sidebar lockup: mark only, aligned to the nav icons ===== */
+/* .sidebar-nav pads 10px and .nav-btn pads 11px, so the nav glyphs centre on x=21+10=31.
+   The lockup padded 16px around a 34px mark, centring it on 33 — two pixels out, which
+   is exactly the sort of thing that reads as "not aligned" without being obvious. */
+.v2-root .sidebar-logo {
+  padding-left: 13px;
+}
+.v2-root .sidebar-logo .logo-word {
+  display: none;
+}
+.v2-root .sidebar-logo img.logo-img {
+  width: 36px;
+  height: 36px;
+  margin: -3px 0;
+  filter: brightness(1.28) drop-shadow(0 0 3px rgba(255, 255, 255, 0.32));
+}
+.v2-root.light .sidebar-logo img.logo-img {
+  filter: none;
+}
+/* same correction in the rail: 42px mark, centred on the rail glyphs' x=33 */
+.v2-root .rail-logo-box {
+  left: 12px;
+}
+.v2-root .rail-logo {
+  filter: brightness(1.28) drop-shadow(0 0 3px rgba(255, 255, 255, 0.32));
+}
+.v2-root.light .rail-logo {
+  filter: none;
+}
+
+/* ===== Projects: a control you click, not a tree that unfolds ===== */
+.v2-root .proj-picker-wrap {
+  position: relative;
+  padding: 2px 10px 0;
+}
+.v2-root .proj-picker-btn {
+  width: 100%;
+}
+.v2-root .proj-picker {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: calc(100% + 4px);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+  border-radius: 12px;
+  background: var(--color-surface, #1a1a1a);
+  border: 1px solid var(--side-border, rgba(255, 255, 255, 0.12));
+  box-shadow: 0 18px 44px -16px rgba(0, 0, 0, 0.7);
+  animation: v2-pick-in 0.16s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+@keyframes v2-pick-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+.v2-root .proj-picker-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 11px;
+  border: none;
+  border-radius: 9px;
+  background: none;
+  color: var(--side-fg);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 510;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.v2-root .proj-picker-item:hover {
+  background: var(--side-hover);
+  color: var(--side-fg-strong);
+}
+.v2-root .proj-picker-item.active {
+  background: var(--hl-active);
+  color: var(--side-fg-strong);
+  font-weight: 600;
+}
+.v2-root .proj-picker-new {
+  margin-top: 4px;
+  border-top: 1px solid var(--side-border, rgba(255, 255, 255, 0.1));
+  border-radius: 0 0 9px 9px;
+  opacity: 0.75;
+}
+.v2-root .proj-picker-new svg {
+  width: 15px;
+  height: 15px;
+}

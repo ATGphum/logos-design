@@ -91,3 +91,10 @@ export const BackChevron = () => (
     <polyline points="15 18 9 12 15 6" />
   </svg>
 )
+
+/** Projects — used by V2, where projects are picked rather than unfolded. */
+export const FolderIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4.2a1.5 1.5 0 0 1 1.2.6l1 1.4h7.6A1.5 1.5 0 0 1 20 9.5v8A1.5 1.5 0 0 1 18.5 19h-14A1.5 1.5 0 0 1 3 17.5z" />
+  </svg>
+)

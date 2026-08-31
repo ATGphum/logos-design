@@ -7,12 +7,17 @@ import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from 
 import ensoWhite from "../assets/enso.svg"
 import ensoInk from "../assets/enso-ink.svg"
 import type { ChatItem, Project } from "../state"
-import { ChevronDown, ConsoleIcon, GearIcon, NewChatIcon, PinIcon, PlusIcon, SearchIcon, SidebarFoldIcon, TrashIcon } from "./icons"
+import { ChevronDown, ConsoleIcon, FolderIcon, GearIcon, NewChatIcon, PinIcon, PlusIcon, SearchIcon, SidebarFoldIcon, TrashIcon } from "./icons"
 
 export interface AgentSidebarProps {
   light: boolean
   chats: ChatItem[]
   projects: Project[]
+  /**
+   * V2: Projects becomes a control you click to pick one, rather than a section that
+   * unfolds a tree. Off everywhere else, which leaves the section exactly as it was.
+   */
+  projectsAsPicker?: boolean
   activeChatId: string | null
   newChatActive: boolean
   isMobile: boolean
@@ -135,6 +140,7 @@ export function AgentSidebar(props: AgentSidebarProps) {
     light,
     chats,
     projects,
+    projectsAsPicker,
     activeChatId,
     newChatActive,
     isMobile,
@@ -152,6 +158,7 @@ export function AgentSidebar(props: AgentSidebarProps) {
 
   const sidebarRef = useRef<HTMLElement>(null)
   const [openProjects, setOpenProjects] = useState<Record<string, boolean>>({})
+  const [pickerOpen, setPickerOpen] = useState(false)
   const [subsOpen, setSubsOpen] = useState(false)
   const projectsFold = useSectionFold()
   const recentFold = useSectionFold()
@@ -263,8 +270,43 @@ export function AgentSidebar(props: AgentSidebarProps) {
           ))}
         </div>
 
-        {/* PROJECTS */}
+        {/* PROJECTS — picker form (V2). One control: click it, choose a project. */}
+        {projectsAsPicker ? (
+          <div className="proj-picker-wrap">
+            <button
+              className={"nav-btn proj-picker-btn" + (pickerOpen ? " active" : "")}
+              onClick={() => setPickerOpen((v) => !v)}
+              title="Choose a project"
+            >
+              <FolderIcon />
+              Projects
+            </button>
+            {pickerOpen ? (
+              <div className="proj-picker">
+                {projects.map((proj) => (
+                  <button
+                    key={proj.id}
+                    className={"proj-picker-item" + (proj.id === activeChatId ? " active" : "")}
+                    onClick={() => {
+                      onSelectChat(proj.id, proj.chatKey)
+                      setPickerOpen(false)
+                    }}
+                  >
+                    {proj.title}
+                  </button>
+                ))}
+                <button className="proj-picker-item proj-picker-new" onClick={() => setPickerOpen(false)}>
+                  <PlusIcon />
+                  New project
+                </button>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+
+        {/* PROJECTS — original folding section */}
         <div
+          hidden={projectsAsPicker}
           className={"section-label sec-toggle" + (projectsFold.collapsed ? " collapsed" : "")}
           style={{ marginTop: 2 }}
           onClick={projectsFold.toggle}
@@ -287,7 +329,12 @@ export function AgentSidebar(props: AgentSidebarProps) {
             </button>
           </span>
         </div>
-        <div id="projects-list" className={subsOpen ? "subs-open" : undefined} ref={projectsFold.listRef}>
+        <div
+          hidden={projectsAsPicker}
+          id="projects-list"
+          className={subsOpen ? "subs-open" : undefined}
+          ref={projectsFold.listRef}
+        >
           {projects.map((proj) => (
             <div key={proj.id} className={"project" + (openProjects[proj.id] ? " open" : "")}>
               <div

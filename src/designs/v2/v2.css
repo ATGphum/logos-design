@@ -2362,3 +2362,70 @@
   background: #ffffff;
   box-shadow: 0 1px 3px rgba(26, 25, 22, 0.35);
 }
+
+/* ===== Goal mode sits in the bar's own surface ===== */
+/* It was a control floating on the page under the composer. It belongs to the composer,
+   so it lives in a tray of the same material — same fill, same lit top edge — tucked
+   directly beneath and narrower, so it reads as part of that object rather than a
+   neighbour of it. */
+.v2-root .v2-goal {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  width: 236px;
+  margin: -30px auto 0;
+  padding: 13px 16px 15px;
+  border-radius: 16px;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(#131313, #131313) padding-box,
+    linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.16) 0%,
+        rgba(255, 255, 255, 0.07) 40%,
+        rgba(255, 255, 255, 0.04) 100%
+      )
+      border-box;
+  box-shadow: none;
+  transition: background 0.34s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+.v2-root .v2-goal-label {
+  align-self: flex-start;
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  color: rgba(255, 255, 255, 0.42);
+  transition: color 0.34s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+.v2-root .v2-goal.on .v2-goal-label {
+  color: rgba(var(--v2-violet), 0.95);
+}
+.v2-root .v2-goal-track {
+  width: 204px;
+}
+
+/* ===== Liquid ===== */
+/* The knob leads on a curve with a little overshoot and the fill follows on a longer,
+   softer one, so the violet runs in behind it rather than moving with it. That lag is
+   what makes it read as fluid rather than as two things translating together. */
+.v2-root .v2-goal-knob {
+  transition: transform 0.44s cubic-bezier(0.34, 1.32, 0.64, 1);
+}
+.v2-root .v2-goal.on .v2-goal-knob {
+  transform: translateX(182px);
+}
+.v2-root .v2-goal-fill {
+  transition: transform 0.66s cubic-bezier(0.19, 1, 0.32, 1);
+}
+/* and the channel brightens as it fills */
+.v2-root .v2-goal.on .v2-goal-track {
+  background-color: rgba(var(--v2-violet), 0.2);
+}
+
+.v2-root.light .v2-goal {
+  background:
+    linear-gradient(#f0eee6, #f0eee6) padding-box,
+    linear-gradient(to bottom, rgba(26, 25, 22, 0.16) 0%, rgba(26, 25, 22, 0.08) 100%) border-box;
+}
+.v2-root.light .v2-goal-label {
+  color: rgba(26, 25, 22, 0.5);
+}

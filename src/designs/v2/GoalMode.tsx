@@ -24,11 +24,11 @@ export function GoalMode() {
     >
       {/* a real track and knob: off, the knob is parked left against an empty track, so
           the state is legible without reading anything */}
+      <span className="v2-goal-label">Goal mode</span>
       <span className="v2-goal-track" aria-hidden="true">
         <span className="v2-goal-fill" />
         <span className="v2-goal-knob" />
       </span>
-      <span className="v2-goal-label">Goal mode</span>
     </button>
   )
 }

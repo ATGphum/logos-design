@@ -100,6 +100,30 @@ export const CS_NAV: NavEntry[] = [
   { item: { label: "Settings", panel: "settings", title: "Settings", sub: "Signup, resource and registration policies.", icon: "gear" } },
 ]
 
+/**
+ * V2's console nav. Same shell, shorter list: Workspace is Dashboard and Billing,
+ * Operations leads with Usage and Competitions. Kept separate from CS_NAV so V1's
+ * console is untouched.
+ */
+export const CS_NAV_V2: NavEntry[] = [
+  { group: "Workspace" },
+  { item: { label: "Dashboard", panel: "overview", title: "Dashboard", sub: "Your credit, your instances, and what they are costing you.", icon: "dashboard" } },
+  { item: { label: "/ Instances", panel: "instances", title: "Instances", sub: "Deployment instances across your machines." }, hidden: true },
+  { item: { label: "Billing", panel: "recharge", title: "Billing", sub: "View your available USD credit and add more with a one-time payment.", icon: "billing" } },
+  { group: "Operations", admin: true },
+  { item: { label: "/ Usage", panel: "usage", title: "Usage", sub: "Rollups, provider records and cost windows." }, admin: true },
+  { item: { label: "/ Competitions", panel: "ph", title: "Competitions", sub: "[Placeholder] Competition rounds and standings." }, admin: true },
+  { item: { label: "/ API Keys", panel: "api", title: "API Keys", sub: "Create, budget and monitor scoped keys." }, admin: true },
+  { item: { label: "/ Users", panel: "users", title: "Users", sub: "Accounts, roles, balances and sessions." }, admin: true },
+  { item: { label: "/ Machines", panel: "machines", title: "Machines", sub: "Nodes, providers, pools and capacity." }, admin: true },
+  { item: { label: "/ Models", panel: "ph", title: "Models", sub: "[Placeholder] Model registry." }, admin: true },
+  { item: { label: "/ Feedback", panel: "ph", title: "Feedback", sub: "[Placeholder] Feedback inbox." }, admin: true },
+  { item: { label: "/ Audit", panel: "ph", title: "Audit", sub: "[Placeholder] Audit trail." }, admin: true },
+  { item: { label: "/ Sessions", panel: "ph", title: "Sessions", sub: "[Placeholder] Active sessions." }, admin: true },
+  { item: { label: "Mainpage", panel: "", title: "", sub: "", icon: "back" }, bottom: true, back: true },
+  { item: { label: "Settings", panel: "settings", title: "Settings", sub: "Signup, resource and registration policies.", icon: "gear" } },
+]
+
 /* ===================== agent chat surface ===================== */
 
 export interface ChatItem {

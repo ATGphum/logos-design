@@ -4,7 +4,7 @@
  * 3826-4134 (script). Class names and demo copy preserved verbatim.
  */
 import { Fragment, Suspense, lazy, useEffect, useMemo, useRef, useState } from "react"
-import { CI_LIST, CI_SIDE_MAX, CS_NAV, type NavItem } from "../state"
+import { CI_LIST, CI_SIDE_MAX, CS_NAV, type NavEntry, type NavItem } from "../state"
 import ensoInk from "../assets/enso-ink.svg"
 import { useViewAs } from "../../../sandbox/viewAs"
 import { useCsBase } from "./BaseComponents"
@@ -45,6 +45,8 @@ export interface ConsoleViewProps {
   onEnterAgent: () => void
   /** csBackHome() — sandbox equivalent: back to the design gallery */
   onBackHome: () => void
+  /** V2 supplies its own, shorter nav; everything else uses the console's own. */
+  nav?: NavEntry[]
 }
 
 interface NavState {
@@ -54,8 +56,8 @@ interface NavState {
   sub: string
 }
 
-const NAV_ITEMS = CS_NAV.filter((e): e is Extract<typeof e, { item: NavItem }> => "item" in e)
-const FIRST = NAV_ITEMS[0].item
+type NavRow = Extract<NavEntry, { item: NavItem }>
+const navRowsOf = (entries: NavEntry[]) => entries.filter((e): e is NavRow => "item" in e)
 
 /** Bottom-rail glyphs — replace the "/" prefix for Mainpage and Settings. */
 function NavIcon({ kind }: { kind: "back" | "gear" | "dashboard" | "billing" }) {
@@ -95,7 +97,9 @@ function NavIcon({ kind }: { kind: "back" | "gear" | "dashboard" | "billing" }) 
   )
 }
 
-export function ConsoleView({ displayed, hidden, night, onToggleNight, onEnterAgent, onBackHome }: ConsoleViewProps) {
+export function ConsoleView({ displayed, hidden, night, onToggleNight, onEnterAgent, onBackHome, nav: navEntries = CS_NAV }: ConsoleViewProps) {
+  const NAV_ITEMS = useMemo(() => navRowsOf(navEntries), [navEntries])
+  const FIRST = NAV_ITEMS[0].item
   const { api, elements } = useCsBase()
 
   const [nav, setNav] = useState<NavState>({ idx: 0, panel: FIRST.panel, title: FIRST.title, sub: FIRST.sub })
@@ -148,12 +152,12 @@ export function ConsoleView({ displayed, hidden, night, onToggleNight, onEnterAg
     if (main) main.scrollTop = 0
   }
 
-  const instancesIdx = useMemo(() => NAV_ITEMS.findIndex((e) => e.item.panel === "instances"), [])
+  const instancesIdx = useMemo(() => NAV_ITEMS.findIndex((e) => e.item.panel === "instances"), [NAV_ITEMS])
 
   const ciOpenInstances = () => csNav(instancesIdx, NAV_ITEMS[instancesIdx].item)
 
-  const usageIdx = useMemo(() => NAV_ITEMS.findIndex((e) => e.item.panel === "usage"), [])
-  const billingIdx = useMemo(() => NAV_ITEMS.findIndex((e) => e.item.panel === "recharge"), [])
+  const usageIdx = useMemo(() => NAV_ITEMS.findIndex((e) => e.item.panel === "usage"), [NAV_ITEMS])
+  const billingIdx = useMemo(() => NAV_ITEMS.findIndex((e) => e.item.panel === "recharge"), [NAV_ITEMS])
   const openBilling = () => csNav(billingIdx, NAV_ITEMS[billingIdx].item)
   const openUsage = () => csNav(usageIdx, NAV_ITEMS[usageIdx].item)
 
@@ -229,7 +233,7 @@ export function ConsoleView({ displayed, hidden, night, onToggleNight, onEnterAg
       sub: "LOGOS console",
       body: (
         <div className="cs-dnav">
-          {CS_NAV.map((entry, i) => {
+          {navEntries.map((entry, i) => {
             if ("group" in entry) {
               if (!adminView && entry.admin) return null
               return (
@@ -462,7 +466,7 @@ export function ConsoleView({ displayed, hidden, night, onToggleNight, onEnterAg
           <div className="cs-maccess" onClick={onEnterAgent}>
             Access LOGOS
           </div>
-          {CS_NAV.map((entry, i) => {
+          {navEntries.map((entry, i) => {
             if ("group" in entry) {
               if (!adminView && entry.admin) return null
               /* the lead group carries the auto margin that centres the nav > band >
@@ -534,7 +538,7 @@ export function ConsoleView({ displayed, hidden, night, onToggleNight, onEnterAg
                 key={i}
                 /* the final row closes the nav cluster; it carries the auto margin that
                    balances the space below it against the space above WORKSPACE */
-                className={"cs-item" + (nav.idx === idx ? " cs-on" : "") + (i === CS_NAV.length - 1 ? " cs-item-tail" : "")}
+                className={"cs-item" + (nav.idx === idx ? " cs-on" : "") + (i === navEntries.length - 1 ? " cs-item-tail" : "")}
                 onClick={() => csNav(idx, entry.item)}
               >
                 {entry.item.icon ? <NavIcon kind={entry.item.icon} /> : null}

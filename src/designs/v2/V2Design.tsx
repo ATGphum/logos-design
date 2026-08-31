@@ -20,7 +20,7 @@ import "../console/console.css"
 import "./v2.css"
 import { AgentView } from "../console/agent/AgentView"
 import { ConsoleView } from "../console/shell/ConsoleView"
-import { isMobileViewport } from "../console/state"
+import { CS_NAV_V2, isMobileViewport } from "../console/state"
 import ensoWhite from "../console/assets/enso.svg"
 import ensoInk from "../console/assets/enso-ink.svg"
 import { LoginGate, type AuthMode } from "./LoginGate"
@@ -156,6 +156,7 @@ export default function V2Design() {
           onToggleNight={() => setNight((v) => !v)}
           onEnterAgent={enterAgent}
           onBackHome={backHome}
+          nav={CS_NAV_V2}
         />
       ) : null}
 

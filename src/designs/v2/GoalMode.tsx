@@ -21,12 +21,32 @@ export function GoalMode() {
       aria-pressed={on}
       title={on ? "Goal mode is on — the agent will think longer" : "Goal mode — let the agent think longer"}
     >
-      {/* a real track and knob: off, the knob is parked left against an empty track, so
-          the state is legible without reading anything */}
       <span className="v2-goal-track" aria-hidden="true">
-        <span className="v2-goal-knob" />
+        {/* Both blobs live inside the filtered layer, so their alpha is blurred and then
+            hard-clipped: where they overlap they read as one body, and as the bulb pulls
+            away a neck stretches between them and snaps. That merge is the whole effect —
+            shadows and gradients cannot produce it. */}
+        <span className="v2-goal-goo">
+          <span className="v2-goal-fill" />
+          <span className="v2-goal-knob" />
+        </span>
       </span>
       <span className="v2-goal-label">Goal mode</span>
+
+      {/* the goo filter itself: blur the alpha, then push it through a steep ramp so the
+          soft edges resolve back to a crisp silhouette */}
+      <svg className="v2-goal-defs" aria-hidden="true" focusable="false">
+        <defs>
+          <filter id="v2-goo">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="4.5" result="blur" />
+            <feColorMatrix
+              in="blur"
+              type="matrix"
+              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -11"
+            />
+          </filter>
+        </defs>
+      </svg>
     </button>
   )
 }

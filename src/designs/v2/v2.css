@@ -480,7 +480,8 @@
    The lockup padded 16px around a 34px mark, centring it on 33 — two pixels out, which
    is exactly the sort of thing that reads as "not aligned" without being obvious. */
 .v2-root .sidebar-logo {
-  padding-left: 13px;
+  /* 34 - 36/2: the nav glyphs centre on 34 now that they are 26px, not 20 */
+  padding-left: 16px;
 }
 .v2-root .sidebar-logo .logo-word {
   display: none;
@@ -803,4 +804,126 @@
 }
 .v2-root .v2-acct-out {
   opacity: 0.6;
+}
+
+/* ===== Projects sits on the nav's axis ===== */
+/* The picker is inside the sections container, which already pads 10px — its own 10px
+   on top put the glyph at x=41 against the nav's 31. */
+.v2-root .proj-picker-wrap {
+  padding-left: 0;
+  padding-right: 0;
+}
+.v2-root .proj-picker {
+  left: 0;
+  right: 0;
+}
+
+/* ===== Glyphs are one size, folded or not ===== */
+/* They were 20px in the column and 26px in the rail, scaled between the two. Matching
+   them means the fold moves things without resizing them — the glyph you click is the
+   same glyph either way. */
+.v2-root .sidebar-nav .nav-btn svg,
+.v2-root .proj-picker-btn svg,
+.v2-root .collapsed-rail .rail-nav svg {
+  width: 26px;
+  height: 26px;
+}
+/* so nothing scales on the way in or out — only position changes */
+.v2-root .collapsed-rail .rail-nav,
+.v2-root .collapsed-rail .rail-logo-box,
+.v2-root .collapsed-settings .rail-btn {
+  transform: none;
+}
+.v2-root.sidebar-collapsed .collapsed-rail .rail-nav,
+.v2-root.sidebar-collapsed .collapsed-rail .rail-logo-box,
+.v2-root.sidebar-collapsed .collapsed-settings .rail-btn {
+  transform: none;
+}
+
+/* ===== A narrower column, with the chats closer together ===== */
+.v2-root {
+  --sidebar-width: 248px;
+}
+.v2-root .section-item {
+  padding: 5px 11px;
+  margin-bottom: 1px;
+}
+
+/* long titles fade out rather than ending in an ellipsis */
+.v2-root .item-title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: clip;
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 26px), transparent 100%);
+  mask-image: linear-gradient(to right, #000 calc(100% - 26px), transparent 100%);
+}
+
+/* ===== More light on the hero ===== */
+.v2-root .hero-greeting {
+  text-shadow: 0 0 18px rgba(255, 255, 255, 0.5), 0 0 44px rgba(255, 255, 255, 0.28),
+    0 0 90px rgba(255, 255, 255, 0.16);
+}
+.v2-root.light .hero-greeting {
+  text-shadow: none;
+}
+.v2-root .v2-hero-mark img {
+  /* the mark had almost none — its glow was tuned for a 36px lockup, not a 140px one */
+  filter: brightness(1.3) drop-shadow(0 0 10px rgba(255, 255, 255, 0.45))
+    drop-shadow(0 0 34px rgba(255, 255, 255, 0.28))
+    drop-shadow(0 0 72px rgba(255, 255, 255, 0.15));
+}
+.v2-root.light .v2-hero-mark img {
+  filter: none;
+}
+
+/* Avatar onto the same axis. The footer pads 15px where the nav pads 10, so the chip
+   inherits a different origin than every other glyph — 15 + 12 + 9 put the avatar at
+   x=49 against the nav's 34. Matching the nav's 10 + 11 lands it on 34. */
+.v2-root .sidebar-footer {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.v2-root .v2-acct {
+  padding: 0;
+}
+.v2-root .v2-acct-chip {
+  padding: 7px 11px;
+}
+
+/* ===== The definition line ===== */
+/* Dictionary furniture used as ornament: phonetic, rule, sense. It sits on its own line
+   under the lockup and is deliberately quiet — the wordmark is the statement, this is
+   the footnote that gives it its meaning. */
+.v2-root .v2-hero-def {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 14px;
+  font-family: var(--app-font-sans);
+  font-size: 15px;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-shadow: none;
+  opacity: 0.5;
+}
+.v2-root .v2-hero-def i {
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  opacity: 0.85;
+}
+.v2-root .v2-hero-arrow {
+  width: 44px;
+  height: 8px;
+  flex: none;
+  opacity: 0.55;
+}
+.v2-root .v2-hero-def em {
+  font-style: normal;
+  letter-spacing: 0.26em;
+  text-transform: lowercase;
+  padding-left: 0.06em;
 }

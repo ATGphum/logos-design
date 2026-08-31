@@ -114,10 +114,22 @@ export default function V2Design() {
           />
         }
         heroGreetingNode={
-          <span className="v2-hero-mark">
-            <img src={light ? ensoInk : ensoWhite} alt="" aria-hidden="true" />
-            <span>LOGOS</span>
-          </span>
+          <>
+            <span className="v2-hero-mark">
+              <img src={light ? ensoInk : ensoWhite} alt="" aria-hidden="true" />
+              <span>LOGOS</span>
+            </span>
+            {/* set like a dictionary entry, but as ornament rather than reference —
+                the pronunciation, then the sense the product is named for */}
+            <span className="v2-hero-def">
+              <i>/ˈlɒɡɒs/</i>
+              <svg className="v2-hero-arrow" viewBox="0 0 44 8" fill="none" aria-hidden="true">
+                <path d="M0 4h39" stroke="currentColor" strokeWidth="1" />
+                <path d="M35.5 1.2 39.4 4l-3.9 2.8" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <em>reason</em>
+            </span>
+          </>
         }
       />
 

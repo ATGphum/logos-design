@@ -585,11 +585,16 @@
   font-size: 58px;
 }
 .v2-root .v2-hero-mark img {
-  /* larger than the cap height it sits beside — the mark is round and open, so matching
-     it to the type's height makes it read smaller than the letters next to it */
-  width: 1.5em;
-  height: 1.5em;
-  margin: -0.25em 0;
+  /* The mark is a brush stroke with very fine spatter along its edge. Below roughly
+     150px those wisps land on fewer pixels than they need and alias into speckle, which
+     is what reads as the SVG being "pixelated" — it is not rasterisation, and it is not
+     the filter (identical with it off). It simply needs the room. 2.4em puts it at
+     ~140px, where the texture resolves.
+     The negative block margin keeps a mark this much taller than the line from opening
+     up the hero's line box. */
+  width: 2.4em;
+  height: 2.4em;
+  margin: -0.55em 0;
 }
 
 /* ===== Model chip: the headline, in the UI face ===== */

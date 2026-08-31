@@ -1837,7 +1837,7 @@
 
 /* ===== The thumb is a thin white line in the seam ===== */
 .v2-root #recent-list::-webkit-scrollbar {
-  width: 2px;
+  width: 0;
 }
 .v2-root #recent-list::-webkit-scrollbar-track {
   background: transparent;
@@ -1871,4 +1871,52 @@
   /* biased left and tighter, so the bloom sits on the column's edge instead of spilling
      out across the page */
   box-shadow: -2px 0 6px rgba(255, 255, 255, 0.13);
+}
+
+/* ===== The drawn scroll indicator ===== */
+/* Replaces the native thumb, which could not taper. Same 2px lane as the seam, clipped
+   to a lens and faded at both ends, so it reads as the seam brightening at your place
+   in the list. */
+.v2-seam-scroll {
+  position: fixed;
+  z-index: 45;
+  width: 2px;
+  pointer-events: none;
+  border-radius: 999px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.95) 26%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(255, 255, 255, 0.95) 74%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  clip-path: polygon(50% 0%, 100% 22%, 100% 78%, 50% 100%, 0% 78%, 0% 22%);
+  box-shadow: -1px 0 8px rgba(255, 255, 255, 0.35);
+}
+.console-root.light .v2-seam-scroll {
+  background: linear-gradient(
+    to bottom,
+    rgba(26, 25, 22, 0) 0%,
+    rgba(26, 25, 22, 0.8) 26%,
+    rgba(26, 25, 22, 0.9) 50%,
+    rgba(26, 25, 22, 0.8) 74%,
+    rgba(26, 25, 22, 0) 100%
+  );
+  box-shadow: none;
+}
+
+/* ===== Smoother ground ramp ===== */
+/* #151515 to black across a wide area is only 21 steps of an 8-bit channel, so the ramp
+   bands — visible as stepping, and the pop-out's blurred scrim amplifies it. More stops
+   shorten each band and the noise dithers across them. */
+.v2-root:not(.light) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E"),
+    linear-gradient(90deg, #151515 0%, #131313 5%, #111111 9%, #0f0f0f 13%,
+      #0d0d0d 17%, #0b0b0b 21%, #090909 25%, #070707 29%, #050505 33%,
+      #030303 37%, #010101 41%, #000000 46%);
+}
+.v2-root .v2-gate-scrim {
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
 }

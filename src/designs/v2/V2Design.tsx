@@ -25,6 +25,7 @@ import ensoWhite from "../console/assets/enso.svg"
 import ensoInk from "../console/assets/enso-ink.svg"
 import { LoginGate, type AuthMode } from "./LoginGate"
 import { AccountChip } from "./AccountChip"
+import { SeamScroll } from "./SeamScroll"
 
 export default function V2Design() {
   const { resolvedMode } = useTheme()
@@ -141,6 +142,8 @@ export default function V2Design() {
           </>
         }
       />
+
+      <SeamScroll />
 
       {/* mounted only once opened, so V2 costs nothing extra on the agent page */}
       {csDisplayed ? (

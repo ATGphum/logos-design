@@ -934,3 +934,28 @@
   text-transform: lowercase;
   padding-left: 0.06em;
 }
+
+/* ===== Lighter glyph weight ===== */
+/* 2.4 was set for 20px icons. Carried onto 26px ones it reads as a heavy outline —
+   the stroke does not scale with the box, so enlarging them thickened them in relative
+   terms too. 1.5 at this size matches the weight of the type beside them, and the
+   rounded joins stop the ends looking blunt. */
+.v2-root .sidebar-nav .nav-btn svg,
+.v2-root .proj-picker-btn svg,
+.v2-root .collapsed-rail .rail-nav svg,
+.v2-root .collapsed-settings .rail-btn svg,
+.v2-root .v2-acct-row svg {
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ===== Recent chats start lower ===== */
+/* The nav now carries four controls, so the list needs air under them rather than
+   butting straight up against Projects. */
+.v2-root .sidebar-section {
+  padding-top: 14px;
+}
+.v2-root .sidebar-section .section-label {
+  margin-top: 6px;
+}

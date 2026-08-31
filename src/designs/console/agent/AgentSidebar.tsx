@@ -247,32 +247,6 @@ export function AgentSidebar(props: AgentSidebarProps) {
           <ConsoleIcon />
           Console
         </button>
-      </nav>
-
-      <div className="sidebar-section">
-        {/* PINNED (hidden until something is pinned) */}
-        <div className="section-label" id="pinned-label" style={{ display: pinned.length > 0 ? undefined : "none" }}>
-          <svg className="label-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M14 4l6 6-3 1-2 5-2-2-4 4-1-1 4-4-2-2 5-2z" />
-          </svg>
-          Pinned
-          <span className="label-count" id="pinned-count">
-            {pinned.length || ""}
-          </span>
-        </div>
-        <div id="pinned-list" style={{ display: pinned.length > 0 ? undefined : "none" }}>
-          {pinned.map((chat) => (
-            <ChatRow
-              key={chat.id}
-              chat={chat}
-              active={chat.id === activeChatId}
-              onSelect={() => onSelectChat(chat.id, chat.title)}
-              onTogglePin={() => onTogglePin(chat.id)}
-              onDelete={() => onDeleteChat(chat.id)}
-            />
-          ))}
-        </div>
-
         {/* PROJECTS — picker form (V2). One control: click it, choose a project. */}
         {projectsAsPicker ? (
           <div className="proj-picker-wrap">
@@ -306,6 +280,31 @@ export function AgentSidebar(props: AgentSidebarProps) {
             ) : null}
           </div>
         ) : null}
+      </nav>
+
+      <div className="sidebar-section">
+        {/* PINNED (hidden until something is pinned) */}
+        <div className="section-label" id="pinned-label" style={{ display: pinned.length > 0 ? undefined : "none" }}>
+          <svg className="label-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M14 4l6 6-3 1-2 5-2-2-4 4-1-1 4-4-2-2 5-2z" />
+          </svg>
+          Pinned
+          <span className="label-count" id="pinned-count">
+            {pinned.length || ""}
+          </span>
+        </div>
+        <div id="pinned-list" style={{ display: pinned.length > 0 ? undefined : "none" }}>
+          {pinned.map((chat) => (
+            <ChatRow
+              key={chat.id}
+              chat={chat}
+              active={chat.id === activeChatId}
+              onSelect={() => onSelectChat(chat.id, chat.title)}
+              onTogglePin={() => onTogglePin(chat.id)}
+              onDelete={() => onDeleteChat(chat.id)}
+            />
+          ))}
+        </div>
 
         {/* PROJECTS — original folding section */}
         <div

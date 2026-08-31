@@ -127,6 +127,7 @@ export default function V2Design() {
       {!signedIn && gateOpen ? (
         <LoginGate
           mode={authMode}
+          light={light}
           onSwitchMode={setAuthMode}
           onSignIn={() => setSignedIn(true)}
           onClose={() => setGateOpen(false)}

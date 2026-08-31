@@ -1,10 +1,15 @@
 import { useState } from "react"
 import ensoInk from "../console/assets/enso-ink.svg"
+import githubWhite from "../login/assets/login-ico-github.webp"
+import githubDark from "../login/assets/login-ico-github-dark.webp"
+import googleIco from "../login/assets/login-ico-google.webp"
+import discordIco from "../login/assets/login-ico-discord.webp"
 
 export type AuthMode = "login" | "signup"
 
 interface LoginGateProps {
   mode: AuthMode
+  light: boolean
   onSwitchMode: (mode: AuthMode) => void
   onSignIn: () => void
   /** the large X — dismiss and carry on looking around */
@@ -12,16 +17,19 @@ interface LoginGateProps {
 }
 
 /**
- * V2's auth pop-out. It appears once on opening the site and can be dismissed with the
- * large X; the Login / Sign up buttons in the agent page's top right bring it back.
+ * V2's auth pop-out. Appears once on opening the site, dismissable with the large X;
+ * Login / Sign up in the agent page's top right bring it back.
  *
- * Inert by design: nothing is validated, stored or sent. This is a design fixture — the
- * real auth surface lives in logos-webui, and #/login is the full-screen treatment this
- * is an alternative to.
+ * Providers and order follow #/login — GitHub, Google, Discord, then email — and reuse
+ * that design's icon assets so the two cannot drift apart.
+ *
+ * Inert by design: nothing is validated, stored or sent. The real auth surface lives in
+ * logos-webui.
  */
-export function LoginGate({ mode, onSwitchMode, onSignIn, onClose }: LoginGateProps) {
+export function LoginGate({ mode, light, onSwitchMode, onSignIn, onClose }: LoginGateProps) {
   const [email, setEmail] = useState("")
   const signup = mode === "signup"
+  const verb = signup ? "Sign up" : "Continue"
 
   return (
     <div className="v2-gate">
@@ -30,7 +38,7 @@ export function LoginGate({ mode, onSwitchMode, onSignIn, onClose }: LoginGatePr
 
       <div className="v2-gate-card" role="dialog" aria-modal="true" aria-labelledby="v2-gate-title">
         <button className="v2-gate-x" type="button" onClick={onClose} aria-label="Close">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
             <path d="M5 5l14 14M19 5L5 19" />
           </svg>
         </button>
@@ -46,6 +54,25 @@ export function LoginGate({ mode, onSwitchMode, onSignIn, onClose }: LoginGatePr
             : "Your agents and instances, wherever you left them."}
         </p>
 
+        <div className="v2-gate-providers">
+          <button className="v2-gate-social" type="button" onClick={onSignIn}>
+            <img className="v2-gate-ico" src={light ? githubDark : githubWhite} alt="" aria-hidden="true" />
+            {verb} with GitHub
+          </button>
+          <button className="v2-gate-social" type="button" onClick={onSignIn}>
+            <img className="v2-gate-ico" src={googleIco} alt="" aria-hidden="true" />
+            {verb} with Google
+          </button>
+          <button className="v2-gate-social" type="button" onClick={onSignIn}>
+            <img className="v2-gate-ico" src={discordIco} alt="" aria-hidden="true" />
+            {verb} with Discord
+          </button>
+        </div>
+
+        <div className="v2-gate-or">
+          <span>or</span>
+        </div>
+
         <form
           className="v2-gate-form"
           onSubmit={(e) => {
@@ -53,29 +80,20 @@ export function LoginGate({ mode, onSwitchMode, onSignIn, onClose }: LoginGatePr
             onSignIn()
           }}
         >
-          <label className="v2-gate-field">
-            <span>Email</span>
-            <input
-              type="email"
-              autoComplete="email"
-              placeholder="you@company.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </label>
-
+          <input
+            className="v2-gate-input"
+            type="email"
+            autoComplete="email"
+            placeholder="Enter your e-mail address"
+            aria-label="Email"
+            spellCheck={false}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
           <button className="v2-gate-go" type="submit">
             {signup ? "Create account" : "Continue"}
           </button>
         </form>
-
-        <div className="v2-gate-or">
-          <span>or</span>
-        </div>
-
-        <button className="v2-gate-alt" type="button" onClick={onSignIn}>
-          Continue with wallet
-        </button>
 
         <p className="v2-gate-switch">
           {signup ? "Already have an account?" : "No account yet?"}{" "}

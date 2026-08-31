@@ -562,3 +562,15 @@
   width: 15px;
   height: 15px;
 }
+
+/* ===== Pitch black ===== */
+/* Dark mode only — light mode keeps its cream. Both the page and the chats column go to
+   true black; the column's border is what keeps the seam readable now that the two
+   surfaces no longer differ (#0e0e0e vs #0d0d0d before). */
+.v2-root:not(.light) {
+  --color-bg: #000000;
+  --side-bg: #000000;
+}
+.v2-root:not(.light) .sidebar {
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+}

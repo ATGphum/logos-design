@@ -1177,3 +1177,15 @@
   /* keeps the last row clear of the account control below */
   padding-bottom: 20px;
 }
+
+/* ===== Scrollbar rides in the column's gutter ===== */
+/* The list stopped 13px short of the column edge, so its scrollbar ran alongside the
+   titles rather than in the margin. Stretching the list's box out to the edge — while
+   padding the rows back to where they were — puts the bar in the spacer and leaves the
+   text where it sits. */
+.v2-root #recent-list {
+  margin-right: -10px;
+  /* rows end level with the nav buttons above them; the bar sits in the 6px beyond */
+  padding-right: 4px;
+  scrollbar-gutter: auto;
+}

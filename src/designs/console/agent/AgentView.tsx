@@ -69,6 +69,11 @@ export interface AgentViewProps {
   projectsAsPicker?: boolean
   /** V2: the bar shows the model's headline only. Omitted elsewhere. */
   shortModelName?: boolean
+  /**
+   * V2: the terminal and side-panel toggles appear only once there is a conversation
+   * for them to act on. Omitted elsewhere, where both are always present.
+   */
+  contextualTools?: boolean
 }
 
 export function AgentView(props: AgentViewProps) {
@@ -88,6 +93,7 @@ export function AgentView(props: AgentViewProps) {
     heroGreetingNode,
     projectsAsPicker,
     shortModelName,
+    contextualTools,
   } = props
 
   const [chats, setChats] = useState<ChatItem[]>(initialRecentChats)
@@ -415,18 +421,25 @@ export function AgentView(props: AgentViewProps) {
           </div>
 
           <div className="topbar-tools">
-            <button id="terminal-toggle" className={terminalOpen ? "active" : undefined} onClick={onToggleTerminal} title="Toggle terminal">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                <rect x="3" y="3" width="18" height="18" rx="2" />
-                <line x1="3" y1="15" x2="21" y2="15" />
-              </svg>
-            </button>
-            <button title="Toggle side panel">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                <rect x="3" y="3" width="18" height="18" rx="2" />
-                <line x1="15" y1="3" x2="15" y2="21" />
-              </svg>
-            </button>
+            {/* Nothing to toggle before a conversation exists: the terminal has no
+                session to show and the side panel no content. They arrive with the
+                first message. */}
+            {contextualTools && emptyState ? null : (
+              <>
+                <button id="terminal-toggle" className={terminalOpen ? "active" : undefined} onClick={onToggleTerminal} title="Toggle terminal">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <line x1="3" y1="15" x2="21" y2="15" />
+                  </svg>
+                </button>
+                <button title="Toggle side panel">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <line x1="15" y1="3" x2="15" y2="21" />
+                  </svg>
+                </button>
+              </>
+            )}
             <button id="mode-toggle" onClick={onToggleLight} title="Toggle light / dark">
               <svg id="mode-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 {light ? <SunPaths /> : <MoonPath />}

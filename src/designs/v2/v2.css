@@ -1329,13 +1329,14 @@
   opacity: 0;
   transition: opacity 0s;
 }
-/* in late enough that the column has the width to hold them, and quick once it starts */
+/* on the fold's own clock and curve, both directions, so the type comes and goes with
+   the column rather than on a schedule of its own */
 .v2-root .sidebar-nav .nav-btn,
 .v2-root .proj-picker-btn {
-  transition: color 0.16s ease 0.2s, background 0.12s;
+  transition: color var(--v2-fold), background 0.12s;
 }
 .v2-root.sidebar-collapsed .sidebar-nav .nav-btn,
 .v2-root.sidebar-collapsed .proj-picker-btn {
   color: transparent;
-  transition: color 0.09s ease, background 0.12s;
+  transition: color var(--v2-fold), background 0.12s;
 }

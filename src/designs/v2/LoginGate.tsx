@@ -8,9 +8,9 @@ interface LoginGateProps {
 }
 
 /**
- * V2's login is a small window over the agent page rather than a screen of its own.
- * The point is that the product reads as the agent: you can see what you are signing
- * in to behind the card, so the gate feels like a step rather than a destination.
+ * V2's login is a small window docked to the right of the agent page — not a screen of
+ * its own, and not built into the page. The agent page renders and behaves normally
+ * underneath; this just sits on it until you are signed in.
  *
  * Inert by design. Nothing is validated, stored, or sent anywhere — this is a design
  * fixture, and the real gate lives in logos-webui's auth surface (see #/login for the
@@ -20,9 +20,8 @@ export function LoginGate({ onSignIn, onSkip }: LoginGateProps) {
   const [email, setEmail] = useState("")
 
   return (
-    <div className="v2-gate" role="dialog" aria-modal="true" aria-labelledby="v2-gate-title">
-      <div className="v2-gate-scrim" />
-      <div className="v2-gate-card">
+    <div className="v2-gate" aria-labelledby="v2-gate-title">
+      <div className="v2-gate-card" role="dialog" aria-labelledby="v2-gate-title">
         <img className="v2-gate-mark" src={ensoInk} alt="" aria-hidden="true" />
 
         <h1 className="v2-gate-title" id="v2-gate-title">

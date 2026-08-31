@@ -5,7 +5,8 @@
  * ("Access LOGOS"). V2 inverts that:
  *
  *  - the agent page is the product, and is what loads
- *  - login is a small window over it, not a screen of its own
+ *  - login is a small window docked to the right of that page while signed out —
+ *    not a screen of its own, and not built into the page
  *  - Mainpage and Console are buttons *on* the agent page, not places you start from
  *
  * Deliberately built by composing the existing AgentView/ConsoleView rather than
@@ -29,7 +30,7 @@ export default function V2Design() {
   const [light, setLight] = useState(startLight)
   const [night, setNight] = useState(!startLight)
 
-  /* the gate opens over the agent page, so you can see what you're signing in to */
+  /* the login window sits on the agent page; the page itself stays untouched */
   const [signedIn, setSignedIn] = useState(false)
 
   /* V2's inversion, in three lines: the console starts closed and the agent is what
@@ -72,8 +73,7 @@ export default function V2Design() {
     (sidebarCollapsed ? " sidebar-collapsed" : "") +
     (terminalOpen ? " terminal-open" : "") +
     (chatReveal ? " chat-reveal" : "") +
-    (!watermarkOn ? " hide-watermark" : "") +
-    (signedIn ? "" : " v2-gated")
+    (!watermarkOn ? " hide-watermark" : "")
 
   return (
     <div className={rootClass}>

@@ -22,6 +22,8 @@ export interface AgentSidebarProps {
   accountSlot?: ReactNode
   /** V2: the lockup itself folds the column, as well as the arrow beside it. */
   logoFolds?: boolean
+  /** folding the column dismisses any open picker — see the effect below */
+  sidebarCollapsed?: boolean
   activeChatId: string | null
   newChatActive: boolean
   isMobile: boolean
@@ -147,6 +149,7 @@ export function AgentSidebar(props: AgentSidebarProps) {
     projectsAsPicker,
     accountSlot,
     logoFolds,
+    sidebarCollapsed,
     activeChatId,
     newChatActive,
     isMobile,
@@ -165,6 +168,12 @@ export function AgentSidebar(props: AgentSidebarProps) {
   const sidebarRef = useRef<HTMLElement>(null)
   const [openProjects, setOpenProjects] = useState<Record<string, boolean>>({})
   const [pickerOpen, setPickerOpen] = useState(false)
+
+  /* Folding the column leaves the picker open behind it, so the rail shows Projects
+     lit as a full white pill with nothing under it. The fold dismisses it. */
+  useEffect(() => {
+    setPickerOpen(false)
+  }, [sidebarCollapsed])
   const [subsOpen, setSubsOpen] = useState(false)
   const projectsFold = useSectionFold()
   const recentFold = useSectionFold()

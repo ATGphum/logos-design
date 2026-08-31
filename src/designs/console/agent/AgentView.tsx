@@ -94,6 +94,7 @@ export function AgentView(props: AgentViewProps) {
     watermarkOn,
     onToggleWatermark,
     isMobile,
+    sidebarCollapsed,
     onOpenConsole,
     onBackHome,
     heroGreetingNode,
@@ -406,6 +407,7 @@ export function AgentView(props: AgentViewProps) {
         projectsAsPicker={projectsAsPicker}
         accountSlot={accountSlot}
         logoFolds={logoFolds}
+        sidebarCollapsed={sidebarCollapsed}
         onOpenSettings={openSettings}
         onToggleSidebar={onToggleSidebar}
       />

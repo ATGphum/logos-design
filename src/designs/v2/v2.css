@@ -1579,3 +1579,32 @@
 .v2-root:not(.light) .collapsed-rail .rail-nav svg {
   filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.22));
 }
+
+/* ===== The selected row is a white pill, as in the console ===== */
+/* The console marks the current page with a solid --cs-ink fill and --cs-bg type. The
+   chats column was using a 8% white wash instead, which reads as a hover state rather
+   than a selection. Same treatment here: full white, ground-coloured text, and the
+   glow comes off since a white halo on white is only fringing. */
+.v2-root:not(.light) .section-item.active,
+.v2-root:not(.light) .section-item.active:hover,
+.v2-root:not(.light) .sidebar-nav .nav-btn.active {
+  background: #ffffff;
+  color: #0a0a0a;
+  font-weight: 500;
+  text-shadow: none;
+}
+.v2-root:not(.light) .sidebar-nav .nav-btn.active svg,
+.v2-root:not(.light) .section-item.active svg {
+  color: #0a0a0a;
+  filter: none;
+}
+/* the status dot and row actions have to invert with it */
+.v2-root:not(.light) .section-item.active .item-dot {
+  background: #0a0a0a;
+}
+.v2-root:not(.light) .section-item.active .chat-action {
+  color: rgba(10, 10, 10, 0.62);
+}
+.v2-root:not(.light) .section-item.active .chat-action:hover {
+  color: #0a0a0a;
+}

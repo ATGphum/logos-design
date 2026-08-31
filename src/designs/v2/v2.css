@@ -350,3 +350,98 @@
     right: 24px;
   }
 }
+
+/* ===== Hero: no suggestion pills ===== */
+/* V2-only — V1's agent page keeps them. */
+.v2-root .hero-suggestions {
+  display: none;
+}
+
+/* ===== The chats column folds like the console does =====
+ * The agent's fold is a hard swap: .sidebar snaps to width 0 and a separate fixed
+ * .collapsed-rail cross-fades in, positioned to overlay the expanded icons exactly so
+ * that nothing moves. That is the opposite of what the console does.
+ *
+ * Here the column closes on the console's clock, its contents clear early, and the rail
+ * icons grow and travel into place rather than appearing where they already were.
+ * Unlike the console's rail these stay anchored top-left — no centring on a rail axis.
+ */
+.v2-root {
+  --v2-fold: 0.28s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+
+/* The column closes on max-width, not width. The agent's collapsed rule forces
+   width: 0 !important and that simply does not interpolate here — the transition is
+   declared and only opacity ever fires, so the column snapped shut in one frame while
+   everything else eased. Holding width at its full value and clamping with max-width
+   gives the same end state and animates, which is the same reason the console's nav
+   labels use max-width. */
+.v2-root .sidebar {
+  max-width: var(--sidebar-width);
+  transition: max-width var(--v2-fold), opacity 0.14s ease;
+}
+.v2-root.sidebar-collapsed .sidebar {
+  width: var(--sidebar-width) !important;
+  max-width: 0;
+}
+
+/* contents clear early so the column closes on empty, as in the console */
+.v2-root .sidebar > .sidebar-logo,
+.v2-root .sidebar > .sidebar-nav,
+.v2-root .sidebar > .sidebar-section,
+.v2-root .sidebar > .sidebar-footer {
+  transition: opacity 0.1s ease;
+}
+
+/* rail icons: bigger, and they arrive rather than appear */
+.v2-root .collapsed-rail {
+  transition: opacity var(--v2-fold), visibility 0s linear 0.28s;
+}
+.v2-root.sidebar-collapsed .collapsed-rail {
+  transition: opacity var(--v2-fold), visibility 0s;
+}
+
+.v2-root .collapsed-rail .rail-nav,
+.v2-root .collapsed-rail .rail-logo-box,
+.v2-root .collapsed-settings .rail-btn {
+  /* expanded resting place: slightly in and smaller, so folding in reads as the glyph
+     growing into the rail. transform-origin left keeps them on the left margin — the
+     structure stays top-left aligned, nothing centres. */
+  transform-origin: left center;
+  transform: translateX(5px) scale(0.78);
+  transition: transform var(--v2-fold);
+}
+.v2-root.sidebar-collapsed .collapsed-rail .rail-nav,
+.v2-root.sidebar-collapsed .collapsed-rail .rail-logo-box,
+.v2-root.sidebar-collapsed .collapsed-settings .rail-btn {
+  transform: none;
+}
+
+.v2-root .collapsed-rail .rail-nav svg {
+  width: 26px;
+  height: 26px;
+}
+.v2-root .collapsed-settings .rail-btn svg {
+  width: 28px;
+  height: 28px;
+}
+.v2-root .rail-logo-box,
+.v2-root .rail-logo {
+  width: 42px;
+  height: 42px;
+}
+.v2-root .rail-expand svg {
+  width: 26px;
+  height: 26px;
+}
+
+/* re-spaced for the larger glyphs, still hung off the top-left */
+.v2-root .rail-search {
+  top: 74px;
+}
+.v2-root .rail-newchat {
+  top: 122px;
+}
+.v2-root .rail-console {
+  top: 170px;
+}

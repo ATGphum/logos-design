@@ -110,9 +110,11 @@ export const CS_NAV_V2: NavEntry[] = [
   { item: { label: "Dashboard", panel: "overview", title: "Dashboard", sub: "Your credit, your instances, and what they are costing you.", icon: "dashboard" } },
   { item: { label: "/ Instances", panel: "instances", title: "Instances", sub: "Deployment instances across your machines." }, hidden: true },
   { item: { label: "Billing", panel: "recharge", title: "Billing", sub: "View your available USD credit and add more with a one-time payment.", icon: "billing" } },
-  { group: "Operations", admin: true },
-  { item: { label: "/ Usage", panel: "usage", title: "Usage", sub: "Rollups, provider records and cost windows." }, admin: true },
-  { item: { label: "/ Competitions", panel: "ph", title: "Competitions", sub: "[Placeholder] Competition rounds and standings." }, admin: true },
+  // Operations is not admin-only here: a customer sees their own usage and the
+  // competition they are entered in. Everything below those two still is.
+  { group: "Operations" },
+  { item: { label: "/ Usage", panel: "usage", title: "Usage", sub: "Rollups, provider records and cost windows." } },
+  { item: { label: "/ Competitions", panel: "ph", title: "Competitions", sub: "[Placeholder] Reports, score, appeals and rank." } },
   { item: { label: "/ API Keys", panel: "api", title: "API Keys", sub: "Create, budget and monitor scoped keys." }, admin: true },
   { item: { label: "/ Users", panel: "users", title: "Users", sub: "Accounts, roles, balances and sessions." }, admin: true },
   { item: { label: "/ Machines", panel: "machines", title: "Machines", sub: "Nodes, providers, pools and capacity." }, admin: true },

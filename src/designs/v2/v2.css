@@ -585,8 +585,11 @@
   font-size: 58px;
 }
 .v2-root .v2-hero-mark img {
-  width: 1em;
-  height: 1em;
+  /* larger than the cap height it sits beside — the mark is round and open, so matching
+     it to the type's height makes it read smaller than the letters next to it */
+  width: 1.5em;
+  height: 1.5em;
+  margin: -0.25em 0;
 }
 
 /* ===== Model chip: the headline, in the UI face ===== */

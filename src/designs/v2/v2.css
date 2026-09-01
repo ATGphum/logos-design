@@ -2294,52 +2294,46 @@
 .v2-root .v2-tk-think-head:hover {
   color: rgba(255, 255, 255, 0.78);
 }
-/* The thinking mark: an arc running a ring, open while it works and closed once the
- * answer lands. Two circles and two keyframes — the brand's own enso being drawn, which
- * says more than a generic spinner and stops dead rather than spinning on after the
- * request has resolved.
+/* The thinking mark: a lattice, bending.
  *
- * r=8.5 gives a circumference of 53.4, which is where every dash number below comes
- * from. Changing the radius means recomputing them or the arc will not close.
+ * Nine nodes running one small vertical wave, each delayed by its position on the
+ * diagonal — so the deformation travels across the grid instead of every node bobbing
+ * in unison, which is the difference between a surface flexing and nine dots blinking.
+ * Bigger and lit: 20px with a violet bloom, since this is the only thing on screen
+ * while you wait.
+ *
+ * Idle is the same grid at rest — flat, still, dim. No spinner and no circle: the mark
+ * does not change identity between states, it just stops moving.
  */
-.v2-root .v2-tk-orb {
-  width: 15px;
-  height: 15px;
+.v2-root .v2-tk-grid {
+  width: 20px;
+  height: 20px;
   overflow: visible;
-  fill: none;
-  stroke-linecap: round;
 }
-.v2-root .v2-tk-orb-track {
-  stroke: rgba(255, 255, 255, 0.12);
-  stroke-width: 1.6;
+.v2-root .v2-tk-node {
+  fill: rgb(var(--v2-violet, 150, 122, 255));
+  opacity: 0.42;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity 0.45s ease, fill 0.45s ease;
 }
-.v2-root .v2-tk-orb-arc {
-  stroke: rgb(var(--v2-violet, 150, 122, 255));
-  stroke-width: 1.9;
-  transform-origin: 12px 12px;
-  filter: drop-shadow(0 0 4px rgba(var(--v2-violet, 150, 122, 255), 0.65));
+.v2-root .v2-tk-think:not(.done) .v2-tk-grid {
+  filter: drop-shadow(0 0 5px rgba(var(--v2-violet, 150, 122, 255), 0.85))
+    drop-shadow(0 0 11px rgba(var(--v2-violet, 150, 122, 255), 0.45));
 }
-/* two rates deliberately out of phase: the arc sweeps at one speed and breathes at
-   another, so it never repeats the same figure twice in a row */
-.v2-root .v2-tk-think:not(.done) .v2-tk-orb-arc {
-  animation: v2-tk-orb-spin 1.15s linear infinite, v2-tk-orb-draw 1.75s ease-in-out infinite;
+.v2-root .v2-tk-think:not(.done) .v2-tk-node {
+  opacity: 1;
+  animation: v2-tk-bend 1.5s ease-in-out infinite;
 }
-@keyframes v2-tk-orb-spin {
-  to { transform: rotate(360deg); }
+@keyframes v2-tk-bend {
+  0%, 100% { transform: translateY(2px) scale(0.72); opacity: 0.45; }
+  45% { transform: translateY(-2.6px) scale(1.14); opacity: 1; }
 }
-@keyframes v2-tk-orb-draw {
-  0%   { stroke-dasharray: 3 50.4; stroke-dashoffset: 0; }
-  50%  { stroke-dasharray: 33 20.4; stroke-dashoffset: -13; }
-  100% { stroke-dasharray: 3 50.4; stroke-dashoffset: -53.4; }
+/* resolved: the lattice settles and the light goes out */
+.v2-root .v2-tk-think.done .v2-tk-node {
+  fill: rgba(var(--v2-violet, 150, 122, 255), 0.55);
 }
-/* resolved: the ring closes and holds */
-.v2-root .v2-tk-think.done .v2-tk-orb-arc {
-  stroke-dasharray: 53.4;
-  stroke-dashoffset: 0;
-  stroke: rgba(var(--v2-violet, 150, 122, 255), 0.62);
-  filter: none;
-  transition: stroke-dashoffset 0.5s cubic-bezier(0.33, 0.45, 0.25, 1), stroke 0.5s ease;
-}
+
 /* the title shimmers while it is working, which is the one place motion belongs */
 .v2-root .v2-tk-think:not(.done) .v2-tk-think-title {
   background: linear-gradient(
@@ -2564,9 +2558,6 @@
 .v2-root.light .v2-tk-think-head {
   color: rgba(26, 25, 22, 0.55);
 }
-.v2-root.light .v2-tk-orb-track {
-  stroke: rgba(26, 25, 22, 0.16);
-}
 .v2-root.light .v2-tk-step {
   color: rgba(26, 25, 22, 0.5);
   border-left-color: rgba(26, 25, 22, 0.14);
@@ -2585,7 +2576,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .v2-root .v2-tk-think-title,
-  .v2-root .v2-tk-orb-arc,
+  .v2-root .v2-tk-node,
   .v2-root .v2-tk-step,
   .v2-root .v2-tk-body.streaming > *:last-child::after {
     animation: none;
@@ -2633,21 +2624,42 @@
  * hero bar and the goal-mode knob both follow; the channel and the code blocks follow
  * the inverse because they are recesses.
  */
+/* the wrap becomes the row that holds them; .nav-arrows is absolutely positioned, so
+   it is unaffected by the switch to flex */
+.v2-root .input-bar-wrap:not(.in-hero) {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 11px;
+}
+/* the bar centres itself with `margin: 0 auto`, and an auto margin in a flex row eats
+   every pixel of free space — measured 583px a side, which threw the orbs out to the
+   viewport edges. The row centres the group instead. */
+.v2-root .input-bar-wrap:not(.in-hero) .input-bar {
+  flex: 0 1 auto;
+  width: 100%;
+  margin: 0;
+  min-width: 0;
+}
+
 .v2-root .v2-bulb {
   --v2-violet: 150, 122, 255;
   position: relative;
+  /* height comes from the bar by stretching, and aspect-ratio makes that a circle. No
+     number to keep in sync — change the bar's height and these follow it exactly. */
   flex: 0 0 auto;
+  align-self: stretch;
+  aspect-ratio: 1;
+  height: auto;
   display: grid;
   place-items: center;
-  width: 30px;
-  height: 30px;
   padding: 0;
   border: 1px solid transparent;
   border-radius: 999px;
   background: linear-gradient(180deg, #1b1b1b, #151515) padding-box,
     linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.08) 55%, rgba(255, 255, 255, 0.05) 100%)
       border-box;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 8px -3px rgba(0, 0, 0, 0.7);
   cursor: pointer;
   color: rgba(255, 255, 255, 0.6);
   transition: color 0.24s ease, background 0.3s ease, box-shadow 0.3s ease;
@@ -2659,8 +2671,8 @@
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6);
 }
 .v2-root .v2-bulb-glyph {
-  width: 16px;
-  height: 16px;
+  width: 21px;
+  height: 21px;
   /* the glyph sits under the ring, both centred on the same box */
   grid-area: 1 / 1;
 }
@@ -2671,8 +2683,8 @@
    split in half. */
 .v2-root .v2-bulb-ring {
   grid-area: 1 / 1;
-  width: 26px;
-  height: 26px;
+  width: 38px;
+  height: 38px;
   fill: none;
   transform: rotate(-90deg);
 }
@@ -2687,14 +2699,14 @@
   transition: stroke-dasharray 0.42s cubic-bezier(0.33, 0.45, 0.25, 1), opacity 0.24s ease;
   opacity: 0.75;
 }
-.v2-root .v2-bulb-brain:hover .v2-bulb-ring-arc {
+.v2-root .v2-bulb-speed:hover .v2-bulb-ring-arc {
   opacity: 1;
 }
 /* deepest setting reads as committed: the glyph brightens with the ring */
-.v2-root .v2-bulb-brain.lv2 {
+.v2-root .v2-bulb-speed.lv2 {
   color: rgba(255, 255, 255, 0.95);
 }
-.v2-root .v2-bulb-brain.lv2 .v2-bulb-ring-arc {
+.v2-root .v2-bulb-speed.lv2 .v2-bulb-ring-arc {
   opacity: 1;
   filter: drop-shadow(0 0 4px rgba(194, 185, 163, 0.5));
 }
@@ -2706,14 +2718,6 @@
     linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.22) 45%, rgba(var(--v2-violet), 0.4) 100%)
       border-box;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.45), 0 0 13px -2px rgba(var(--v2-violet), 0.8);
-}
-.v2-root .v2-bulb-goal .v2-bulb-pip {
-  transition: transform 0.34s cubic-bezier(0.33, 0.45, 0.25, 1);
-  transform-origin: 12px 12px;
-  transform: scale(0.6);
-}
-.v2-root .v2-bulb-goal.on .v2-bulb-pip {
-  transform: scale(1);
 }
 
 .v2-root.light .v2-bulb {
@@ -2732,8 +2736,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .v2-root .v2-bulb-ring-arc,
-  .v2-root .v2-bulb-goal .v2-bulb-pip {
+  .v2-root .v2-bulb-ring-arc {
     transition: none;
   }
 }

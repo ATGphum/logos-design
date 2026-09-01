@@ -93,9 +93,10 @@ export interface AgentViewProps {
    */
   transcript?: (messages: Message[]) => ReactNode
   /**
-   * V2: controls that belong to the composer only once it has dropped to the bottom of
-   * a conversation. The hero has room to state these at full size below the bar; the
-   * bottom bar does not, so they compact into it. Omitted elsewhere.
+   * V2: controls flanking the composer, once it has dropped to the bottom of a
+   * conversation. They sit OUTSIDE the bar, as its siblings, so they can stretch to its
+   * height rather than being sized against it by hand. The hero states these at full
+   * size below the bar instead. Omitted elsewhere.
    */
   barLeading?: ReactNode
   barTrailing?: ReactNode
@@ -284,6 +285,7 @@ export function AgentView(props: AgentViewProps) {
 
   const inputBar = (
     <div className={"input-bar-wrap" + (emptyState ? " in-hero" : "")}>
+      {!emptyState ? barLeading : null}
       <div className="input-bar">
         <button className="icon-btn input-plus" title="Attach">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -291,7 +293,6 @@ export function AgentView(props: AgentViewProps) {
             <line x1="5" y1="12" x2="19" y2="12" />
           </svg>
         </button>
-        {!emptyState ? barLeading : null}
         <textarea
           id="chat-input"
           ref={inputRef}
@@ -348,7 +349,6 @@ export function AgentView(props: AgentViewProps) {
           </div>
         </div>
 
-        {!emptyState ? barTrailing : null}
         <button className="icon-btn mic-btn" title="Voice input">
           {v2Icons ? (
             <MicIconV2 />
@@ -369,6 +369,7 @@ export function AgentView(props: AgentViewProps) {
           </svg>
         </button>
       </div>
+      {!emptyState ? barTrailing : null}
 
       <div className="nav-arrows">
         <button title="Previous">↑</button>

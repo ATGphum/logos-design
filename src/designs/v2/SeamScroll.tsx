@@ -10,49 +10,61 @@ import { useEffect, useState } from "react"
  *
  * Positioned fixed against the column's own rect rather than portalled into it, so the
  * shared sidebar needs no markup for it.
+ *
+ * It measures every frame rather than on scroll and resize events. The column's width is
+ * animated by CSS, and CSS transitions fire no event per frame — the old code polled at
+ * 120ms to cover that, which is about two samples across a 280ms fold, so the indicator
+ * stepped along visibly behind the column. Safari made it obvious; it was never right.
+ * A rAF loop tracks the animation exactly, costs two rect reads a frame, and only calls
+ * setState when the measured position has actually changed.
  */
 export function SeamScroll() {
   const [box, setBox] = useState<{ x: number; top: number; height: number } | null>(null)
 
   useEffect(() => {
-    let frame = 0
+    let raf = 0
+    /* the last position we actually rendered, as a string — cheaper to compare than
+       three numbers and it keeps setState out of frames where nothing moved */
+    let last = ""
 
-    const measure = () => {
+    const tick = () => {
+      raf = requestAnimationFrame(tick)
+
       const list = document.querySelector<HTMLElement>("#recent-list")
       const side = document.querySelector<HTMLElement>(".sidebar")
-      if (!list || !side) return setBox(null)
+      if (!list || !side) {
+        if (last !== "none") {
+          last = "none"
+          setBox(null)
+        }
+        return
+      }
 
       const sr = side.getBoundingClientRect()
       const lr = list.getBoundingClientRect()
       /* folded in, or nothing to scroll */
-      if (sr.width < 40 || list.scrollHeight <= list.clientHeight + 1) return setBox(null)
+      if (sr.width < 40 || list.scrollHeight <= list.clientHeight + 1) {
+        if (last !== "none") {
+          last = "none"
+          setBox(null)
+        }
+        return
+      }
 
       const ratio = list.clientHeight / list.scrollHeight
       const height = Math.max(48, lr.height * ratio)
       const travel = lr.height - height
       const progress = list.scrollTop / (list.scrollHeight - list.clientHeight || 1)
+      const next = { x: sr.right - 2, top: lr.top + travel * progress, height }
 
-      setBox({ x: sr.right - 2, top: lr.top + travel * progress, height })
+      const key = `${next.x}|${next.top}|${next.height}`
+      if (key === last) return
+      last = key
+      setBox(next)
     }
 
-    const onScrollOrResize = () => {
-      cancelAnimationFrame(frame)
-      frame = requestAnimationFrame(measure)
-    }
-
-    measure()
-    const list = document.querySelector("#recent-list")
-    list?.addEventListener("scroll", onScrollOrResize, { passive: true })
-    window.addEventListener("resize", onScrollOrResize)
-    /* the column's width animates, so re-measure across the fold */
-    const poll = window.setInterval(measure, 120)
-
-    return () => {
-      cancelAnimationFrame(frame)
-      window.clearInterval(poll)
-      list?.removeEventListener("scroll", onScrollOrResize)
-      window.removeEventListener("resize", onScrollOrResize)
-    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
   }, [])
 
   if (!box) return null

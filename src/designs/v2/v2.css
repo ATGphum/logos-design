@@ -1942,8 +1942,8 @@
 /* .input-plus also carries .icon-btn, so this needs the extra class to outrank the
    generic control size below it */
 .v2-root .icon-btn.input-plus svg {
-  width: 21px;
-  height: 21px;
+  width: 22px;
+  height: 22px;
   stroke-width: 1.5;
 }
 .v2-root .icon-btn svg {
@@ -2294,44 +2294,45 @@
 .v2-root .v2-tk-think-head:hover {
   color: rgba(255, 255, 255, 0.78);
 }
-/* The thinking mark: a lattice, bending.
+/* The thinking mark: four strands, flexing.
  *
- * Nine nodes running one small vertical wave, each delayed by its position on the
- * diagonal — so the deformation travels across the grid instead of every node bobbing
- * in unison, which is the difference between a surface flexing and nine dots blinking.
- * Bigger and lit: 20px with a violet bloom, since this is the only thing on screen
- * while you wait.
+ * Same language as before — small elements running one wave, each delayed by its
+ * position so the deformation travels rather than everything moving in unison. Bars
+ * instead of a dot lattice: they hold their shape at 20px where nine dots start to mush
+ * together, and a height changing reads as movement more directly than a dot shifting.
  *
- * Idle is the same grid at rest — flat, still, dim. No spinner and no circle: the mark
- * does not change identity between states, it just stops moving.
+ * Idle is the same four bars at a flat, even rest. The mark keeps its identity between
+ * states and simply stops moving — no spinner, no circle.
  */
 .v2-root .v2-tk-grid {
-  width: 20px;
-  height: 20px;
+  width: 21px;
+  height: 21px;
   overflow: visible;
 }
 .v2-root .v2-tk-node {
   fill: rgb(var(--v2-violet, 150, 122, 255));
-  opacity: 0.42;
+  opacity: 0.45;
   transform-box: fill-box;
   transform-origin: center;
-  transition: opacity 0.45s ease, fill 0.45s ease;
+  transition: opacity 0.45s ease, fill 0.45s ease, transform 0.45s cubic-bezier(0.33, 0.45, 0.25, 1);
+  transform: scaleY(0.34);
 }
 .v2-root .v2-tk-think:not(.done) .v2-tk-grid {
-  filter: drop-shadow(0 0 5px rgba(var(--v2-violet, 150, 122, 255), 0.85))
-    drop-shadow(0 0 11px rgba(var(--v2-violet, 150, 122, 255), 0.45));
+  filter: drop-shadow(0 0 6px rgba(var(--v2-violet, 150, 122, 255), 0.9))
+    drop-shadow(0 0 14px rgba(var(--v2-violet, 150, 122, 255), 0.5));
 }
 .v2-root .v2-tk-think:not(.done) .v2-tk-node {
   opacity: 1;
-  animation: v2-tk-bend 1.5s ease-in-out infinite;
+  transition: none;
+  animation: v2-tk-bend 1.15s ease-in-out infinite;
 }
 @keyframes v2-tk-bend {
-  0%, 100% { transform: translateY(2px) scale(0.72); opacity: 0.45; }
-  45% { transform: translateY(-2.6px) scale(1.14); opacity: 1; }
+  0%, 100% { transform: scaleY(0.28); opacity: 0.5; }
+  45% { transform: scaleY(1); opacity: 1; }
 }
-/* resolved: the lattice settles and the light goes out */
+/* resolved: the strands settle level and the light goes out */
 .v2-root .v2-tk-think.done .v2-tk-node {
-  fill: rgba(var(--v2-violet, 150, 122, 255), 0.55);
+  fill: rgba(var(--v2-violet, 150, 122, 255), 0.6);
 }
 
 /* the title shimmers while it is working, which is the one place motion belongs */
@@ -2671,8 +2672,8 @@
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6);
 }
 .v2-root .v2-bulb-glyph {
-  width: 21px;
-  height: 21px;
+  width: 22px;
+  height: 22px;
   /* the glyph sits under the ring, both centred on the same box */
   grid-area: 1 / 1;
 }
@@ -2687,37 +2688,61 @@
   height: 38px;
   fill: none;
   transform: rotate(-90deg);
+  /* an SVG clips to its own viewport by default, so the arc's drop-shadow was being cut
+     off square — that was the box visible around the ring, not a border */
+  overflow: visible;
 }
 .v2-root .v2-bulb-ring-track {
   stroke: rgba(255, 255, 255, 0.1);
   stroke-width: 1.5;
 }
 .v2-root .v2-bulb-ring-arc {
-  stroke: #c2b9a3;
-  stroke-width: 1.7;
+  stroke: rgb(var(--v2-violet));
+  stroke-width: 1.8;
   stroke-linecap: round;
+  filter: drop-shadow(0 0 5px rgba(var(--v2-violet), 0.9)) drop-shadow(0 0 12px rgba(var(--v2-violet), 0.55));
   transition: stroke-dasharray 0.42s cubic-bezier(0.33, 0.45, 0.25, 1), opacity 0.24s ease;
-  opacity: 0.75;
+  opacity: 1;
+}
+/* the bolt is the bright thing, the ring is the gauge around it — both lit */
+.v2-root .v2-bulb-speed {
+  color: #ffffff;
+}
+.v2-root .v2-bulb-speed .v2-bulb-glyph {
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.65)) drop-shadow(0 0 11px rgba(255, 255, 255, 0.3));
 }
 .v2-root .v2-bulb-speed:hover .v2-bulb-ring-arc {
   opacity: 1;
 }
 /* deepest setting reads as committed: the glyph brightens with the ring */
-.v2-root .v2-bulb-speed.lv2 {
-  color: rgba(255, 255, 255, 0.95);
-}
 .v2-root .v2-bulb-speed.lv2 .v2-bulb-ring-arc {
   opacity: 1;
-  filter: drop-shadow(0 0 4px rgba(194, 185, 163, 0.5));
+  filter: drop-shadow(0 0 7px rgba(var(--v2-violet), 1)) drop-shadow(0 0 16px rgba(var(--v2-violet), 0.6));
 }
 
 /* goal: off is dim and flush, on is the violet the big toggle uses */
+/* On, quietly. Flooding the orb violet made the loudest thing on the page a switch you
+   set once, so the body stays exactly as it is and three smaller signals carry the state
+   together: the glyph lights, the rim takes the colour, and a soft bloom sits under it.
+   Read at a glance it is unmistakable; read from across the screen it is not shouting. */
 .v2-root .v2-bulb-goal.on {
-  color: #ffffff;
-  background: linear-gradient(180deg, rgba(var(--v2-violet), 0.9), rgba(var(--v2-violet), 0.66)) padding-box,
-    linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.22) 45%, rgba(var(--v2-violet), 0.4) 100%)
+  color: rgb(178, 156, 255);
+  background: linear-gradient(180deg, #1f1c2c, #17151f) padding-box,
+    linear-gradient(
+        180deg,
+        rgba(var(--v2-violet), 0.75) 0%,
+        rgba(var(--v2-violet), 0.4) 50%,
+        rgba(var(--v2-violet), 0.22) 100%
+      )
       border-box;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.45), 0 0 13px -2px rgba(var(--v2-violet), 0.8);
+  box-shadow: 0 2px 8px -3px rgba(0, 0, 0, 0.7), 0 0 20px -4px rgba(var(--v2-violet), 0.85),
+    0 0 40px -10px rgba(var(--v2-violet), 0.6);
+}
+.v2-root .v2-bulb-goal .v2-bulb-glyph {
+  transition: filter 0.3s ease;
+}
+.v2-root .v2-bulb-goal.on .v2-bulb-glyph {
+  filter: drop-shadow(0 0 6px rgba(var(--v2-violet), 0.9)) drop-shadow(0 0 14px rgba(var(--v2-violet), 0.5));
 }
 
 .v2-root.light .v2-bulb {
@@ -2731,8 +2756,8 @@
 .v2-root.light .v2-bulb-ring-track {
   stroke: rgba(26, 25, 22, 0.12);
 }
-.v2-root.light .v2-bulb-ring-arc {
-  stroke: #8a8065;
+.v2-root.light .v2-bulb-speed {
+  color: #1a1916;
 }
 
 @media (prefers-reduced-motion: reduce) {

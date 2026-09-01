@@ -9,8 +9,9 @@ import { useState } from "react"
  * exactly as tall as the bar and exactly round without a single hand-tuned number.
  *
  * Left is the bolt: how fast to answer, three settings, shown as an arc closing around
- * the glyph. Right is the brain: Goal mode, the long-thinking switch. Speed on the left,
- * depth on the right, and the icons say which is which without a label.
+ * the glyph. Right is a branch — one thought opening into three — which is Goal mode,
+ * the long-thinking switch. Speed on the left, deliberation on the right, and the glyphs
+ * say which is which without a label.
  */
 
 const SPEEDS = [
@@ -62,11 +63,19 @@ export function GoalBulb() {
       aria-pressed={on}
       title={on ? "Goal mode is on — the agent will think longer" : "Goal mode — let the agent think longer"}
     >
+      {/* One thought branching into three: the graph glyph, which is what long thinking
+          actually looks like. Tried a brain first (a blob with scratches at this size)
+          and then a diamond of nodes — at 21px the curves closed up against the nodes
+          and it read as a four-pointed star. Orthogonal rules survive small sizes;
+          curves between close points do not. */}
       <svg className="v2-bulb-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="M12 5.1a3 3 0 0 0-5.4 1.5A2.7 2.7 0 0 0 5.2 9.3a2.8 2.8 0 0 0 .5 3.3 2.8 2.8 0 0 0 .6 3.4A2.9 2.9 0 0 0 12 17.6z" />
-        <path d="M12 5.1a3 3 0 0 1 5.4 1.5 2.7 2.7 0 0 1 1.4 2.7 2.8 2.8 0 0 1-.5 3.3 2.8 2.8 0 0 1-.6 3.4A2.9 2.9 0 0 1 12 17.6z" />
-        <line x1="12" y1="5.1" x2="12" y2="17.6" />
-        <path d="M8.6 9.1h1.6M13.8 9.1h1.6M8.2 13.2h1.9M13.9 13.2h1.9" />
+        <path d="M12 6.6v3.1" />
+        <path d="M5.6 14.1v-2.2a2.2 2.2 0 0 1 2.2-2.2h8.4a2.2 2.2 0 0 1 2.2 2.2v2.2" />
+        <path d="M12 9.7v4.4" />
+        <circle cx="12" cy="4.7" r="1.75" fill="currentColor" stroke="none" />
+        <circle cx="5.6" cy="16.1" r="1.75" fill="currentColor" stroke="none" />
+        <circle cx="12" cy="16.1" r="1.75" fill="currentColor" stroke="none" />
+        <circle cx="18.4" cy="16.1" r="1.75" fill="currentColor" stroke="none" />
       </svg>
     </button>
   )

@@ -150,24 +150,23 @@ function Reasoning({ steps, shown, done, seconds }: { steps: string[]; shown: nu
   return (
     <div className={"v2-tk-think" + (open ? " open" : "") + (done ? " done" : "")}>
       <button className="v2-tk-think-head" onClick={() => setOpen((v) => !v)} type="button">
-        {/* A lattice, bending. Each node runs the same small vertical wave, delayed by
-            its position on the diagonal — so the deformation travels across the grid
-            rather than every node bobbing together, which is what makes it read as one
-            surface flexing instead of nine dots blinking. At rest the grid is simply
-            flat and still, which is the idle mark: no spinner, no circle. */}
+        {/* Four strands flexing: each runs the same wave, delayed by its position, so
+            the movement travels across the group rather than every bar pumping at once.
+            Bars rather than a dot lattice — they hold their shape at this size, where
+            nine dots mush together. At rest they sit level, which is the idle mark. */}
         <svg className="v2-tk-grid" viewBox="0 0 24 24" aria-hidden="true">
-          {[0, 1, 2].map((row) =>
-            [0, 1, 2].map((col) => (
-              <circle
-                key={`${row}-${col}`}
-                className="v2-tk-node"
-                cx={5 + col * 7}
-                cy={5 + row * 7}
-                r="1.75"
-                style={{ animationDelay: `${(row + col) * 0.11}s` }}
-              />
-            )),
-          )}
+          {[0, 1, 2, 3].map((i) => (
+            <rect
+              key={i}
+              className="v2-tk-node"
+              x={2.6 + i * 5.6}
+              y="3"
+              width="3"
+              height="18"
+              rx="1.5"
+              style={{ animationDelay: `${i * 0.115}s` }}
+            />
+          ))}
         </svg>
         <span className="v2-tk-think-title">{done ? `Thought for ${seconds}s` : "Thinking"}</span>
         <svg className="v2-tk-think-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

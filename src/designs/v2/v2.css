@@ -2696,11 +2696,14 @@
 .v2-root .v2-bulb {
   --v2-violet: 150, 122, 255;
   position: relative;
-  /* height comes from the bar by stretching, and aspect-ratio makes that a circle. No
-     number to keep in sync — change the bar's height and these follow it exactly. */
-  flex: 0 0 auto;
+  /* Capsules, not circles. They were circles by aspect-ratio, which only proposes a
+     width — at a narrow viewport flex shrank it and they came out as ovals by accident.
+     The oval is the better shape, so it is stated outright: a fixed width that cannot be
+     shrunk, height still taken from the bar by stretching. Both are given the same width,
+     so the pair always matches whatever the bar does. */
+  flex: 0 0 38px;
+  width: 38px;
   align-self: stretch;
-  aspect-ratio: 1;
   height: auto;
   display: grid;
   place-items: center;
@@ -2722,8 +2725,8 @@
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6);
 }
 .v2-root .v2-bulb-glyph {
-  width: 22px;
-  height: 22px;
+  width: 19px;
+  height: 19px;
   /* the glyph sits under the ring, both centred on the same box */
   grid-area: 1 / 1;
 }
@@ -2734,8 +2737,9 @@
    split in half. */
 .v2-root .v2-bulb-ring {
   grid-area: 1 / 1;
-  width: 38px;
-  height: 38px;
+  /* 32 inside a 38 capsule leaves 3px a side for the glow to breathe */
+  width: 32px;
+  height: 32px;
   fill: none;
   transform: rotate(-90deg);
   /* an SVG clips to its own viewport by default, so the arc's drop-shadow was being cut
@@ -2793,8 +2797,8 @@
  * carries one meaning in both places, and switching it on literally starts it thinking.
  */
 .v2-root .v2-bulb-lattice {
-  width: 21px;
-  height: 21px;
+  width: 19px;
+  height: 19px;
   overflow: visible;
   transition: filter 0.32s ease;
 }

@@ -9,9 +9,9 @@ import { useState } from "react"
  * exactly as tall as the bar and exactly round without a single hand-tuned number.
  *
  * Left is the bolt: how fast to answer, three settings, shown as an arc closing around
- * the glyph. Right is a branch — one thought opening into three — which is Goal mode,
- * the long-thinking switch. Speed on the left, deliberation on the right, and the glyphs
- * say which is which without a label.
+ * the glyph. Right is Goal mode, drawn as the same bending lattice the thread uses while
+ * it thinks — off it sits at rest, on it bends. Speed on the left, depth on the right,
+ * and the same figure means the same thing in both places.
  */
 
 const SPEEDS = [
@@ -63,19 +63,22 @@ export function GoalBulb() {
       aria-pressed={on}
       title={on ? "Goal mode is on — the agent will think longer" : "Goal mode — let the agent think longer"}
     >
-      {/* One thought branching into three: the graph glyph, which is what long thinking
-          actually looks like. Tried a brain first (a blob with scratches at this size)
-          and then a diamond of nodes — at 21px the curves closed up against the nodes
-          and it read as a four-pointed star. Orthogonal rules survive small sizes;
-          curves between close points do not. */}
-      <svg className="v2-bulb-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="M12 6.6v3.1" />
-        <path d="M5.6 14.1v-2.2a2.2 2.2 0 0 1 2.2-2.2h8.4a2.2 2.2 0 0 1 2.2 2.2v2.2" />
-        <path d="M12 9.7v4.4" />
-        <circle cx="12" cy="4.7" r="1.75" fill="currentColor" stroke="none" />
-        <circle cx="5.6" cy="16.1" r="1.75" fill="currentColor" stroke="none" />
-        <circle cx="12" cy="16.1" r="1.75" fill="currentColor" stroke="none" />
-        <circle cx="18.4" cy="16.1" r="1.75" fill="currentColor" stroke="none" />
+      {/* The lattice, bending — the same figure and the same travelling wave as the
+          thinking mark, which is the point: Goal mode is that thinking, held longer.
+          Off it is the grid at rest, flat and still. Pressing it starts the bend. */}
+      <svg className="v2-bulb-lattice" viewBox="0 0 24 24" aria-hidden="true">
+        {[0, 1, 2].map((row) =>
+          [0, 1, 2].map((col) => (
+            <circle
+              key={`${row}-${col}`}
+              className="v2-bulb-node"
+              cx={5 + col * 7}
+              cy={5 + row * 7}
+              r="1.6"
+              style={{ animationDelay: `${(row + col) * 0.11}s` }}
+            />
+          )),
+        )}
       </svg>
     </button>
   )

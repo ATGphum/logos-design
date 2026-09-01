@@ -2738,11 +2738,36 @@
   box-shadow: 0 2px 8px -3px rgba(0, 0, 0, 0.7), 0 0 20px -4px rgba(var(--v2-violet), 0.85),
     0 0 40px -10px rgba(var(--v2-violet), 0.6);
 }
-.v2-root .v2-bulb-goal .v2-bulb-glyph {
-  transition: filter 0.3s ease;
+/* Goal mode's glyph is the thinking lattice, and it behaves the same way: at rest while
+ * off, bending while on. Same nine nodes, same travelling wave, same delays — the figure
+ * carries one meaning in both places, and switching it on literally starts it thinking.
+ */
+.v2-root .v2-bulb-lattice {
+  width: 21px;
+  height: 21px;
+  overflow: visible;
+  transition: filter 0.32s ease;
 }
-.v2-root .v2-bulb-goal.on .v2-bulb-glyph {
+.v2-root .v2-bulb-node {
+  fill: currentColor;
+  transform-box: fill-box;
+  transform-origin: center;
+  /* off: flat, still, and a touch smaller — fragile rather than solid */
+  transform: scale(0.82);
+  transition: transform 0.42s cubic-bezier(0.33, 0.45, 0.25, 1), opacity 0.32s ease;
+  opacity: 0.85;
+}
+.v2-root .v2-bulb-goal.on .v2-bulb-lattice {
   filter: drop-shadow(0 0 6px rgba(var(--v2-violet), 0.9)) drop-shadow(0 0 14px rgba(var(--v2-violet), 0.5));
+}
+.v2-root .v2-bulb-goal.on .v2-bulb-node {
+  opacity: 1;
+  transition: none;
+  animation: v2-bulb-bend 1.5s ease-in-out infinite;
+}
+@keyframes v2-bulb-bend {
+  0%, 100% { transform: translateY(1.9px) scale(0.7); opacity: 0.5; }
+  45% { transform: translateY(-2.4px) scale(1.12); opacity: 1; }
 }
 
 .v2-root.light .v2-bulb {
@@ -2761,7 +2786,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .v2-root .v2-bulb-node,
+  .v2-root .v2-bulb-node,
   .v2-root .v2-bulb-ring-arc {
     transition: none;
+    animation: none;
   }
 }

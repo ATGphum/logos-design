@@ -1494,15 +1494,103 @@
 }
 
 .v2-root #cs-view {
-  inset: 3.4vh 2.6vw;
-  border-radius: 20px;
+  /* A window, not a page with a margin. 3.4vh/2.6vw left so little of the agent showing
+     that it read as full-bleed with a rounded corner; this leaves a real border of the
+     surface it opened from. Capped so it stops growing on a wide display — past about
+     1180px the console is stretched rather than filled — and `margin: auto` centres it
+     inside the inset once a cap binds. */
+  inset: 7vh 7vw;
+  max-width: 1180px;
+  max-height: 790px;
+  margin: auto;
+  border-radius: 18px;
   overflow: hidden;
   box-shadow: 0 44px 130px -34px rgba(0, 0, 0, 0.92), 0 0 0 1px rgba(255, 255, 255, 0.09);
 }
 /* the console's own rounded corners have to clip its chrome too */
 .v2-root #cs-view .cs-wrap,
 .v2-root #cs-view .cs-side {
-  border-bottom-left-radius: 20px;
+  border-bottom-left-radius: 18px;
+}
+
+/* ===== Console cleanup =====
+ *
+ * Three things were fighting each other in here.
+ *
+ * The chips came in three saturated colours — amber, blue, neutral — that encode
+ * nothing: 'review instances' and 'health signals' share amber, 'config / policy' and
+ * '12 visible' share blue, and no rule connects either pair. Colour that does not mean
+ * anything is just noise, and on a page that is otherwise ink and cream it was the
+ * loudest thing on screen. One quiet treatment for all of them; if a state ever needs
+ * calling out, it can have the colour back and it will actually read.
+ *
+ * The action buttons were hard-cornered against a page of pills and rounded chips.
+ *
+ * And the nav had two kinds of item — icon rows for Workspace, slash-prefixed text for
+ * Operations — which made one list look like two lists that had been pasted together.
+ * The slashes are gone (state.ts, V2's nav only) and the labels now sit on one axis
+ * whether they carry an icon or not.
+ */
+.v2-root #cs-view .chip,
+.v2-root #cs-view .chip-o,
+.v2-root #cs-view .chip-b,
+.v2-root #cs-view .chip-n {
+  background: rgba(244, 242, 236, 0.07);
+  border: 1px solid rgba(244, 242, 236, 0.1);
+  color: rgba(255, 255, 255, 0.82);
+  border-radius: 6px;
+  font-weight: 400;
+}
+.v2-root #cs-view.cs-day .chip,
+.v2-root #cs-view:not(.cs-night) .chip {
+  background: rgba(26, 25, 22, 0.055);
+  border-color: rgba(26, 25, 22, 0.1);
+  color: rgba(26, 25, 22, 0.78);
+}
+
+.v2-root #cs-view .cs-btn {
+  border-radius: 7px;
+  padding: 13px 20px;
+  /* They were `flex: 0 1 auto` in a nowrap row, so a narrower window shrank all three
+     below their own text — measured 153px against 186px of content. The overflow is
+     visible, so each label ran under the next button's background and read as truncated.
+     They keep their natural width now and the row wraps if there is not room for it. */
+  flex: 0 0 auto;
+}
+.v2-root #cs-view .acts {
+  flex-wrap: wrap;
+  /* wrapped rows stay flush with the row above rather than ragging left */
+  justify-content: flex-end;
+}
+/* Same shape of bug one line up: the budget summary is `flex: 0 1 auto` with
+   overflow: hidden, so the action row squeezed it to 126px against 222px of content and
+   the token count was genuinely cut off — not an artefact of the smaller window, just
+   newly visible in it. It holds its width now and the header row wraps instead. */
+.v2-root #cs-view .ov-btop {
+  flex-wrap: wrap;
+  row-gap: 14px;
+}
+.v2-root #cs-view .ov-spent {
+  flex: 0 0 auto;
+  overflow: visible;
+}
+
+/* The module tiles were cramped in every panel, not just this one — a sweep found them
+   236px wide against 243-295px of content on Dashboard, Usage, API Keys, Users and
+   Machines. The grid is auto-fit with a 230px floor, which is low enough that three
+   columns still "fit" at a width none of the tiles can actually use. Raising the floor
+   drops it to two columns, where each tile gets ~370px and nothing is squeezed. This is
+   what most of the messiness was: label and value colliding inside every tile. */
+.v2-root #cs-view .cs-mods {
+  grid-template-columns: repeat(auto-fit, minmax(272px, 1fr));
+}
+
+/* labels onto one axis, icon or not — the icon column is 26px plus its 10px gap */
+.v2-root #cs-view .cs-item .cs-item-lb {
+  display: inline-block;
+}
+.v2-root #cs-view .cs-item:not(:has(.cs-navico)) .cs-item-lb {
+  padding-left: 36px;
 }
 
 /* full-bleed below tablet, where an inset window leaves too little room */

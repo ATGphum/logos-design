@@ -150,7 +150,13 @@ function Reasoning({ steps, shown, done, seconds }: { steps: string[]; shown: nu
   return (
     <div className={"v2-tk-think" + (open ? " open" : "") + (done ? " done" : "")}>
       <button className="v2-tk-think-head" onClick={() => setOpen((v) => !v)} type="button">
-        <span className="v2-tk-think-dot" aria-hidden="true" />
+        {/* An arc travelling a ring: open while it works, closed once it has an answer.
+            The mark is the product's own — a thought completing reads as the enso being
+            drawn shut, which is more specific than a spinner and costs two circles. */}
+        <svg className="v2-tk-orb" viewBox="0 0 24 24" aria-hidden="true">
+          <circle className="v2-tk-orb-track" cx="12" cy="12" r="8.5" />
+          <circle className="v2-tk-orb-arc" cx="12" cy="12" r="8.5" />
+        </svg>
         <span className="v2-tk-think-title">{done ? `Thought for ${seconds}s` : "Thinking"}</span>
         <svg className="v2-tk-think-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <polyline points="6 9 12 15 18 9" />

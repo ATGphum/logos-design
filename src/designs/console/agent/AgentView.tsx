@@ -92,6 +92,13 @@ export interface AgentViewProps {
    * and streaming. Omitted elsewhere, where the built-in stub renders instead.
    */
   transcript?: (messages: Message[]) => ReactNode
+  /**
+   * V2: controls that belong to the composer only once it has dropped to the bottom of
+   * a conversation. The hero has room to state these at full size below the bar; the
+   * bottom bar does not, so they compact into it. Omitted elsewhere.
+   */
+  barLeading?: ReactNode
+  barTrailing?: ReactNode
 }
 
 export function AgentView(props: AgentViewProps) {
@@ -119,6 +126,8 @@ export function AgentView(props: AgentViewProps) {
     v2Icons,
     heroBelow,
     transcript,
+    barLeading,
+    barTrailing,
   } = props
 
   const [chats, setChats] = useState<ChatItem[]>(initialRecentChats)
@@ -282,6 +291,7 @@ export function AgentView(props: AgentViewProps) {
             <line x1="5" y1="12" x2="19" y2="12" />
           </svg>
         </button>
+        {!emptyState ? barLeading : null}
         <textarea
           id="chat-input"
           ref={inputRef}
@@ -338,6 +348,7 @@ export function AgentView(props: AgentViewProps) {
           </div>
         </div>
 
+        {!emptyState ? barTrailing : null}
         <button className="icon-btn mic-btn" title="Voice input">
           {v2Icons ? (
             <MicIconV2 />

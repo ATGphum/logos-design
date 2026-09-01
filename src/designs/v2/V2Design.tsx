@@ -28,6 +28,7 @@ import { AccountChip } from "./AccountChip"
 import { SeamScroll } from "./SeamScroll"
 import { GoalMode } from "./GoalMode"
 import { V2Thread } from "./V2Thread"
+import { GoalBulb, ThinkSpeed } from "./BarBulbs"
 
 export default function V2Design() {
   const { resolvedMode } = useTheme()
@@ -114,6 +115,8 @@ export default function V2Design() {
         v2Icons
         heroBelow={<GoalMode />}
         transcript={(messages) => <V2Thread messages={messages} />}
+        barLeading={<ThinkSpeed />}
+        barTrailing={<GoalBulb />}
         consoleActive={csDisplayed && !csHidden}
         accountSlot={
           <AccountChip

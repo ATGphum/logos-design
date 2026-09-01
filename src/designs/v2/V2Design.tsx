@@ -27,6 +27,7 @@ import { LoginGate, type AuthMode } from "./LoginGate"
 import { AccountChip } from "./AccountChip"
 import { SeamScroll } from "./SeamScroll"
 import { GoalMode } from "./GoalMode"
+import { V2Thread } from "./V2Thread"
 
 export default function V2Design() {
   const { resolvedMode } = useTheme()
@@ -112,6 +113,7 @@ export default function V2Design() {
         logoFolds
         v2Icons
         heroBelow={<GoalMode />}
+        transcript={(messages) => <V2Thread messages={messages} />}
         consoleActive={csDisplayed && !csHidden}
         accountSlot={
           <AccountChip

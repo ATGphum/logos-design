@@ -2222,3 +2222,372 @@
   color: #1a1916;
   text-shadow: none;
 }
+
+/* ===== V2 conversation =====
+ *
+ * Only the person gets a bubble. A bubble is a container, and a container earns its
+ * keep when something sits beside it — the user's turn is short and needs an edge to
+ * end at; the agent's turn is the body of the page and does not. Boxing both made the
+ * answer read as a quoted excerpt of itself, which is what made the old thread look
+ * dated.
+ *
+ * Text is brighter across the board. The agent's prose is the product, and it was
+ * running at the same weight as the chrome around it.
+ */
+.v2-root .v2-tk {
+  width: 100%;
+  max-width: 768px;
+  margin: 0 auto;
+  padding: 30px 0 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* ————— the person ————— */
+.v2-root .v2-tk-user {
+  display: flex;
+  justify-content: flex-end;
+}
+.v2-root .v2-tk-bubble {
+  max-width: 78%;
+  padding: 11px 16px;
+  border-radius: 18px;
+  border: 1px solid transparent;
+  /* the hero bar's construction, at bubble scale — this is a raised surface, so the
+     rim is lit along the top */
+  background: linear-gradient(180deg, #1c1c1c, #171717) padding-box,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.06) 55%, rgba(255, 255, 255, 0.04) 100%)
+      border-box;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 14.5px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* ————— the agent ————— */
+.v2-root .v2-tk-agent {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* the reasoning strip: steps on a hairline rail, then one line you can reopen */
+.v2-root .v2-tk-think {
+  align-self: flex-start;
+  max-width: 100%;
+}
+.v2-root .v2-tk-think-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12.5px;
+  letter-spacing: 0.01em;
+  transition: color 0.2s ease;
+}
+.v2-root .v2-tk-think-head:hover {
+  color: rgba(255, 255, 255, 0.78);
+}
+.v2-root .v2-tk-think-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(var(--v2-violet, 150, 122, 255), 0.9);
+  box-shadow: 0 0 9px rgba(var(--v2-violet, 150, 122, 255), 0.7);
+}
+/* only while it is still thinking — a pulse that keeps going after the answer lands
+   reads as a stuck request */
+.v2-root .v2-tk-think:not(.done) .v2-tk-think-dot {
+  animation: v2-tk-pulse 1.15s ease-in-out infinite;
+}
+@keyframes v2-tk-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.72); }
+}
+/* the title shimmers while it is working, which is the one place motion belongs */
+.v2-root .v2-tk-think:not(.done) .v2-tk-think-title {
+  background: linear-gradient(
+      100deg,
+      rgba(255, 255, 255, 0.42) 30%,
+      rgba(255, 255, 255, 0.95) 50%,
+      rgba(255, 255, 255, 0.42) 70%
+    )
+    0 0 / 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: v2-tk-shimmer 1.9s linear infinite;
+}
+@keyframes v2-tk-shimmer {
+  to { background-position: -220% 0; }
+}
+.v2-root .v2-tk-think-caret {
+  width: 13px;
+  height: 13px;
+  opacity: 0.55;
+  transition: transform 0.28s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+.v2-root .v2-tk-think.open .v2-tk-think-caret {
+  transform: rotate(180deg);
+}
+
+/* grid-template-rows animates where max-height cannot: no dead zone, and no cap to
+   guess at when the step list is longer than expected */
+.v2-root .v2-tk-think-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.34s cubic-bezier(0.33, 0.45, 0.25, 1),
+    opacity 0.28s ease;
+  opacity: 0;
+}
+.v2-root .v2-tk-think.open .v2-tk-think-body {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+.v2-root .v2-tk-think-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+.v2-root .v2-tk-step {
+  position: relative;
+  margin-left: 2px;
+  padding: 5px 0 5px 16px;
+  border-left: 1px solid rgba(255, 255, 255, 0.13);
+  color: rgba(255, 255, 255, 0.46);
+  font-size: 12.5px;
+  line-height: 1.5;
+  animation: v2-tk-step-in 0.34s cubic-bezier(0.33, 0.45, 0.25, 1) both;
+}
+.v2-root .v2-tk-step:first-child {
+  padding-top: 9px;
+}
+.v2-root .v2-tk-step::before {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  margin-top: -2.5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.28);
+}
+@keyframes v2-tk-step-in {
+  from { opacity: 0; transform: translateY(-3px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ————— the answer ————— */
+.v2-root .v2-tk-body {
+  color: rgba(255, 255, 255, 0.93);
+  font-size: 15px;
+  line-height: 1.72;
+  overflow-wrap: anywhere;
+}
+.v2-root .v2-tk-body > *:first-child {
+  margin-top: 0;
+}
+.v2-root .v2-tk-body > *:last-child {
+  margin-bottom: 0;
+}
+.v2-root .v2-tk-body p {
+  margin: 0 0 15px;
+}
+.v2-root .v2-tk-body h3 {
+  margin: 26px 0 11px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #ffffff;
+}
+.v2-root .v2-tk-body strong {
+  font-weight: 600;
+  color: #ffffff;
+}
+.v2-root .v2-tk-body ul {
+  margin: 0 0 15px;
+  padding-left: 3px;
+  list-style: none;
+}
+.v2-root .v2-tk-body li {
+  position: relative;
+  padding-left: 18px;
+  margin-bottom: 7px;
+}
+.v2-root .v2-tk-body li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 0.72em;
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.4);
+}
+.v2-root .v2-tk-code {
+  padding: 1.5px 5px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.86em;
+  color: #e8e2d4;
+}
+.v2-root .v2-tk-pre {
+  position: relative;
+  margin: 0 0 16px;
+  padding: 15px 16px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  /* a code block is inset in the page, so it is lit as a recess: shadowed top lip,
+     lit bottom lip — the same rule the goal-mode channel follows */
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.24)) padding-box,
+    linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(255, 255, 255, 0.04) 55%, rgba(255, 255, 255, 0.14) 100%)
+      border-box;
+  box-shadow: inset 0 2px 4px -2px rgba(0, 0, 0, 0.8);
+  overflow-x: auto;
+}
+.v2-root .v2-tk-pre code {
+  font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12.6px;
+  line-height: 1.68;
+  color: #ddd6c6;
+  white-space: pre;
+}
+.v2-root .v2-tk-lang {
+  position: absolute;
+  top: 9px;
+  right: 12px;
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.26);
+}
+
+/* the caret rides the last line while tokens are arriving */
+.v2-root .v2-tk-body.streaming > *:last-child::after {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 1.02em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  border-radius: 1px;
+  background: rgba(var(--v2-violet, 150, 122, 255), 0.95);
+  animation: v2-tk-caret 1s steps(2, start) infinite;
+}
+@keyframes v2-tk-caret {
+  50% { opacity: 0; }
+}
+
+/* ————— per-turn actions ————— */
+.v2-root .v2-tk-actions {
+  display: flex;
+  gap: 2px;
+  margin-top: -2px;
+  opacity: 0;
+  transition: opacity 0.22s ease;
+}
+.v2-root .v2-tk-agent:hover .v2-tk-actions {
+  opacity: 1;
+}
+.v2-root .v2-tk-actions button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.42);
+  transition: color 0.18s ease, background 0.18s ease;
+}
+.v2-root .v2-tk-actions button:hover {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.07);
+}
+.v2-root .v2-tk-actions svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ————— light ————— */
+.v2-root.light .v2-tk-bubble {
+  background: linear-gradient(180deg, #ffffff, #f7f5ef) padding-box,
+    linear-gradient(180deg, rgba(26, 25, 22, 0.14), rgba(26, 25, 22, 0.08)) border-box;
+  color: #1a1916;
+}
+.v2-root.light .v2-tk-body {
+  color: #26251f;
+}
+.v2-root.light .v2-tk-body h3,
+.v2-root.light .v2-tk-body strong {
+  color: #14130f;
+}
+.v2-root.light .v2-tk-think-head {
+  color: rgba(26, 25, 22, 0.55);
+}
+.v2-root.light .v2-tk-step {
+  color: rgba(26, 25, 22, 0.5);
+  border-left-color: rgba(26, 25, 22, 0.14);
+}
+.v2-root.light .v2-tk-pre {
+  background: linear-gradient(180deg, rgba(26, 25, 22, 0.06), rgba(26, 25, 22, 0.03)) padding-box,
+    linear-gradient(180deg, rgba(26, 25, 22, 0.16), rgba(255, 255, 255, 0.9)) border-box;
+}
+.v2-root.light .v2-tk-pre code,
+.v2-root.light .v2-tk-code {
+  color: #2b2a24;
+}
+.v2-root.light .v2-tk-code {
+  background: rgba(26, 25, 22, 0.07);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v2-root .v2-tk-think-title,
+  .v2-root .v2-tk-think-dot,
+  .v2-root .v2-tk-step,
+  .v2-root .v2-tk-body.streaming > *:last-child::after {
+    animation: none;
+  }
+}
+
+/* ===== The composer keeps the hero bar's material once it drops to the bottom =====
+ * It was reverting to the plain chat.css bar down there, so the surface you had just
+ * been typing into changed material as soon as you sent — the same control should not
+ * be made of two different things.
+ */
+.v2-root:not(.light) .input-bar-wrap:not(.in-hero) .input-bar {
+  border: 1px solid transparent;
+  background: linear-gradient(#131313, #131313) padding-box,
+    linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.22) 0%,
+        rgba(255, 255, 255, 0.1) 34%,
+        rgba(255, 255, 255, 0.05) 70%,
+        rgba(255, 255, 255, 0.04) 100%
+      )
+      border-box;
+  box-shadow: 0 8px 30px -14px rgba(0, 0, 0, 0.9);
+}
+.v2-root:not(.light) .input-bar-wrap:not(.in-hero) .input-bar:focus-within {
+  background: linear-gradient(#171717, #171717) padding-box,
+    linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.4) 0%,
+        rgba(255, 255, 255, 0.18) 34%,
+        rgba(255, 255, 255, 0.1) 70%,
+        rgba(255, 255, 255, 0.08) 100%
+      )
+      border-box;
+}
+.v2-root.light .input-bar-wrap:not(.in-hero) .input-bar {
+  background: #f0eee6;
+}

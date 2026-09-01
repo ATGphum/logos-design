@@ -13,7 +13,7 @@ import { ConsoleIcon, ConsoleIconV2, FolderIcon, GearIcon, MicIconV2, NewChatIco
 import { SearchOverlay } from "./SearchOverlay"
 import { SettingsView } from "./SettingsView"
 
-interface Message {
+export interface Message {
   key: number
   role: "user" | "agent"
   text: string
@@ -86,6 +86,12 @@ export interface AgentViewProps {
   v2Icons?: boolean
   /** V2: sits under the composer in the hero — the Goal mode toggle. */
   heroBelow?: ReactNode
+  /**
+   * V2: renders the conversation itself. Given the whole message list, so the renderer
+   * can pair each agent turn with the prompt that caused it and drive its own thinking
+   * and streaming. Omitted elsewhere, where the built-in stub renders instead.
+   */
+  transcript?: (messages: Message[]) => ReactNode
 }
 
 export function AgentView(props: AgentViewProps) {
@@ -112,6 +118,7 @@ export function AgentView(props: AgentViewProps) {
     consoleActive,
     v2Icons,
     heroBelow,
+    transcript,
   } = props
 
   const [chats, setChats] = useState<ChatItem[]>(initialRecentChats)
@@ -529,6 +536,8 @@ export function AgentView(props: AgentViewProps) {
                 </div>
               </div>
             </div>
+          ) : transcript ? (
+            transcript(messages)
           ) : (
             messages.map((m) =>
               m.role === "user" ? (

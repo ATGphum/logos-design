@@ -2443,8 +2443,8 @@
  * states and simply stops moving — no spinner, no circle.
  */
 .v2-root .v2-tk-grid {
-  width: 21px;
-  height: 21px;
+  width: 19px;
+  height: 19px;
   overflow: visible;
 }
 .v2-root .v2-tk-node {
@@ -2456,8 +2456,10 @@
   transform: scaleY(0.34);
 }
 .v2-root .v2-tk-think:not(.done) .v2-tk-grid {
-  filter: drop-shadow(0 0 6px rgba(var(--v2-violet, 150, 122, 255), 0.9))
-    drop-shadow(0 0 14px rgba(var(--v2-violet, 150, 122, 255), 0.5));
+  /* a finer bar carries less of its own light, so the bloom comes down with it —
+     otherwise the glow does the work the stroke used to and it reads fat again */
+  filter: drop-shadow(0 0 4px rgba(var(--v2-violet, 150, 122, 255), 0.8))
+    drop-shadow(0 0 10px rgba(var(--v2-violet, 150, 122, 255), 0.4));
 }
 .v2-root .v2-tk-think:not(.done) .v2-tk-node {
   opacity: 1;
@@ -3059,4 +3061,80 @@
 }
 .v2-root #cs-view:not(.cs-night) .cs-tag.warn {
   color: #7a5320;
+}
+
+/* ===== The name, drawn only when asked for =====
+ *
+ * A 19px glyph can carry a state but not a name, and a permanent caption beside a control
+ * this small is worse than the ambiguity it fixes. So the name exists and simply is not
+ * drawn until you go looking: it rises on hover and on keyboard focus.
+ *
+ * A real element rather than the native `title`, which arrives about a second late,
+ * cannot be styled, and looks like the operating system rather than the product. Built
+ * from the same material as everything else in the bar — dark fill on padding-box, rim
+ * lit along the top on border-box — so it reads as part of the surface it came out of.
+ */
+.v2-root .v2-tip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  padding: 7px 11px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: linear-gradient(180deg, #1c1c1c, #151515) padding-box,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.07) 60%, rgba(255, 255, 255, 0.05) 100%)
+      border-box;
+  box-shadow: 0 10px 26px -12px rgba(0, 0, 0, 0.9);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  /* the 4px of travel is what makes it feel like it came from the button */
+  transform: translate(-50%, 4px);
+  transition: opacity 0.18s ease, transform 0.24s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+.v2-root .v2-bulb:hover .v2-tip,
+.v2-root .v2-bulb:focus-visible .v2-tip {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  /* a short delay so sweeping across the bar does not flash them */
+  transition-delay: 0.22s;
+}
+.v2-root .v2-tip b {
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+.v2-root .v2-tip i {
+  font-style: normal;
+  font-size: 12.5px;
+  color: #ffffff;
+}
+/* on, the reading is the violet one — the tip says the same thing the glyph does */
+.v2-root .v2-bulb-goal.on .v2-tip i {
+  color: rgb(186, 166, 255);
+}
+
+.v2-root.light .v2-tip {
+  background: linear-gradient(180deg, #ffffff, #f4f2ea) padding-box,
+    linear-gradient(180deg, rgba(26, 25, 22, 0.18), rgba(26, 25, 22, 0.1)) border-box;
+}
+.v2-root.light .v2-tip b {
+  color: rgba(26, 25, 22, 0.55);
+}
+.v2-root.light .v2-tip i {
+  color: #1a1916;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v2-root .v2-tip {
+    transition: opacity 0.01ms;
+    transform: translate(-50%, 0);
+  }
 }

@@ -14,6 +14,27 @@ import { useState } from "react"
  * and the same figure means the same thing in both places.
  */
 
+/**
+ * What the glyph cannot say on its own.
+ *
+ * A 19px mark can carry a state but not a name, and a permanent caption beside a control
+ * this small is worse than the ambiguity it fixes. So the name is there and simply not
+ * drawn until asked for: it rises on hover and on keyboard focus, and it is a real
+ * element rather than the native `title`, which arrives a second late, cannot be styled,
+ * and looks like the operating system rather than the product.
+ *
+ * It carries the current setting as well as the name, so hovering answers both "what is
+ * this" and "what is it on" in one look.
+ */
+function Tip({ label, value }: { label: string; value: string }) {
+  return (
+    <span className="v2-tip" aria-hidden="true">
+      <b>{label}</b>
+      <i>{value}</i>
+    </span>
+  )
+}
+
 const SPEEDS = [
   { name: "Instant", hint: "Answers immediately" },
   { name: "Balanced", hint: "Thinks briefly first" },
@@ -29,9 +50,9 @@ export function ThinkSpeed() {
       type="button"
       className={"v2-bulb v2-bulb-speed lv" + level}
       onClick={() => setLevel((l) => (l + 1) % SPEEDS.length)}
-      title={`Thinking speed: ${s.name} — ${s.hint}`}
       aria-label={`Thinking speed: ${s.name}`}
     >
+      <Tip label="Speed" value={s.name} />
       {/* The gauge traces the button, not a circle inside it. Drawn as a rounded rect
           stretched to the capsule's box: rx equals half the width, so the top edge
           collapses to a single point at dead centre and the path starts there and runs
@@ -68,8 +89,9 @@ export function GoalBulb() {
       className={"v2-bulb v2-bulb-goal" + (on ? " on" : "")}
       onClick={() => setOn((v) => !v)}
       aria-pressed={on}
-      title={on ? "Goal mode is on — the agent will think longer" : "Goal mode — let the agent think longer"}
+      aria-label={"Goal mode " + (on ? "on" : "off")}
     >
+      <Tip label="Goal mode" value={on ? "On — thinks it through" : "Off"} />
       {/* The lattice, bending — the same figure and the same travelling wave as the
           thinking mark, which is the point: Goal mode is that thinking, held longer.
           Off it is the grid at rest, flat and still. Pressing it starts the bend. */}

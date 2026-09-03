@@ -159,11 +159,11 @@ function Reasoning({ steps, shown, done, seconds }: { steps: string[]; shown: nu
             <rect
               key={i}
               className="v2-tk-node"
-              x={2.6 + i * 5.6}
-              y="3"
-              width="3"
-              height="18"
-              rx="1.5"
+              x={3.5 + i * 5.7}
+              y="2.5"
+              width="2"
+              height="19"
+              rx="1"
               style={{ animationDelay: `${i * 0.115}s` }}
             />
           ))}

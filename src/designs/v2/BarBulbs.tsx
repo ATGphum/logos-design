@@ -9,7 +9,7 @@ import { useState } from "react"
  * exactly as tall as the bar and exactly round without a single hand-tuned number.
  *
  * Left is the bolt: how fast to answer, three settings, shown as an arc closing around
- * the glyph. Right is Goal mode, drawn as the same bending lattice the thread uses while
+ * the capsule's own outline. Right is Goal mode, drawn as the same bending lattice the thread uses while
  * it thinks — off it sits at rest, on it bends. Speed on the left, depth on the right,
  * and the same figure means the same thing in both places.
  */
@@ -19,9 +19,6 @@ const SPEEDS = [
   { name: "Balanced", hint: "Thinks briefly first" },
   { name: "Deep", hint: "Thinks it through" },
 ]
-
-/* r=10 in a 24 box → circumference 62.8, which is where the thirds below come from */
-const CIRC = 62.8
 
 export function ThinkSpeed() {
   const [level, setLevel] = useState(1)
@@ -35,14 +32,24 @@ export function ThinkSpeed() {
       title={`Thinking speed: ${s.name} — ${s.hint}`}
       aria-label={`Thinking speed: ${s.name}`}
     >
-      <svg className="v2-bulb-ring" viewBox="0 0 24 24" aria-hidden="true">
-        <circle className="v2-bulb-ring-track" cx="12" cy="12" r="10" />
-        <circle
+      {/* The gauge traces the button, not a circle inside it. Drawn as a rounded rect
+          stretched to the capsule's box: rx equals half the width, so the top edge
+          collapses to a single point at dead centre and the path starts there and runs
+          clockwise — no rotation needed to get 12 o'clock.
+          pathLength="100" normalises the perimeter, so the thirds below are literal
+          percentages and stay correct at any button height; non-scaling-stroke keeps the
+          line an even weight despite the non-uniform stretch. */}
+      <svg className="v2-bulb-ring" viewBox="0 0 38 56" preserveAspectRatio="none" aria-hidden="true">
+        <rect className="v2-bulb-ring-track" x="4" y="4" width="30" height="48" rx="15" pathLength="100" />
+        <rect
           className="v2-bulb-ring-arc"
-          cx="12"
-          cy="12"
-          r="10"
-          style={{ strokeDasharray: `${(CIRC * (level + 1)) / 3} ${CIRC}` }}
+          x="4"
+          y="4"
+          width="30"
+          height="48"
+          rx="15"
+          pathLength="100"
+          style={{ strokeDasharray: `${((level + 1) * 100) / 3} 100` }}
         />
       </svg>
       <svg className="v2-bulb-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

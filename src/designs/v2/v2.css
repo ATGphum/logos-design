@@ -2824,15 +2824,21 @@
    mode's, and two violet controls either side of the bar would read as one setting
    split in half. */
 .v2-root .v2-bulb-ring {
-  grid-area: 1 / 1;
-  /* 32 inside a 38 capsule leaves 3px a side for the glow to breathe */
-  width: 32px;
-  height: 32px;
+  /* fills the button rather than sitting in the grid cell, so the gauge is the button's
+     own outline; the glyph keeps the cell to itself and stays centred */
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   fill: none;
-  transform: rotate(-90deg);
   /* an SVG clips to its own viewport by default, so the arc's drop-shadow was being cut
      off square — that was the box visible around the ring, not a border */
   overflow: visible;
+}
+.v2-root .v2-bulb-ring-track,
+.v2-root .v2-bulb-ring-arc {
+  /* the box is stretched to the capsule, so the stroke must not stretch with it */
+  vector-effect: non-scaling-stroke;
 }
 .v2-root .v2-bulb-ring-track {
   stroke: rgba(255, 255, 255, 0.1);

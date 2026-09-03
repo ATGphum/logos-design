@@ -3170,3 +3170,179 @@
 .v2-root .topbar-tools {
   margin-left: 22px;
 }
+
+/* ===== Login, in the same material as everything else =====
+ *
+ * The gate was flat: one fill, one even 1px stroke all the way round, and type running
+ * at weight 300 under 0.62 opacity. Next to a hero bar built from a lit rim and a real
+ * falloff it read as a different product.
+ *
+ * So the card and its buttons are built the way the bar is — fill on padding-box under a
+ * gradient on border-box, brightest along the top edge and falling away toward the
+ * bottom, because these are raised surfaces. The one exception is the e-mail field: an
+ * input is something you type INTO, so it is lit as a recess — shadowed upper lip, lit
+ * lower one — the same rule the goal channel and the code blocks follow. That contrast
+ * is doing work: on this card, the sunk thing is the one you fill in.
+ *
+ * Type comes up in weight and in brightness throughout. It was set as though it were
+ * secondary to something, and there is nothing else on screen.
+ */
+.v2-root .v2-gate-card {
+  border: 1px solid transparent;
+  background: linear-gradient(180deg, #191919 0%, #131313 42%, #101010 100%) padding-box,
+    linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.28) 0%,
+        rgba(255, 255, 255, 0.12) 32%,
+        rgba(255, 255, 255, 0.055) 68%,
+        rgba(255, 255, 255, 0.04) 100%
+      )
+      border-box;
+  box-shadow: 0 28px 80px -20px rgba(0, 0, 0, 0.85), 0 0 60px -30px rgba(255, 255, 255, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.v2-root.light .v2-gate-card {
+  background: linear-gradient(180deg, #ffffff 0%, #fdfcf8 100%) padding-box,
+    linear-gradient(180deg, rgba(26, 25, 22, 0.2) 0%, rgba(26, 25, 22, 0.08) 100%) border-box;
+}
+
+.v2-root .v2-gate-title {
+  font-size: 23px;
+  color: #ffffff;
+  text-shadow: 0 0 22px rgba(255, 255, 255, 0.28);
+}
+.v2-root.light .v2-gate-title {
+  color: #14130f;
+  text-shadow: none;
+}
+.v2-root .v2-gate-sub {
+  font-weight: 400;
+  font-size: 13.5px;
+  opacity: 1;
+  color: rgba(255, 255, 255, 0.66);
+}
+.v2-root.light .v2-gate-sub {
+  color: rgba(26, 25, 22, 0.64);
+}
+
+/* the provider rows: raised, so the rim is lit along the top */
+.v2-root .v2-gate-social {
+  border: 1px solid transparent;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.03)) padding-box,
+    linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.34) 0%,
+        rgba(255, 255, 255, 0.16) 45%,
+        rgba(255, 255, 255, 0.09) 100%
+      )
+      border-box;
+  box-shadow: 0 2px 8px -5px rgba(0, 0, 0, 0.8);
+  font-weight: 500;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.96);
+}
+.v2-root .v2-gate-social:hover {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.06)) padding-box,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.26) 45%, rgba(255, 255, 255, 0.14) 100%)
+      border-box;
+  border-color: transparent;
+}
+.v2-root.light .v2-gate-social {
+  background: linear-gradient(180deg, #ffffff, #f7f5ef) padding-box,
+    linear-gradient(180deg, rgba(26, 25, 22, 0.26), rgba(26, 25, 22, 0.12)) border-box;
+  color: #1a1916;
+}
+
+/* the field is the one recess on the card — shadowed at the top, lit at the bottom */
+.v2-root .v2-gate-input {
+  border: 1px solid transparent;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.16) 55%, rgba(255, 255, 255, 0.02) 100%)
+      padding-box,
+    linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(255, 255, 255, 0.05) 55%, rgba(255, 255, 255, 0.2) 100%)
+      border-box;
+  box-shadow: inset 0 2px 4px -2px rgba(0, 0, 0, 0.85);
+  font-weight: 400;
+  color: #ffffff;
+}
+.v2-root .v2-gate-input::placeholder {
+  opacity: 1;
+  color: rgba(255, 255, 255, 0.4);
+}
+.v2-root .v2-gate-input:focus {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.12) 55%, rgba(255, 255, 255, 0.04) 100%)
+      padding-box,
+    linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, rgba(255, 255, 255, 0.14) 50%, rgba(255, 255, 255, 0.42) 100%)
+      border-box;
+}
+.v2-root.light .v2-gate-input {
+  background: linear-gradient(180deg, rgba(26, 25, 22, 0.07), rgba(26, 25, 22, 0.02)) padding-box,
+    linear-gradient(180deg, rgba(26, 25, 22, 0.28), rgba(255, 255, 255, 0.9)) border-box;
+  color: #1a1916;
+}
+.v2-root.light .v2-gate-input::placeholder {
+  color: rgba(26, 25, 22, 0.42);
+}
+
+/* the primary action stays the brightest thing on the card, and now says so */
+.v2-root .v2-gate-go {
+  font-weight: 700;
+  font-size: 12.5px;
+  background: linear-gradient(180deg, #ffffff 0%, #ece9e1 100%);
+  box-shadow: 0 0 26px -8px rgba(255, 255, 255, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+.v2-root .v2-gate-go:hover {
+  box-shadow: 0 0 34px -6px rgba(255, 255, 255, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.v2-root .v2-gate-or {
+  font-weight: 500;
+  opacity: 1;
+  color: rgba(255, 255, 255, 0.42);
+}
+.v2-root.light .v2-gate-or {
+  color: rgba(26, 25, 22, 0.45);
+}
+.v2-root .v2-gate-switch {
+  font-weight: 400;
+  opacity: 1;
+  color: rgba(255, 255, 255, 0.6);
+}
+.v2-root.light .v2-gate-switch {
+  color: rgba(26, 25, 22, 0.6);
+}
+.v2-root .v2-gate-switch button {
+  font-weight: 600;
+  color: #ffffff;
+}
+.v2-root.light .v2-gate-switch button {
+  color: #1a1916;
+}
+
+/* The top-right pair is the same control in miniature, so it is made the same way —
+   Sign up filled because it is the one being recommended, Login rimmed. */
+.v2-root .v2-auth-btn {
+  border: 1px solid transparent;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)) padding-box,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.14) 50%, rgba(255, 255, 255, 0.08) 100%)
+      border-box;
+  box-shadow: 0 2px 8px -5px rgba(0, 0, 0, 0.8);
+  font-weight: 700;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.97);
+}
+.v2-root .v2-auth-btn:hover {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.07)) padding-box,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.24) 50%, rgba(255, 255, 255, 0.13) 100%)
+      border-box;
+}
+.v2-root .v2-auth-btn.v2-auth-primary {
+  background: linear-gradient(180deg, #ffffff 0%, #ece9e1 100%) padding-box,
+    linear-gradient(180deg, #ffffff, #d9d5ca) border-box;
+  color: #0e0e0e;
+  box-shadow: 0 0 22px -8px rgba(255, 255, 255, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+.v2-root .v2-auth-btn.v2-auth-primary:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #f4f2ec 100%) padding-box,
+    linear-gradient(180deg, #ffffff, #e2ded3) border-box;
+  box-shadow: 0 0 30px -6px rgba(255, 255, 255, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}

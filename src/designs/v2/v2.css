@@ -2729,7 +2729,8 @@
  * been typing into changed material as soon as you sent — the same control should not
  * be made of two different things.
  */
-.v2-root:not(.light) .input-bar-wrap:not(.in-hero) .input-bar {
+.v2-root:not(.light) .input-bar-wrap:not(.in-hero) .input-bar,
+.v2-root:not(.light) .input-bar-wrap.in-hero .input-bar {
   border: 1px solid transparent;
   background: linear-gradient(#131313, #131313) padding-box,
     linear-gradient(
@@ -2767,16 +2768,17 @@
  */
 /* the wrap becomes the row that holds them; .nav-arrows is absolutely positioned, so
    it is unaffected by the switch to flex */
-.v2-root .input-bar-wrap:not(.in-hero) {
+/* One control bar, the same shape whether or not you have said anything yet. */
+.v2-root .input-bar-wrap {
   display: flex;
   align-items: stretch;
   justify-content: center;
   gap: 11px;
 }
 /* the bar centres itself with `margin: 0 auto`, and an auto margin in a flex row eats
-   every pixel of free space — measured 583px a side, which threw the orbs out to the
+   every pixel of free space — measured 583px a side, which threw the capsules out to the
    viewport edges. The row centres the group instead. */
-.v2-root .input-bar-wrap:not(.in-hero) .input-bar {
+.v2-root .input-bar-wrap .input-bar {
   flex: 0 1 auto;
   width: 100%;
   margin: 0;
@@ -3137,4 +3139,34 @@
     transition: opacity 0.01ms;
     transform: translate(-50%, 0);
   }
+}
+
+/* ===== The terminal stays shut until it is opened =====
+ *
+ * Closed, the drawer is not hidden — it is a fully visible element parked below the fold
+ * by `transform: translateY(100%)`, with opacity 1, visibility visible and pointer-events
+ * auto. Measured, its top edge sat 5px below the viewport: five pixels of clearance, and
+ * a box-shadow drawn upward out of it that has nothing to be clipped by. Any rounding,
+ * any zoom, any browser chrome that changes the viewport height by a few pixels and the
+ * shadow — or the drawer's own top edge — appears along the bottom of the page looking
+ * like it is opening on its own.
+ *
+ * Closed it now clears the fold by a real margin, drops the shadow that was the visible
+ * part, and takes itself out of hit-testing so nothing in it can be clicked or tabbed to
+ * while it is away. The transform is still what animates, so opening is unchanged.
+ */
+.v2-root:not(.terminal-open) .terminal-panel {
+  transform: translateY(calc(100% + 28px));
+  box-shadow: none;
+  pointer-events: none;
+}
+.v2-root:not(.terminal-open) .terminal-panel * {
+  pointer-events: none;
+}
+
+/* And the button that opens it sat 23px from the sidebar's fold control, in the same
+   top-left corner — and only appears once there is a conversation, so it arrives
+   unannounced exactly where you have been clicking to fold the column. More room. */
+.v2-root .topbar-tools {
+  margin-left: 22px;
 }

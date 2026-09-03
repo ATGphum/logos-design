@@ -1,8 +1,11 @@
-import { useState } from "react"
-
 /**
- * The two orbs flanking the composer, once it has dropped to the bottom of a
- * conversation.
+ * The two capsules flanking the composer, in the hero and at the bottom of a
+ * conversation alike — it is one control bar, so it should not change shape depending on
+ * whether you have said anything yet.
+ *
+ * Neither holds its own state. The composer is rendered in two different places in the
+ * tree depending on whether there is a conversation, so a control that owned its setting
+ * would reset the moment you sent your first message. V2Design holds both.
  *
  * They sit outside the bar as its siblings rather than inside it, and take their height
  * from it by stretching — see the aspect-ratio note in v2.css. That is why they stay
@@ -35,21 +38,22 @@ function Tip({ label, value }: { label: string; value: string }) {
   )
 }
 
+export const SPEED_COUNT = 3
+
 const SPEEDS = [
   { name: "Instant", hint: "Answers immediately" },
   { name: "Balanced", hint: "Thinks briefly first" },
   { name: "Deep", hint: "Thinks it through" },
 ]
 
-export function ThinkSpeed() {
-  const [level, setLevel] = useState(1)
+export function ThinkSpeed({ level, onCycle }: { level: number; onCycle: () => void }) {
   const s = SPEEDS[level]
 
   return (
     <button
       type="button"
       className={"v2-bulb v2-bulb-speed lv" + level}
-      onClick={() => setLevel((l) => (l + 1) % SPEEDS.length)}
+      onClick={onCycle}
       aria-label={`Thinking speed: ${s.name}`}
     >
       <Tip label="Speed" value={s.name} />
@@ -80,14 +84,12 @@ export function ThinkSpeed() {
   )
 }
 
-export function GoalBulb() {
-  const [on, setOn] = useState(false)
-
+export function GoalBulb({ on, onToggle }: { on: boolean; onToggle: () => void }) {
   return (
     <button
       type="button"
       className={"v2-bulb v2-bulb-goal" + (on ? " on" : "")}
-      onClick={() => setOn((v) => !v)}
+      onClick={onToggle}
       aria-pressed={on}
       aria-label={"Goal mode " + (on ? "on" : "off")}
     >

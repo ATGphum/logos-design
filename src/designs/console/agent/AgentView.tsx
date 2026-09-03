@@ -93,10 +93,9 @@ export interface AgentViewProps {
    */
   transcript?: (messages: Message[]) => ReactNode
   /**
-   * V2: controls flanking the composer, once it has dropped to the bottom of a
-   * conversation. They sit OUTSIDE the bar, as its siblings, so they can stretch to its
-   * height rather than being sized against it by hand. The hero states these at full
-   * size below the bar instead. Omitted elsewhere.
+   * V2: controls flanking the composer, in the hero and at the foot of a conversation
+   * alike. They sit OUTSIDE the bar, as its siblings, so they can stretch to its height
+   * rather than being sized against it by hand. Omitted elsewhere.
    */
   barLeading?: ReactNode
   barTrailing?: ReactNode
@@ -285,7 +284,7 @@ export function AgentView(props: AgentViewProps) {
 
   const inputBar = (
     <div className={"input-bar-wrap" + (emptyState ? " in-hero" : "")}>
-      {!emptyState ? barLeading : null}
+      {barLeading}
       <div className="input-bar">
         <button className="icon-btn input-plus" title="Attach">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -369,7 +368,7 @@ export function AgentView(props: AgentViewProps) {
           </svg>
         </button>
       </div>
-      {!emptyState ? barTrailing : null}
+      {barTrailing}
 
       <div className="nav-arrows">
         <button title="Previous">↑</button>

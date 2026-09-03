@@ -26,9 +26,8 @@ import ensoInk from "../console/assets/enso-ink.svg"
 import { LoginGate, type AuthMode } from "./LoginGate"
 import { AccountChip } from "./AccountChip"
 import { SeamScroll } from "./SeamScroll"
-import { GoalMode } from "./GoalMode"
 import { V2Thread } from "./V2Thread"
-import { GoalBulb, ThinkSpeed } from "./BarBulbs"
+import { GoalBulb, SPEED_COUNT, ThinkSpeed } from "./BarBulbs"
 
 export default function V2Design() {
   const { resolvedMode } = useTheme()
@@ -57,6 +56,13 @@ export default function V2Design() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true)
   const [terminalOpen, setTerminalOpen] = useState(false)
   const [watermarkOn, setWatermarkOn] = useState(true)
+
+  /* The composer's two controls live here rather than in the buttons, because the
+     composer is rendered in two different places in the tree — inside the hero while it
+     is empty, at the foot of the page once there is a conversation. A control owning its
+     own setting would reset the moment you sent the first message. */
+  const [speed, setSpeed] = useState(1)
+  const [goalOn, setGoalOn] = useState(false)
 
   const [isMobile] = useState(isMobileViewport)
   const timers = useRef<number[]>([])
@@ -113,10 +119,9 @@ export default function V2Design() {
         freshOnOpen
         logoFolds
         v2Icons
-        heroBelow={<GoalMode />}
         transcript={(messages) => <V2Thread messages={messages} />}
-        barLeading={<ThinkSpeed />}
-        barTrailing={<GoalBulb />}
+        barLeading={<ThinkSpeed level={speed} onCycle={() => setSpeed((l) => (l + 1) % SPEED_COUNT)} />}
+        barTrailing={<GoalBulb on={goalOn} onToggle={() => setGoalOn((v) => !v)} />}
         consoleActive={csDisplayed && !csHidden}
         accountSlot={
           <AccountChip

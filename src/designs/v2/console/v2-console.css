@@ -70,7 +70,7 @@
   display: flex;
   align-items: center;
   gap: 9px;
-  padding: 2px 8px 14px;
+  padding: 3px 10px 15px;
 }
 .k-brand img {
   width: 22px;
@@ -273,21 +273,41 @@
   background: rgba(255, 255, 255, 0.07);
   color: var(--k-ink);
 }
+/* It is a control, so it is sized like one. It was a 26px avatar and two lines of 10-12px
+   type with no padding and no hit area — about 90x26 of target in a 52px bar, which is
+   both hard to hit and reads as a label rather than something you press. */
 .k-who {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding-left: 4px;
+  gap: 10px;
+  height: 40px;
+  padding: 0 10px 0 7px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+.k-who:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--k-line-2);
+}
+.k-who-caret {
+  width: 13px;
+  height: 13px;
+  color: var(--k-faint);
 }
 .k-who-ava {
   display: grid;
   place-items: center;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border-radius: 999px;
   background: linear-gradient(180deg, #2a2a2a, #1c1c1c);
   border: 1px solid rgba(255, 255, 255, 0.14);
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 600;
 }
 .k-who-text {
@@ -296,12 +316,12 @@
   line-height: 1.25;
 }
 .k-who-text b {
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 500;
 }
 .k-who-text em {
   font-style: normal;
-  font-size: 10px;
+  font-size: 10.5px;
   color: var(--k-faint);
 }
 
@@ -469,20 +489,32 @@
 }
 
 /* ————————————————— rows ————————————————— */
-/* One column, always. Name at the left margin, everything else flushed right — so a long
-   label and a long value cannot collide, which is what the tile grid did at every width
-   below its own minimum. */
+/* Aligned by construction, not by eye.
+ *
+ * Each row used to flush its own value, tag and chevron to the right independently, so
+ * the columns landed wherever that row's tag happened to be wide — three rows, three
+ * different x positions for the same "0". Nothing was crooked in isolation; the list was
+ * crooked as a whole, which is exactly the kind of thing that reads as unfinished.
+ *
+ * The list owns the tracks now and every row borrows them with `grid-template-columns:
+ * subgrid`. So the value column is as wide as the widest value in that list, the tag
+ * column as wide as the widest tag, and every row sits on the same four verticals — with
+ * no fixed widths to guess at and nothing to re-tune when the content changes.
+ *
+ * Each row declares all four cells even when empty, because a missing cell would shift
+ * everything after it into the wrong track.
+ */
 .k-rows {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr auto auto 15px;
   margin: 8px -20px 0;
 }
 .k-row {
-  display: flex;
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  width: 100%;
+  column-gap: 14px;
   padding: 11px 20px;
   border: 0;
   border-top: 1px solid var(--k-line);
@@ -510,16 +542,21 @@
   font-size: 12px;
   color: var(--k-faint);
 }
-.k-row-right {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+/* numbers line up on their right edge, tags all start at the same left edge */
 .k-row-val {
+  justify-self: end;
   font-size: 13.5px;
   font-variant-numeric: tabular-nums;
   color: var(--k-ink);
+}
+.k-row-tagcell {
+  justify-self: start;
+  display: flex;
+}
+.k-row-gocell {
+  justify-self: end;
+  display: flex;
+  align-items: center;
 }
 .k-row-go {
   width: 15px;
@@ -530,6 +567,18 @@
 .k-row.is-link:hover .k-row-go {
   color: var(--k-ink);
   transform: translateX(2px);
+}
+
+/* a browser without subgrid still gets a readable row, just not shared tracks */
+@supports not (grid-template-columns: subgrid) {
+  .k-rows {
+    display: block;
+  }
+  .k-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+  }
 }
 
 /* one tag treatment; colour only where it means a state */

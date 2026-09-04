@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react"
 import { useViewAs } from "../../../sandbox/viewAs"
-import ensoWhite from "../../console/assets/enso.svg"
 import {
   BillingPage,
   CompetitionsPage,
@@ -159,8 +158,9 @@ export function V2Console({ open, onClose, night, onToggleNight, initial = "dash
   return (
     <div className={"k-console" + (open ? "" : " out") + (night ? " night" : " day")} role="dialog" aria-modal="true" aria-label="Console">
       <aside className="k-side">
+        {/* No mark here. The enso already sits top-left of the page this window opened
+            over, and repeating it inside says the console is a separate product. */}
         <div className="k-brand">
-          <img src={ensoWhite} alt="" aria-hidden="true" />
           <span>Console</span>
         </div>
 
@@ -221,13 +221,16 @@ export function V2Console({ open, onClose, night, onToggleNight, initial = "dash
                 <Glyph d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" stroke={1.7} />
               )}
             </button>
-            <div className="k-who">
+            <button className="k-who" type="button">
               <span className="k-who-ava">S</span>
               <span className="k-who-text">
                 <b>scout tesy</b>
                 <em>{admin ? "Administrator" : "org_000004"}</em>
               </span>
-            </div>
+              <svg className="k-who-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
             {/* the way out, stated as a control rather than left to the scrim */}
             <button className="k-close" onClick={onClose} type="button" aria-label="Close console">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" aria-hidden="true">

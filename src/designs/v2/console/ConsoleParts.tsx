@@ -102,15 +102,17 @@ export function Row({
   /** present = this row goes somewhere, and only then does it get a chevron */
   onOpen?: () => void
 }) {
+  /* Four cells, always all four, even when empty — the tracks only line up if every row
+     declares the same ones. See the subgrid note in the stylesheet. */
   const body = (
     <>
       <span className="k-row-name">
         {name}
         {note ? <em>{note}</em> : null}
       </span>
-      <span className="k-row-right">
-        {value ? <span className="k-row-val">{value}</span> : null}
-        {tag ? <span className={"k-tag" + (tone ? " " + tone : "")}>{tag}</span> : null}
+      <span className="k-row-val">{value ?? ""}</span>
+      <span className="k-row-tagcell">{tag ? <span className={"k-tag" + (tone ? " " + tone : "")}>{tag}</span> : null}</span>
+      <span className="k-row-gocell">
         {onOpen ? (
           <svg className="k-row-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <polyline points="9 6 15 12 9 18" />

@@ -31,6 +31,7 @@ import { AccountChip } from "./AccountChip"
 import { SeamScroll } from "./SeamScroll"
 import { V2Thread } from "./V2Thread"
 import { V2Console } from "./console/V2Console"
+import type { PageId } from "./console/ConsolePages"
 import { GoalBulb, SPEED_COUNT, ThinkSpeed } from "./BarBulbs"
 
 export default function V2Design() {
@@ -53,6 +54,9 @@ export default function V2Design() {
 
   /* V2's inversion, in three lines: the console starts closed and the agent is what
      you land on. V1 starts these true/false the other way round. */
+  /* which page the console opens on — set by whatever asked for it, so the credit meter
+     can land you on Usage while the account menu lands you on Billing */
+  const [csPage, setCsPage] = useState<PageId>("dashboard")
   const [csDisplayed, setCsDisplayed] = useState(false)
   const [csHidden, setCsHidden] = useState(true)
   const [chatReveal, setChatReveal] = useState(false)
@@ -80,8 +84,9 @@ export default function V2Design() {
   }
 
   /* agent → console, from the rail button or the sidebar's Console row */
-  const openConsole = () => {
+  const openConsole = (page: PageId = "dashboard") => {
     if (isMobileViewport()) setSidebarCollapsed(true)
+    setCsPage(page)
     setCsDisplayed(true)
     requestAnimationFrame(() => setCsHidden(false))
   }
@@ -119,7 +124,7 @@ export default function V2Design() {
         watermarkOn={watermarkOn}
         onToggleWatermark={() => setWatermarkOn((v) => !v)}
         isMobile={isMobile}
-        onOpenConsole={openConsole}
+        onOpenConsole={() => openConsole()}
         onBackHome={backHome}
         projectsAsPicker
         shortModelName
@@ -134,8 +139,9 @@ export default function V2Design() {
         consoleActive={csDisplayed && !csHidden}
         accountSlot={
           <AccountChip
-            onOpenBilling={openConsole}
-            onOpenSettings={openConsole}
+            onOpenBilling={() => openConsole("billing")}
+            onOpenUsage={() => openConsole("usage")}
+            onOpenSettings={() => openConsole("settings")}
             light={light}
             onToggleLight={() => setLight((v) => !v)}
           />
@@ -180,6 +186,7 @@ export default function V2Design() {
           onClose={enterAgent}
           night={night}
           onToggleNight={() => setNight((v) => !v)}
+          initial={csPage}
         />
       ) : null}
 

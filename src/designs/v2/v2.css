@@ -3618,3 +3618,87 @@
     transition: none;
   }
 }
+
+/* ===== The credit meter arrives with the fold, not after it =====
+ *
+ * The footer's opacity is held for the whole 0.42s fold and then snapped — that hold is
+ * the glyph handover: the column's icons and the rail's icons are two copies of the same
+ * mark at the same coordinates, so cross-fading them doubles their opacity and flickers.
+ * The one that cannot move is shown for the entire transition and the swap happens at
+ * the end.
+ *
+ * The credit meter is not that. Its two forms are a bar and a ring — different shapes in
+ * different places, with nothing to double against — so it has no reason to wait. The
+ * hold moves off the footer and onto the chip, which does have a twin, and the meter
+ * cross-fades across the fold instead: the ring dissolving as the bar arrives reads as
+ * one becoming the other.
+ */
+.v2-root .sidebar > .sidebar-footer {
+  transition: opacity var(--v2-fold);
+}
+.v2-root.sidebar-collapsed .sidebar > .sidebar-footer {
+  transition: opacity 0.12s ease;
+}
+/* the account glyph keeps the hold it needs */
+.v2-root .v2-acct-chip {
+  transition: background 0.2s ease, opacity 0s linear 0.42s;
+}
+.v2-root.sidebar-collapsed .v2-acct-chip {
+  opacity: 0;
+  transition: opacity 0s;
+}
+/* the ring leaves over the fold rather than snapping out at the end of it */
+.v2-root .collapsed-settings .v2-usage-ring {
+  opacity: 0;
+  transition: opacity var(--v2-fold);
+}
+.v2-root.sidebar-collapsed .collapsed-settings .v2-usage-ring {
+  opacity: 1;
+}
+
+/* ===== Brighter, and the value in white =====
+ * Colour says how much is left; the number says exactly how much. Keeping the figure
+ * white in both forms means the reading is always at full contrast and the colour is
+ * free to go as saturated as it needs to without costing legibility.
+ */
+.v2-root .v2-usage {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.v2-root .sidebar-footer .v2-usage {
+  border-radius: 9px;
+  transition: background 0.16s ease;
+}
+.v2-root .sidebar-footer .v2-usage:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+.v2-root .v2-usage-line span {
+  color: #ffffff;
+  font-weight: 500;
+}
+.v2-root .v2-usage-line {
+  color: rgba(255, 255, 255, 0.5);
+}
+.v2-root .v2-usage-pct {
+  color: #ffffff;
+}
+.v2-root .v2-usage-ring-track {
+  stroke: rgba(255, 255, 255, 0.14);
+}
+.v2-root .collapsed-settings .v2-usage:hover .v2-usage-ring-arc {
+  stroke-width: 3;
+}
+.v2-root.light .v2-usage-line span,
+.v2-root.light .v2-usage-pct {
+  color: #14130f;
+}
+.v2-root.light .sidebar-footer .v2-usage:hover {
+  background: rgba(26, 25, 22, 0.05);
+}

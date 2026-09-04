@@ -46,6 +46,8 @@ const MoonGlyph = () => (
 interface AccountChipProps {
   /** the console's Billing panel, so the two surfaces reach the same place */
   onOpenBilling: () => void
+  /** the credit meter is a control: it opens the console on Usage */
+  onOpenUsage: () => void
   onOpenSettings: () => void
   light: boolean
   onToggleLight: () => void
@@ -76,9 +78,9 @@ const CREDIT = { amount: "$163.60", pct: 65 }
  */
 function gaugeColour(pct: number): string {
   const stops: [number, [number, number, number]][] = [
-    [0, [201, 105, 95]],
-    [50, [210, 160, 90]],
-    [100, [110, 190, 130]],
+    [0, [240, 78, 78]],
+    [50, [242, 170, 58]],
+    [100, [74, 219, 126]],
   ]
   const p = Math.max(0, Math.min(100, pct))
   let lo = stops[0]
@@ -107,19 +109,19 @@ function gaugeColour(pct: number): string {
  * Open: a meter with the figure beside it, above the name.
  * Folded: a ring with the percentage inside it, on the rail's glyph axis.
  */
-function UsageMeter() {
+function UsageMeter({ onOpen }: { onOpen: () => void }) {
   const colour = gaugeColour(CREDIT.pct)
   const label = `${CREDIT.amount} left — ${CREDIT.pct}% of your credit`
 
   return (
-    <div className="v2-usage" title={label} aria-label={label}>
+    <button className="v2-usage" type="button" onClick={onOpen} title={label + " — open Usage"} aria-label={label}>
       <div className="v2-usage-bar" aria-hidden="true">
         <div className="v2-usage-line">
           <span>{CREDIT.amount} left</span>
           <b style={{ color: colour }}>{CREDIT.pct}%</b>
         </div>
         <div className="v2-usage-track">
-          <span style={{ width: CREDIT.pct + "%", background: colour }} />
+          <span style={{ width: CREDIT.pct + "%", background: colour, boxShadow: `0 0 8px ${colour}` }} />
         </div>
       </div>
 
@@ -135,18 +137,18 @@ function UsageMeter() {
             r="13"
             pathLength="100"
             stroke={colour}
-            style={{ strokeDasharray: `${CREDIT.pct} 100` }}
+            style={{ strokeDasharray: `${CREDIT.pct} 100`, filter: `drop-shadow(0 0 4px ${colour})` }}
           />
         </svg>
-        <span className="v2-usage-pct" style={{ color: colour }}>
-          {CREDIT.pct}
-        </span>
+        {/* the ring carries the colour, the number carries the value — same division as
+            the bar, where the figure is white and the meter is coloured */}
+        <span className="v2-usage-pct">{CREDIT.pct}</span>
       </div>
-    </div>
+    </button>
   )
 }
 
-export function AccountChip({ onOpenBilling, onOpenSettings, light, onToggleLight }: AccountChipProps) {
+export function AccountChip({ onOpenBilling, onOpenUsage, onOpenSettings, light, onToggleLight }: AccountChipProps) {
   const [open, setOpen] = useState(false)
   const wrapRef = useRef<HTMLDivElement>(null)
 
@@ -162,7 +164,7 @@ export function AccountChip({ onOpenBilling, onOpenSettings, light, onToggleLigh
 
   return (
     <div className={"v2-acct" + (open ? " open" : "")} ref={wrapRef}>
-      <UsageMeter />
+      <UsageMeter onOpen={onOpenUsage} />
       <button className="v2-acct-chip" onClick={() => setOpen((v) => !v)} title="Account">
         <span className="v2-acct-ico">
           <UserGlyph />

@@ -31,6 +31,36 @@ interface Nav {
   go: (p: PageId) => void
 }
 
+/* One credit figure, shared.
+ *
+ * The Dashboard opens on it, and Usage is where the sidebar's credit meter sends you —
+ * so a page that answers "how much is left" has to actually show it. Written once so the
+ * two can never drift: same balance, same spend, same percentage, same bar. */
+const CREDIT = { balance: "163.60", spent: "$4.12", tokens: "2.31M tokens", usedPct: 35 }
+
+function CreditCard() {
+  return (
+    <Card title="Credit" lede="Your remaining balance and what has gone out in the last day.">
+      <div className="k-credit">
+        <div className="k-credit-fig">
+          <span className="k-credit-cur">$</span>
+          {CREDIT.balance}
+        </div>
+        <div className="k-credit-side">
+          <div className="k-credit-spent">
+            <b>{CREDIT.spent}</b> spent in the past 24 hours
+          </div>
+          <div className="k-credit-tok">{CREDIT.tokens}</div>
+        </div>
+      </div>
+      <div className="k-meter" role="img" aria-label={`${CREDIT.usedPct}% of credit used`}>
+        <span style={{ width: CREDIT.usedPct + "%" }} />
+      </div>
+      <div className="k-meter-l">{CREDIT.usedPct}% used</div>
+    </Card>
+  )
+}
+
 /* ————————————————— Dashboard ————————————————— */
 export function DashboardPage({ go }: Nav) {
   return (
@@ -46,26 +76,7 @@ export function DashboardPage({ go }: Nav) {
         </>
       }
     >
-      {/* The balance is the reason most people open this page, so it is the first thing
-          on it and the largest — the old layout gave it equal billing with a row of
-          buttons and a progress bar. */}
-      <Card title="Credit" lede="Your remaining balance and what has gone out in the last day.">
-        <div className="k-credit">
-          <div className="k-credit-fig">
-            <span className="k-credit-cur">$</span>163.60
-          </div>
-          <div className="k-credit-side">
-            <div className="k-credit-spent">
-              <b>$4.12</b> spent in the past 24 hours
-            </div>
-            <div className="k-credit-tok">2.31M tokens</div>
-          </div>
-        </div>
-        <div className="k-meter" role="img" aria-label="35% of credit used">
-          <span style={{ width: "35%" }} />
-        </div>
-        <div className="k-meter-l">35% used</div>
-      </Card>
+      <CreditCard />
 
       <Card title="Needs your attention" lede="Nothing here means nothing to do. Each line opens the page that fixes it.">
         <Rows>
@@ -174,6 +185,10 @@ export function UsagePage() {
         </>
       }
     >
+      {/* first, because this is where the sidebar's credit meter lands — the page has to
+          answer the question the meter raised before it starts on token counts */}
+      <CreditCard />
+
       <Figures>
         <Fig label="Input tokens" value="0" note="sent to models" />
         <Fig label="Output tokens" value="0" note="returned by models" />

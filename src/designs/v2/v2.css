@@ -3491,3 +3491,130 @@
 .v2-root .model-item .m-check {
   display: none;
 }
+
+/* ===== Credit left, above the account =====
+ *
+ * Two shapes, one component. AgentView renders the account slot twice — once in the
+ * column footer, once in the fixed rail — so the meter is already mounted in both, and
+ * which shape shows is decided by which of the two it landed in. Nothing needs to be
+ * told whether the sidebar is folded, and the two copies cannot fall out of step.
+ *
+ * Open: a meter with the figure above it. Folded: a ring with the percentage inside,
+ * sitting on the rail's glyph axis.
+ */
+.v2-root .v2-usage {
+  display: block;
+}
+
+/* ————— open: the bar ————— */
+.v2-root .sidebar-footer .v2-usage-ring {
+  display: none;
+}
+.v2-root .sidebar-footer .v2-usage-bar {
+  display: block;
+  padding: 0 11px 9px;
+}
+.v2-root .v2-usage-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 10.5px;
+  color: rgba(255, 255, 255, 0.46);
+}
+.v2-root .v2-usage-line b {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.v2-root .v2-usage-track {
+  height: 3px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.09);
+  overflow: hidden;
+}
+.v2-root .v2-usage-track span {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.42s cubic-bezier(0.33, 0.45, 0.25, 1), background 0.42s ease;
+}
+
+/* ————— folded: the ring ————— */
+.v2-root .collapsed-settings .v2-usage-bar {
+  display: none;
+}
+/* Every glyph in the rail — the four nav icons and the account's own — is a 22px box
+   sitting at the same x, because they all start from the chip's left padding. Centring
+   the ring in its 46px container instead put it on 33 against their 34.
+   So the two numbers that define that axis are declared once below and the ring's offset
+   is derived from them: it cannot drift if either changes, and there is no nudge to
+   re-tune. Measured after: ring centre 34.0, glyph centres 34.0. */
+.v2-root .collapsed-settings {
+  --v2-rail-inset: 13px;
+  --v2-rail-glyph: 22px;
+}
+.v2-root .collapsed-settings .v2-acct-chip {
+  padding-left: var(--v2-rail-inset);
+}
+.v2-root .collapsed-settings .v2-usage-ring {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  margin: 0 0 10px calc(var(--v2-rail-inset) + (var(--v2-rail-glyph) - 26px) / 2);
+}
+.v2-root .v2-usage-ring svg {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  overflow: visible;
+  /* the arc starts at 12 o'clock and empties clockwise, the way a gauge drains */
+  transform: rotate(-90deg);
+}
+.v2-root .v2-usage-ring-track {
+  stroke: rgba(255, 255, 255, 0.11);
+  stroke-width: 2.4;
+}
+.v2-root .v2-usage-ring-arc {
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.42s cubic-bezier(0.33, 0.45, 0.25, 1), stroke 0.42s ease;
+}
+.v2-root .v2-usage-pct {
+  grid-area: 1 / 1;
+  font-size: 10px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  transition: color 0.42s ease;
+}
+
+/* the rail's copy of the chip is the person glyph alone, so the ring sits above it on
+   the same axis rather than beside it */
+.v2-root .collapsed-settings .v2-acct {
+  display: flex;
+  flex-direction: column;
+  /* start, not center — the ring places itself off the glyph axis above, and centring
+     here would override that with the container's own middle */
+  align-items: flex-start;
+}
+
+.v2-root.light .v2-usage-line {
+  color: rgba(26, 25, 22, 0.5);
+}
+.v2-root.light .v2-usage-track {
+  background: rgba(26, 25, 22, 0.11);
+}
+.v2-root.light .v2-usage-ring-track {
+  stroke: rgba(26, 25, 22, 0.13);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v2-root .v2-usage-track span,
+  .v2-root .v2-usage-ring-arc {
+    transition: none;
+  }
+}

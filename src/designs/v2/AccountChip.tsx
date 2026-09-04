@@ -62,6 +62,90 @@ interface AccountChipProps {
  *
  * Fixture data; no real account is involved.
  */
+/* Credit left, matching the console's Dashboard exactly — $163.60 with 35% used. The two
+   surfaces must never disagree about the same number. */
+const CREDIT = { amount: "$163.60", pct: 65 }
+
+/**
+ * Green at full, amber at half, red at empty — interpolated, not stepped.
+ *
+ * A three-colour ramp read as one continuous value: the ring does not change state at a
+ * threshold, it drifts, so 70% and 60% look different from each other rather than both
+ * looking "fine". Stepping it would hide exactly the part of the range where you would
+ * want to notice the drift.
+ */
+function gaugeColour(pct: number): string {
+  const stops: [number, [number, number, number]][] = [
+    [0, [201, 105, 95]],
+    [50, [210, 160, 90]],
+    [100, [110, 190, 130]],
+  ]
+  const p = Math.max(0, Math.min(100, pct))
+  let lo = stops[0]
+  let hi = stops[stops.length - 1]
+  for (let i = 0; i < stops.length - 1; i++) {
+    if (p >= stops[i][0] && p <= stops[i + 1][0]) {
+      lo = stops[i]
+      hi = stops[i + 1]
+      break
+    }
+  }
+  const span = hi[0] - lo[0] || 1
+  const t = (p - lo[0]) / span
+  const c = lo[1].map((v, i) => Math.round(v + (hi[1][i] - v) * t))
+  return `rgb(${c[0]}, ${c[1]}, ${c[2]})`
+}
+
+/**
+ * How much credit is left, in the two shapes the column has room for.
+ *
+ * Both are rendered every time. AgentView puts the account slot in two places — the
+ * column footer and the fixed rail — so the same component is already mounted twice, and
+ * which shape shows is decided by which of those two it landed in. No prop needs to know
+ * whether the sidebar is folded, and the two can never disagree.
+ *
+ * Open: a meter with the figure beside it, above the name.
+ * Folded: a ring with the percentage inside it, on the rail's glyph axis.
+ */
+function UsageMeter() {
+  const colour = gaugeColour(CREDIT.pct)
+  const label = `${CREDIT.amount} left — ${CREDIT.pct}% of your credit`
+
+  return (
+    <div className="v2-usage" title={label} aria-label={label}>
+      <div className="v2-usage-bar" aria-hidden="true">
+        <div className="v2-usage-line">
+          <span>{CREDIT.amount} left</span>
+          <b style={{ color: colour }}>{CREDIT.pct}%</b>
+        </div>
+        <div className="v2-usage-track">
+          <span style={{ width: CREDIT.pct + "%", background: colour }} />
+        </div>
+      </div>
+
+      <div className="v2-usage-ring" aria-hidden="true">
+        {/* pathLength normalises the circumference, so the dash is the percentage
+            itself — no radius-dependent constant to keep in step with the CSS */}
+        <svg viewBox="0 0 32 32">
+          <circle className="v2-usage-ring-track" cx="16" cy="16" r="13" pathLength="100" />
+          <circle
+            className="v2-usage-ring-arc"
+            cx="16"
+            cy="16"
+            r="13"
+            pathLength="100"
+            stroke={colour}
+            style={{ strokeDasharray: `${CREDIT.pct} 100` }}
+          />
+        </svg>
+        <span className="v2-usage-pct" style={{ color: colour }}>
+          {CREDIT.pct}
+        </span>
+      </div>
+    </div>
+  )
+}
+
 export function AccountChip({ onOpenBilling, onOpenSettings, light, onToggleLight }: AccountChipProps) {
   const [open, setOpen] = useState(false)
   const wrapRef = useRef<HTMLDivElement>(null)
@@ -78,6 +162,7 @@ export function AccountChip({ onOpenBilling, onOpenSettings, light, onToggleLigh
 
   return (
     <div className={"v2-acct" + (open ? " open" : "")} ref={wrapRef}>
+      <UsageMeter />
       <button className="v2-acct-chip" onClick={() => setOpen((v) => !v)} title="Account">
         <span className="v2-acct-ico">
           <UserGlyph />

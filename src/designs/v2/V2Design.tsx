@@ -127,6 +127,7 @@ export default function V2Design() {
         freshOnOpen
         logoFolds
         v2Icons
+        modelMenuAbove
         transcript={(messages) => <V2Thread messages={messages} />}
         barLeading={<ThinkSpeed level={speed} onCycle={() => setSpeed((l) => (l + 1) % SPEED_COUNT)} />}
         barTrailing={<GoalBulb on={goalOn} onToggle={() => setGoalOn((v) => !v)} />}

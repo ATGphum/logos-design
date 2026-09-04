@@ -86,6 +86,8 @@ export interface AgentViewProps {
   v2Icons?: boolean
   /** V2: sits under the composer in the hero — the Goal mode toggle. */
   heroBelow?: ReactNode
+  /** V2: the model menu stands above the bar rather than centred over the trigger. */
+  modelMenuAbove?: boolean
   /**
    * V2: renders the conversation itself. Given the whole message list, so the renderer
    * can pair each agent turn with the prompt that caused it and drive its own thinking
@@ -125,6 +127,7 @@ export function AgentView(props: AgentViewProps) {
     consoleActive,
     v2Icons,
     heroBelow,
+    modelMenuAbove,
     transcript,
     barLeading,
     barTrailing,
@@ -249,10 +252,21 @@ export function AgentView(props: AgentViewProps) {
       menu.style.left = tr.left + tr.width / 2 + "px"
       menu.style.top = "0px"
       const mr = menu.getBoundingClientRect()
-      let top = tr.top + tr.height / 2 - mr.height / 2
-      top = Math.max(14, Math.min(top, window.innerHeight - mr.height - 14))
-      menu.style.top = top + "px"
-      menu.style.transformOrigin = "50% 50%"
+      if (modelMenuAbove) {
+        /* V2: stand it on top of the trigger rather than centred over it. Centring puts
+           the menu across the control that opened it, so the thing you just clicked
+           disappears under its own list — and on the hero it lands over the wordmark.
+           Flipping below only if there is genuinely no room above. */
+        const gap = 10
+        const above = tr.top - mr.height - gap
+        menu.style.top = (above >= 14 ? above : Math.min(tr.bottom + gap, window.innerHeight - mr.height - 14)) + "px"
+        menu.style.transformOrigin = above >= 14 ? "50% 100%" : "50% 0%"
+      } else {
+        let top = tr.top + tr.height / 2 - mr.height / 2
+        top = Math.max(14, Math.min(top, window.innerHeight - mr.height - 14))
+        menu.style.top = top + "px"
+        menu.style.transformOrigin = "50% 50%"
+      }
     }
     setModelMenuOpen(true)
   }

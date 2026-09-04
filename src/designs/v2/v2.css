@@ -3372,3 +3372,122 @@
   color: #f6f4ee;
   border-color: transparent;
 }
+
+/* ===== Model selector =====
+ *
+ * The trigger says which model is answering you, and it was the quietest thing in the
+ * bar — same weight and colour as the placeholder beside it. It is the one piece of
+ * state the composer carries, so it now reads as state: brighter, a little heavier, and
+ * lit just enough to separate it from the chrome.
+ *
+ * The menu is built like every other panel in V2 — flat fill, one hairline, one shadow.
+ * It was a 3px-radius box with 2px-radius rows and an inset white bar marking the
+ * selection, which is a menu from a different decade. Selection is now a violet dot in
+ * a fixed column, so the rows share a left edge whether they are selected or not.
+ *
+ * It also stands above the bar rather than centred over the trigger — see
+ * modelMenuAbove in AgentView. Centring put the list across the control that opened it.
+ */
+.v2-root .model-selector {
+  color: rgba(255, 255, 255, 0.96);
+  font-weight: 500;
+  border-radius: 8px;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+.v2-root .model-selector:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+.v2-root #model-name {
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+.v2-root .model-selector .model-icon {
+  color: rgb(178, 156, 255);
+  filter: drop-shadow(0 0 5px rgba(var(--v2-violet, 150, 122, 255), 0.55));
+}
+.v2-root .model-selector svg {
+  opacity: 0.75;
+}
+
+.v2-root .model-menu {
+  /* the hero centres its whole column, and the menu was inheriting it — a list of names
+     reads down its left edge, not down its middle */
+  text-align: left;
+  min-width: 300px;
+  padding: 6px;
+  border-radius: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #141414;
+  box-shadow: 0 22px 60px -24px rgba(0, 0, 0, 0.85);
+  /* a short rise rather than a bounce: the menu arrives from the bar it belongs to */
+  transform: translateX(-50%) translateY(6px) scale(0.99);
+  transition: opacity 0.16s ease, transform 0.24s cubic-bezier(0.33, 0.45, 0.25, 1),
+    visibility 0s linear 0.24s;
+}
+.v2-root .model-menu.open {
+  transform: translateX(-50%) translateY(0) scale(1);
+  transition: opacity 0.16s ease, transform 0.26s cubic-bezier(0.33, 0.45, 0.25, 1), visibility 0s;
+}
+.v2-root.light .model-menu {
+  border-color: rgba(26, 25, 22, 0.12);
+  background: #ffffff;
+  box-shadow: 0 22px 60px -28px rgba(26, 25, 22, 0.32);
+}
+
+.v2-root .model-menu-head {
+  text-align: left;
+  padding: 7px 12px 9px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  margin-bottom: 5px;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.4);
+}
+.v2-root.light .model-menu-head {
+  border-bottom-color: rgba(26, 25, 22, 0.09);
+  color: rgba(26, 25, 22, 0.45);
+}
+
+/* the marker sits in its own column, so every row starts on the same left edge */
+.v2-root .model-item {
+  gap: 12px;
+  padding: 9px 12px;
+  border-radius: 9px;
+}
+.v2-root .model-item::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  transition: background 0.18s ease, box-shadow 0.18s ease;
+}
+.v2-root .model-item.selected {
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: none;
+}
+.v2-root .model-item.selected::before {
+  background: rgb(168, 145, 255);
+  box-shadow: 0 0 8px rgba(var(--v2-violet, 150, 122, 255), 0.75);
+}
+.v2-root.light .model-item.selected {
+  background: rgba(26, 25, 22, 0.05);
+}
+.v2-root.light .model-item::before {
+  background: rgba(26, 25, 22, 0.16);
+}
+.v2-root .model-item .m-name {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.v2-root .model-item .m-sum {
+  font-size: 11.5px;
+  margin-top: 1px;
+}
+/* the dot already says which one is on */
+.v2-root .model-item .m-check {
+  display: none;
+}

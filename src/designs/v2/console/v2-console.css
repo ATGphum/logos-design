@@ -581,32 +581,51 @@
   }
 }
 
-/* one tag treatment; colour only where it means a state */
+/* No box.
+ *
+ * A filled green pill is a lot of ink for "nothing is wrong", and at this size a tinted
+ * block with a tinted border and tinted text is three treatments carrying one fact. It
+ * was also the only saturated shape on a page that is otherwise ink and paper, so it
+ * caught the eye first and said the least.
+ *
+ * Colour is a marker now, not a container: a 5px dot in the state's hue with the label in
+ * ordinary text. The signal survives — you can still find the amber ones at a glance —
+ * and the row stops shouting. Neutral tags are simply text, so a column of tags reads as
+ * one thing rather than two.
+ */
 .k-tag {
-  padding: 3px 8px;
-  border-radius: 6px;
-  border: 1px solid var(--k-line-2);
-  background: rgba(255, 255, 255, 0.05);
-  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
   color: var(--k-dim);
   white-space: nowrap;
 }
-.k-tag.ok {
-  border-color: rgba(110, 190, 130, 0.34);
-  background: rgba(110, 190, 130, 0.12);
-  color: #a6dfb6;
+.k-tag.ok::before,
+.k-tag.warn::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
 }
-.k-tag.warn {
-  border-color: rgba(210, 160, 90, 0.38);
-  background: rgba(210, 160, 90, 0.13);
-  color: #e9c694;
+.k-tag.ok::before {
+  background: #6ebe82;
+  box-shadow: 0 0 6px rgba(110, 190, 130, 0.55);
+}
+.k-tag.warn::before {
+  background: #d2a05a;
+  box-shadow: 0 0 6px rgba(210, 160, 90, 0.55);
 }
 
 /* ————————————————— credit block ————————————————— */
+/* The summary centres against the figure rather than sitting on its baseline. Baseline
+   alignment is right for two runs of text; against a 46px numeral it drops a two-line
+   block to the bottom of the figure's box and leaves a hole above it. */
 .k-credit {
   display: flex;
-  align-items: baseline;
-  gap: 20px;
+  align-items: center;
+  gap: 22px;
   flex-wrap: wrap;
   margin: 12px 0 14px;
 }
@@ -623,7 +642,7 @@
   vertical-align: 0.35em;
 }
 .k-credit-side {
-  padding-bottom: 3px;
+  padding-top: 2px;
 }
 .k-credit-spent {
   font-size: 13px;
@@ -954,9 +973,7 @@
   color: #f6f4ee;
   box-shadow: 0 2px 10px -6px rgba(26, 25, 22, 0.6);
 }
-.k-console.day .k-tag {
-  background: rgba(26, 25, 22, 0.05);
-}
+
 .k-console.day .k-row.is-link:hover,
 .k-console.day .k-switch:hover,
 .k-console.day .k-navitem:hover,
@@ -979,11 +996,11 @@
 .k-console.day .k-fig-v.warn {
   color: #7a5320;
 }
-.k-console.day .k-tag.ok {
-  color: #2f6b40;
+.k-console.day .k-tag.ok::before {
+  background: #3f8a55;
 }
-.k-console.day .k-tag.warn {
-  color: #7a5320;
+.k-console.day .k-tag.warn::before {
+  background: #b07f38;
 }
 .k-console.day .k-scroll {
   scrollbar-color: rgba(26, 25, 22, 0.2) transparent;

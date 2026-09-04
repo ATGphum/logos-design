@@ -69,9 +69,9 @@ export function DashboardPage({ go }: Nav) {
 
       <Card title="Needs your attention" lede="Nothing here means nothing to do. Each line opens the page that fixes it.">
         <Rows>
-          <Row name="Instances needing attention" value="0" tag="All healthy" tone="ok" onOpen={() => go("instances")} />
-          <Row name="Stale heartbeats" note="instances that stopped reporting in" value="0" tag="All reporting" tone="ok" onOpen={() => go("machines")} />
-          <Row name="Config drift" note="running settings differ from saved policy" value="0" tag="In sync" tone="ok" onOpen={() => go("settings")} />
+          <Row name="Instances needing attention" value="0" tag="No issues" tone="ok" onOpen={() => go("instances")} />
+          <Row name="Stale heartbeats" note="instances that stopped reporting in" value="0" tag="Heartbeats current" tone="ok" onOpen={() => go("machines")} />
+          <Row name="Config drift" note="running settings differ from saved policy" value="0" tag="Matches policy" tone="ok" onOpen={() => go("settings")} />
         </Rows>
       </Card>
 

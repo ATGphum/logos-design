@@ -1,15 +1,17 @@
 /* ===========================================================================
    V2 console
    ---------------------------------------------------------------------------
-   Same material rules as the agent page, applied consistently:
+   Flat surfaces, even edges, one hairline.
 
-     raised   → fill on padding-box, gradient on border-box, brightest along the
-                TOP edge and falling away downward. Cards, buttons, the window.
-     recessed → the inverse: shadowed upper lip, lit lower one, floor darkest
-                under the lip. Inputs and search, because you type into them.
+   The agent page's raised/recessed material — a fill fading down the height under a
+   rim lit along the top, or its inverse — is right there and wrong here. It reads as
+   a highlight on one large control on an empty page; on a console, where every screen
+   is thirty controls at once, the same treatment is a wash on the panels and a bevel
+   on the buttons, and the whole thing dates.
 
-   Nothing is painted onto a face. Every surface here is one of those two things,
-   which is what makes the console feel like the same product as the agent.
+   So: fill and a hairline, and rank carried by value. A field is one step darker than
+   its surroundings; a primary button is solid white; nothing glows. The console shares
+   the agent's palette, type and spacing rather than its lighting model.
 
    One scale, used everywhere:
      28 / 20 / 15 / 13.5 / 12 / 10.5px
@@ -85,25 +87,28 @@
   color: var(--k-ink);
 }
 
-/* search is recessed — it is a field */
+/* A field still reads as a field one step darker than its surroundings — it does not
+   also need a lit lower lip and an inset shadow. That machining is legible on a single
+   large control and merely heavy on a 32px box in a sidebar. */
 .k-search {
   position: relative;
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 16px;
-  padding: 0 11px;
-  height: 34px;
-  border-radius: 9px;
-  border: 1px solid transparent;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.4), rgba(255, 255, 255, 0.02)) padding-box,
-    linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(255, 255, 255, 0.04) 55%, rgba(255, 255, 255, 0.14) 100%)
-      border-box;
-  box-shadow: inset 0 2px 3px -1px rgba(0, 0, 0, 0.7);
+  padding: 0 10px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--k-line);
+  background: rgba(0, 0, 0, 0.22);
+  transition: border-color 0.18s ease;
+}
+.k-search:focus-within {
+  border-color: var(--k-line-2);
 }
 .k-search svg {
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
   flex: 0 0 auto;
   color: var(--k-faint);
 }
@@ -305,8 +310,8 @@
   width: 28px;
   height: 28px;
   border-radius: 999px;
-  background: linear-gradient(180deg, #2a2a2a, #1c1c1c);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid var(--k-line-2);
   font-size: 11.5px;
   font-weight: 600;
 }
@@ -380,36 +385,44 @@
 }
 
 /* ————————————————— buttons (raised) ————————————————— */
+/* Flat, for the same reason the panels are.
+ *
+ * These carried the agent bar's treatment — a fill fading down the height, a rim lit
+ * along the top, a drop shadow, and on the primary an outward white glow and an inset
+ * highlight. Five effects on a 34px button. That vocabulary earns its place on the
+ * composer, which is one large control on an empty page; on a console header next to a
+ * title it is the bevelled-button look, and it dates the whole page.
+ *
+ * A button needs to read as pressable and to rank against its neighbour. Fill and a
+ * hairline do both: the secondary is a tint of the ground, the primary is solid white.
+ * Nothing glows.
+ */
 .k-btn {
   flex: 0 0 auto;
-  padding: 9px 16px;
-  border: 1px solid transparent;
-  border-radius: 9px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)) padding-box,
-    linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.12) 55%, rgba(255, 255, 255, 0.07) 100%)
-      border-box;
-  box-shadow: 0 2px 7px -5px rgba(0, 0, 0, 0.9);
-  color: rgba(255, 255, 255, 0.95);
+  padding: 9px 15px;
+  border: 1px solid var(--k-line-2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.055);
+  color: rgba(255, 255, 255, 0.92);
   font: inherit;
   font-size: 12.5px;
   font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background 0.18s ease, border-color 0.18s ease;
 }
 .k-btn:hover {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06)) padding-box,
-    linear-gradient(180deg, rgba(255, 255, 255, 0.46) 0%, rgba(255, 255, 255, 0.2) 55%, rgba(255, 255, 255, 0.11) 100%)
-      border-box;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 .k-btn.pri {
-  background: linear-gradient(180deg, #ffffff, #ebe8e0) padding-box, linear-gradient(180deg, #ffffff, #d9d5ca) border-box;
+  border-color: transparent;
+  background: #ffffff;
   color: #0e0e0e;
   font-weight: 600;
-  box-shadow: 0 0 18px -8px rgba(255, 255, 255, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 .k-btn.pri:hover {
-  background: linear-gradient(180deg, #ffffff, #f4f2ec) padding-box, linear-gradient(180deg, #ffffff, #e2ded3) border-box;
+  background: #eceae3;
 }
 
 /* ————————————————— readings ————————————————— */
@@ -751,8 +764,8 @@
   height: 22px;
   margin-right: 9px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: linear-gradient(180deg, #262626, #1a1a1a);
+  border: 1px solid var(--k-line-2);
+  background: rgba(255, 255, 255, 0.08);
   font-size: 10px;
   font-weight: 600;
   vertical-align: -6px;
@@ -798,22 +811,18 @@
   color: var(--k-faint);
 }
 .k-input {
-  padding: 10px 13px;
-  border: 1px solid transparent;
-  border-radius: 9px;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.42), rgba(255, 255, 255, 0.02)) padding-box,
-    linear-gradient(180deg, rgba(0, 0, 0, 0.58) 0%, rgba(255, 255, 255, 0.04) 55%, rgba(255, 255, 255, 0.16) 100%)
-      border-box;
-  box-shadow: inset 0 2px 3px -1px rgba(0, 0, 0, 0.75);
+  padding: 10px 12px;
+  border: 1px solid var(--k-line);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.22);
   color: var(--k-ink);
   font: inherit;
   font-size: 13.5px;
   outline: none;
+  transition: border-color 0.18s ease;
 }
 .k-input:focus {
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.34), rgba(255, 255, 255, 0.04)) padding-box,
-    linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, rgba(255, 255, 255, 0.12) 50%, rgba(255, 255, 255, 0.38) 100%)
-      border-box;
+  border-color: rgba(255, 255, 255, 0.28);
 }
 .k-field-h {
   font-size: 11.5px;
@@ -853,13 +862,9 @@
   width: 38px;
   height: 22px;
   border-radius: 999px;
-  border: 1px solid transparent;
-  /* recess: shadowed top lip, lit bottom */
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.45), rgba(255, 255, 255, 0.03)) padding-box,
-    linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(255, 255, 255, 0.04) 55%, rgba(255, 255, 255, 0.2) 100%)
-      border-box;
-  box-shadow: inset 0 2px 3px -1px rgba(0, 0, 0, 0.8);
-  transition: background 0.34s var(--k-ease);
+  border: 1px solid var(--k-line-2);
+  background: rgba(0, 0, 0, 0.3);
+  transition: background 0.34s var(--k-ease), border-color 0.34s var(--k-ease);
 }
 .k-switch-knob {
   position: absolute;
@@ -869,18 +874,16 @@
   height: 16px;
   border-radius: 999px;
   /* raised: lit along the top */
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.42));
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  background: rgba(255, 255, 255, 0.55);
   transition: transform 0.34s var(--k-ease), background 0.34s var(--k-ease);
 }
 .k-switch.on .k-switch-track {
-  background: linear-gradient(180deg, rgba(var(--k-violet), 0.28), rgba(var(--k-violet), 0.14)) padding-box,
-    linear-gradient(180deg, rgba(var(--k-violet), 0.5) 0%, rgba(var(--k-violet), 0.3) 55%, rgba(var(--k-violet), 0.7) 100%)
-      border-box;
+  background: rgba(var(--k-violet), 0.32);
+  border-color: rgba(var(--k-violet), 0.55);
 }
 .k-switch.on .k-switch-knob {
   transform: translateX(16px);
-  background: linear-gradient(180deg, rgb(178, 156, 255), rgb(140, 112, 250));
+  background: rgb(168, 145, 255);
 }
 .k-switch-text {
   display: flex;
@@ -952,9 +955,8 @@
 .k-console.day .k-search,
 .k-console.day .k-input,
 .k-console.day .k-switch-track {
-  background: linear-gradient(180deg, rgba(26, 25, 22, 0.06), rgba(255, 255, 255, 0.5)) padding-box,
-    linear-gradient(180deg, rgba(26, 25, 22, 0.24), rgba(255, 255, 255, 0.9)) border-box;
-  box-shadow: inset 0 2px 3px -1px rgba(26, 25, 22, 0.18);
+  background: rgba(26, 25, 22, 0.045);
+  border-color: rgba(26, 25, 22, 0.14);
 }
 .k-console.day .k-card {
   background: #ffffff;
@@ -964,14 +966,21 @@
   background: rgba(26, 25, 22, 0.02);
 }
 .k-console.day .k-btn {
-  background: linear-gradient(180deg, #ffffff, #f5f3ed) padding-box,
-    linear-gradient(180deg, rgba(26, 25, 22, 0.2), rgba(26, 25, 22, 0.1)) border-box;
+  background: #ffffff;
+  border-color: rgba(26, 25, 22, 0.16);
   color: #1a1916;
 }
+.k-console.day .k-btn:hover {
+  background: #f4f2ec;
+  border-color: rgba(26, 25, 22, 0.26);
+}
 .k-console.day .k-btn.pri {
-  background: linear-gradient(180deg, #26251f, #1a1916) padding-box, linear-gradient(180deg, #3a3830, #1a1916) border-box;
+  background: #1a1916;
+  border-color: transparent;
   color: #f6f4ee;
-  box-shadow: 0 2px 10px -6px rgba(26, 25, 22, 0.6);
+}
+.k-console.day .k-btn.pri:hover {
+  background: #333129;
 }
 
 .k-console.day .k-row.is-link:hover,
@@ -982,8 +991,8 @@
 }
 .k-console.day .k-who-ava,
 .k-console.day .k-ava {
-  background: linear-gradient(180deg, #ffffff, #eeece4);
-  border-color: rgba(26, 25, 22, 0.16);
+  background: rgba(26, 25, 22, 0.06);
+  border-color: rgba(26, 25, 22, 0.14);
   color: #1a1916;
 }
 .k-console.day .k-meter {

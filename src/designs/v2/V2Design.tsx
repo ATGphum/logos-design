@@ -86,10 +86,14 @@ export default function V2Design() {
     requestAnimationFrame(() => setCsHidden(false))
   }
 
-  /* Mainpage is a button on the agent page now. The marketing site is not part of the
-     sandbox, so it lands on the gallery — same stand-in V1 uses. */
+  /* Mainpage is a button on the agent page now, and it goes to the actual landing page
+     rather than to the sandbox gallery. The marketing site is in this repo — the
+     prototype at marketing/llm-interface.html opens straight onto its mp-view — so the
+     dev server already serves it and the two surfaces can simply be joined up. Browser
+     back returns here. */
+  const MAINPAGE = "/marketing/llm-interface.html"
   const backHome = () => {
-    window.location.hash = "#/"
+    window.location.assign(MAINPAGE)
   }
 
   const rootClass =
@@ -178,16 +182,25 @@ export default function V2Design() {
         />
       ) : null}
 
-      {signedIn ? null : (
-        <div className="v2-auth">
-          <button className="v2-auth-btn" type="button" onClick={() => openAuth("login")}>
-            Login
-          </button>
-          <button className="v2-auth-btn v2-auth-primary" type="button" onClick={() => openAuth("signup")}>
-            Sign up
-          </button>
-        </div>
-      )}
+      {/* The top-right group. Mainpage is always here — it is the way out of the product
+          and does not depend on whether you are signed in — with the auth pair beside it
+          only while you are not. The unlabelled arrow AgentView draws for the same
+          destination is hidden in V2 (see v2.css): one door, named. */}
+      <div className="v2-top">
+        <button className="v2-auth-btn" type="button" onClick={backHome}>
+          Mainpage
+        </button>
+        {signedIn ? null : (
+          <>
+            <button className="v2-auth-btn" type="button" onClick={() => openAuth("login")}>
+              Login
+            </button>
+            <button className="v2-auth-btn v2-auth-primary" type="button" onClick={() => openAuth("signup")}>
+              Sign up
+            </button>
+          </>
+        )}
+      </div>
 
       {!signedIn && gateOpen ? (
         <LoginGate

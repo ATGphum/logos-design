@@ -288,14 +288,19 @@
 /* Sits to the left of the agent's own three controls, which end 24px from the right
    edge and are 27px tall — these are deliberately bigger, since they are the primary
    thing to do while signed out. */
-.v2-root .v2-auth {
+.v2-root .v2-top {
   position: fixed;
   top: 13px;
   right: 130px;
   z-index: 60;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+}
+/* AgentView draws its own unlabelled arrow to the same place. Two controls for one
+   destination, one of them a glyph nobody reads — the named one wins. */
+.v2-root .chat-home {
+  display: none;
 }
 
 .v2-root .v2-auth-btn {
@@ -1063,11 +1068,11 @@
    state. The terminal and side-panel toggles still appear once a chat starts, though,
    and you can start one without signing in — so the tools step aside while the pair is
    showing rather than the pair being permanently inset for them. */
-.v2-root .v2-auth {
+.v2-root .v2-top {
   right: 24px;
 }
-.v2-root.v2-signedout .topbar-tools {
-  margin-right: 214px;
+.v2-root .topbar-tools {
+  margin-right: 300px;
 }
 
 /* ===== New chat leads ===== */
@@ -3318,31 +3323,47 @@
   color: #1a1916;
 }
 
-/* The top-right pair is the same control in miniature, so it is made the same way —
-   Sign up filled because it is the one being recommended, Login rimmed. */
+/* Flat, like the console's.
+ *
+ * These carried the composer's material — a fill fading down the height under a rim lit
+ * along the top, a drop shadow, and on Sign up an outward glow and an inset highlight.
+ * At 38px in a corner that is not lighting, it is a bevel, and it is the oldest-looking
+ * thing on the page.
+ *
+ * Rank comes from value instead: Mainpage and Login are a tint of the ground, Sign up is
+ * solid white because it is the one being recommended. Nothing glows.
+ */
 .v2-root .v2-auth-btn {
-  border: 1px solid transparent;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)) padding-box,
-    linear-gradient(180deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.14) 50%, rgba(255, 255, 255, 0.08) 100%)
-      border-box;
-  box-shadow: 0 2px 8px -5px rgba(0, 0, 0, 0.8);
-  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.055);
+  box-shadow: none;
+  font-weight: 600;
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.97);
+  color: rgba(255, 255, 255, 0.92);
+  transition: background 0.18s ease, border-color 0.18s ease;
 }
 .v2-root .v2-auth-btn:hover {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.07)) padding-box,
-    linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.24) 50%, rgba(255, 255, 255, 0.13) 100%)
-      border-box;
+  background: rgba(255, 255, 255, 0.11);
+  border-color: rgba(255, 255, 255, 0.26);
+  transform: none;
 }
 .v2-root .v2-auth-btn.v2-auth-primary {
-  background: linear-gradient(180deg, #ffffff 0%, #ece9e1 100%) padding-box,
-    linear-gradient(180deg, #ffffff, #d9d5ca) border-box;
+  border-color: transparent;
+  background: #ffffff;
   color: #0e0e0e;
-  box-shadow: 0 0 22px -8px rgba(255, 255, 255, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  box-shadow: none;
 }
 .v2-root .v2-auth-btn.v2-auth-primary:hover {
-  background: linear-gradient(180deg, #ffffff 0%, #f4f2ec 100%) padding-box,
-    linear-gradient(180deg, #ffffff, #e2ded3) border-box;
-  box-shadow: 0 0 30px -6px rgba(255, 255, 255, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  background: #eceae3;
+  border-color: transparent;
+}
+.v2-root.light .v2-auth-btn {
+  border-color: rgba(26, 25, 22, 0.18);
+  background: rgba(255, 255, 255, 0.8);
+  color: #1a1916;
+}
+.v2-root.light .v2-auth-btn.v2-auth-primary {
+  background: #1a1916;
+  color: #f6f4ee;
+  border-color: transparent;
 }

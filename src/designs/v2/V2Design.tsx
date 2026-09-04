@@ -9,9 +9,13 @@
  *    Login / Sign up in the top right — not a screen of its own
  *  - Mainpage and Console are buttons *on* the agent page, not places you start from
  *
- * Deliberately built by composing the existing AgentView/ConsoleView rather than
- * forking them, so V1 keeps working untouched and any fix to the shared surfaces
- * lands in both. Everything V2-specific is the entry logic here plus v2.css.
+ * The agent surface is composed from the existing AgentView, so V1 keeps working
+ * untouched and any fix to the shared surface lands in both.
+ *
+ * The console is not. It is written from scratch in ./console — the old one's layout is a
+ * fixed column, a 100px banner and pages made of tiles three across, and no amount of CSS
+ * on top of that produces a different structure. Restyling it kept producing the old
+ * console in new paint. V1 still uses ConsoleView, untouched.
  */
 import { useRef, useState } from "react"
 import { useTheme } from "../../vendor/webui/theme"
@@ -19,14 +23,14 @@ import "../console/chat.css"
 import "../console/console.css"
 import "./v2.css"
 import { AgentView } from "../console/agent/AgentView"
-import { ConsoleView } from "../console/shell/ConsoleView"
-import { CS_NAV_V2, isMobileViewport } from "../console/state"
+import { isMobileViewport } from "../console/state"
 import ensoWhite from "../console/assets/enso.svg"
 import ensoInk from "../console/assets/enso-ink.svg"
 import { LoginGate, type AuthMode } from "./LoginGate"
 import { AccountChip } from "./AccountChip"
 import { SeamScroll } from "./SeamScroll"
 import { V2Thread } from "./V2Thread"
+import { V2Console } from "./console/V2Console"
 import { GoalBulb, SPEED_COUNT, ThinkSpeed } from "./BarBulbs"
 
 export default function V2Design() {
@@ -166,14 +170,11 @@ export default function V2Design() {
         />
       ) : null}
       {csDisplayed ? (
-        <ConsoleView
-          displayed={csDisplayed}
-          hidden={csHidden}
+        <V2Console
+          open={!csHidden}
+          onClose={enterAgent}
           night={night}
           onToggleNight={() => setNight((v) => !v)}
-          onEnterAgent={enterAgent}
-          onBackHome={backHome}
-          nav={CS_NAV_V2}
         />
       ) : null}
 

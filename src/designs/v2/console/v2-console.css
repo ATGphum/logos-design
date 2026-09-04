@@ -1,0 +1,987 @@
+/* ===========================================================================
+   V2 console
+   ---------------------------------------------------------------------------
+   Same material rules as the agent page, applied consistently:
+
+     raised   → fill on padding-box, gradient on border-box, brightest along the
+                TOP edge and falling away downward. Cards, buttons, the window.
+     recessed → the inverse: shadowed upper lip, lit lower one, floor darkest
+                under the lip. Inputs and search, because you type into them.
+
+   Nothing is painted onto a face. Every surface here is one of those two things,
+   which is what makes the console feel like the same product as the agent.
+
+   One scale, used everywhere:
+     28 / 20 / 15 / 13.5 / 12 / 10.5px
+     radii 16 (window) / 12 (card) / 9 (control) / 999 (pill)
+     the page gutter is 30px and the rhythm between cards is 18px
+   =========================================================================== */
+
+.k-console {
+  --k-ink: #ffffff;
+  --k-dim: rgba(255, 255, 255, 0.62);
+  --k-faint: rgba(255, 255, 255, 0.4);
+  --k-line: rgba(255, 255, 255, 0.08);
+  --k-line-2: rgba(255, 255, 255, 0.13);
+  --k-violet: 150, 122, 255;
+  --k-ease: cubic-bezier(0.33, 0.45, 0.25, 1);
+
+  position: fixed;
+  inset: 7vh 7vw;
+  max-width: 1180px;
+  max-height: 790px;
+  margin: auto;
+  z-index: 450;
+  display: grid;
+  grid-template-columns: 224px 1fr;
+  border-radius: 16px;
+  border: 1px solid transparent;
+  overflow: hidden;
+  background: linear-gradient(180deg, #121212 0%, #0d0d0d 100%) padding-box,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.1) 34%, rgba(255, 255, 255, 0.05) 100%)
+      border-box;
+  box-shadow: 0 44px 130px -34px rgba(0, 0, 0, 0.92);
+  color: var(--k-ink);
+  font-family: var(--app-font-sans, "Inter", system-ui, sans-serif);
+  font-size: 13.5px;
+  line-height: 1.55;
+  opacity: 1;
+  transition: opacity 0.42s var(--k-ease), transform 0.42s var(--k-ease);
+}
+.k-console.out {
+  opacity: 0;
+  transform: scale(0.985);
+  pointer-events: none;
+}
+
+/* ————————————————— sidebar ————————————————— */
+.k-side {
+  /* min-height: 0 — a grid item's automatic minimum is its content, and without this
+     a long nav pushes the row taller than the window and the footer falls outside it */
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 12px 12px;
+  border-right: 1px solid var(--k-line);
+  background: rgba(255, 255, 255, 0.016);
+}
+
+.k-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 2px 8px 14px;
+}
+.k-brand img {
+  width: 22px;
+  height: 22px;
+  filter: brightness(1.2) drop-shadow(0 0 5px rgba(255, 255, 255, 0.35));
+}
+.k-brand span {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--k-ink);
+}
+
+/* search is recessed — it is a field */
+.k-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 0 11px;
+  height: 34px;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.4), rgba(255, 255, 255, 0.02)) padding-box,
+    linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(255, 255, 255, 0.04) 55%, rgba(255, 255, 255, 0.14) 100%)
+      border-box;
+  box-shadow: inset 0 2px 3px -1px rgba(0, 0, 0, 0.7);
+}
+.k-search svg {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  color: var(--k-faint);
+}
+.k-search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  background: none;
+  outline: none;
+  color: var(--k-ink);
+  font: inherit;
+  font-size: 12.5px;
+}
+.k-search input::placeholder {
+  color: var(--k-faint);
+}
+
+.k-nav {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.k-nav::-webkit-scrollbar {
+  width: 0;
+}
+.k-group + .k-group {
+  margin-top: 16px;
+}
+.k-group-l {
+  padding: 0 10px 6px;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  /* token, not a literal — hardcoded white here vanished entirely on the light ground */
+  color: var(--k-faint);
+  opacity: 0.85;
+}
+
+.k-navitem {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--k-dim);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+.k-navitem svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+}
+.k-navitem:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--k-ink);
+}
+/* the selected page is the one white thing in the column, as on the agent page */
+.k-navitem.on {
+  background: #ffffff;
+  color: #0e0e0e;
+  font-weight: 500;
+}
+.k-nav-none {
+  padding: 8px 10px;
+  color: var(--k-faint);
+  font-size: 12.5px;
+}
+
+.k-side-foot {
+  flex: 0 0 auto;
+  padding-top: 12px;
+  margin-top: 10px;
+  border-top: 1px solid var(--k-line);
+}
+.k-vers {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 10px 0;
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: var(--k-faint);
+  opacity: 0.8;
+}
+
+/* ————————————————— main ————————————————— */
+.k-main {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.k-topbar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  height: 52px;
+  padding: 0 16px 0 30px;
+  border-bottom: 1px solid var(--k-line);
+}
+/* A breadcrumb rather than a banner: it says where you are AND how to get out, in one
+   line and 52px, where the old console spent 100px on a title it repeats below. */
+.k-crumb {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12.5px;
+}
+.k-crumb-root {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--k-faint);
+  font: inherit;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+  transition: color 0.18s ease;
+}
+.k-crumb-root:hover {
+  color: var(--k-ink);
+}
+.k-crumb-sep {
+  color: var(--k-faint);
+  opacity: 0.6;
+}
+.k-crumb-here {
+  color: var(--k-ink);
+  font-weight: 500;
+}
+
+.k-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.k-iconbtn,
+.k-close {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--k-dim);
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+.k-iconbtn svg,
+.k-close svg {
+  width: 16px;
+  height: 16px;
+}
+.k-iconbtn:hover,
+.k-close:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--k-ink);
+}
+.k-who {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 4px;
+}
+.k-who-ava {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #2a2a2a, #1c1c1c);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font-size: 11px;
+  font-weight: 600;
+}
+.k-who-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+.k-who-text b {
+  font-size: 12px;
+  font-weight: 500;
+}
+.k-who-text em {
+  font-style: normal;
+  font-size: 10px;
+  color: var(--k-faint);
+}
+
+.k-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+}
+.k-scroll::-webkit-scrollbar {
+  width: 9px;
+}
+.k-scroll::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.16) padding-box;
+}
+
+/* ————————————————— page ————————————————— */
+.k-page {
+  padding: 26px 30px 40px;
+}
+.k-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 22px;
+}
+.k-head h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+}
+/* the one line that tells a stranger what they are looking at */
+.k-head p {
+  margin: 7px 0 0;
+  max-width: 58ch;
+  font-size: 13.5px;
+  color: var(--k-dim);
+}
+.k-head-acts {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.k-body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ————————————————— buttons (raised) ————————————————— */
+.k-btn {
+  flex: 0 0 auto;
+  padding: 9px 16px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)) padding-box,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.12) 55%, rgba(255, 255, 255, 0.07) 100%)
+      border-box;
+  box-shadow: 0 2px 7px -5px rgba(0, 0, 0, 0.9);
+  color: rgba(255, 255, 255, 0.95);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.k-btn:hover {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06)) padding-box,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.46) 0%, rgba(255, 255, 255, 0.2) 55%, rgba(255, 255, 255, 0.11) 100%)
+      border-box;
+}
+.k-btn.pri {
+  background: linear-gradient(180deg, #ffffff, #ebe8e0) padding-box, linear-gradient(180deg, #ffffff, #d9d5ca) border-box;
+  color: #0e0e0e;
+  font-weight: 600;
+  box-shadow: 0 0 18px -8px rgba(255, 255, 255, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+.k-btn.pri:hover {
+  background: linear-gradient(180deg, #ffffff, #f4f2ec) padding-box, linear-gradient(180deg, #ffffff, #e2ded3) border-box;
+}
+
+/* ————————————————— readings ————————————————— */
+/* Deliberately unboxed. A figure is not a control, and the moment you put it in a card
+   with a border people try to click it — which is exactly what the old tiles did. */
+.k-figs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 2px 30px;
+  padding: 2px 0 4px;
+}
+.k-fig-l {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--k-faint);
+}
+.k-fig-v {
+  margin-top: 5px;
+  font-size: 27px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.k-fig-v.ok {
+  color: #a6dfb6;
+}
+.k-fig-v.warn {
+  color: #e9c694;
+}
+.k-fig-n {
+  margin-top: 3px;
+  font-size: 12px;
+  color: var(--k-faint);
+}
+
+/* ————————————————— card (raised) ————————————————— */
+.k-card {
+  padding: 18px 20px 6px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015)) padding-box,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.07) 45%, rgba(255, 255, 255, 0.045) 100%)
+      border-box;
+}
+.k-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding-bottom: 4px;
+}
+.k-card h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+.k-card-head p {
+  margin: 4px 0 0;
+  max-width: 62ch;
+  font-size: 12.5px;
+  color: var(--k-dim);
+}
+
+/* ————————————————— rows ————————————————— */
+/* One column, always. Name at the left margin, everything else flushed right — so a long
+   label and a long value cannot collide, which is what the tile grid did at every width
+   below its own minimum. */
+.k-rows {
+  display: flex;
+  flex-direction: column;
+  margin: 8px -20px 0;
+}
+.k-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 11px 20px;
+  border: 0;
+  border-top: 1px solid var(--k-line);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+.k-row.is-link {
+  cursor: pointer;
+  transition: background 0.16s ease;
+}
+.k-row.is-link:hover {
+  background: rgba(255, 255, 255, 0.045);
+}
+.k-row-name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 13.5px;
+}
+.k-row-name em {
+  font-style: normal;
+  margin-top: 1px;
+  font-size: 12px;
+  color: var(--k-faint);
+}
+.k-row-right {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.k-row-val {
+  font-size: 13.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--k-ink);
+}
+.k-row-go {
+  width: 15px;
+  height: 15px;
+  color: var(--k-faint);
+  transition: color 0.16s ease, transform 0.2s var(--k-ease);
+}
+.k-row.is-link:hover .k-row-go {
+  color: var(--k-ink);
+  transform: translateX(2px);
+}
+
+/* one tag treatment; colour only where it means a state */
+.k-tag {
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--k-line-2);
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 11px;
+  color: var(--k-dim);
+  white-space: nowrap;
+}
+.k-tag.ok {
+  border-color: rgba(110, 190, 130, 0.34);
+  background: rgba(110, 190, 130, 0.12);
+  color: #a6dfb6;
+}
+.k-tag.warn {
+  border-color: rgba(210, 160, 90, 0.38);
+  background: rgba(210, 160, 90, 0.13);
+  color: #e9c694;
+}
+
+/* ————————————————— credit block ————————————————— */
+.k-credit {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin: 12px 0 14px;
+}
+.k-credit-fig {
+  font-size: 46px;
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.k-credit-cur {
+  margin-right: 4px;
+  font-size: 22px;
+  color: var(--k-faint);
+  vertical-align: 0.35em;
+}
+.k-credit-side {
+  padding-bottom: 3px;
+}
+.k-credit-spent {
+  font-size: 13px;
+  color: var(--k-dim);
+}
+.k-credit-spent b {
+  font-weight: 600;
+  color: var(--k-ink);
+}
+.k-credit-tok {
+  font-size: 12px;
+  color: var(--k-faint);
+}
+
+/* the meter is a recess with something filling it */
+.k-meter {
+  height: 7px;
+  border-radius: 99px;
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8), inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+.k-meter span {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, rgba(var(--k-violet), 0.75), rgba(var(--k-violet), 1));
+  box-shadow: 0 0 12px -2px rgba(var(--k-violet), 0.75);
+}
+.k-meter-l {
+  margin: 7px 0 14px;
+  font-size: 12px;
+  color: var(--k-faint);
+}
+
+/* ————————————————— table ————————————————— */
+.k-table-wrap {
+  margin: 8px -20px 0;
+  overflow-x: auto;
+}
+.k-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.k-table th {
+  padding: 0 14px 8px;
+  border-bottom: 1px solid var(--k-line);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-align: left;
+  color: var(--k-faint);
+  white-space: nowrap;
+}
+.k-table th:first-child,
+.k-table td:first-child {
+  padding-left: 20px;
+}
+.k-table th:last-child,
+.k-table td:last-child {
+  padding-right: 20px;
+}
+.k-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--k-line);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.k-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.03);
+}
+.k-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.k-table code {
+  font-family: "Geist Mono", ui-monospace, Menlo, monospace;
+  font-size: 11.5px;
+  color: var(--k-dim);
+}
+.k-td-act,
+.k-th-act {
+  text-align: right;
+}
+.k-linkbtn {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--k-dim);
+  font: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: color 0.16s ease;
+}
+.k-linkbtn:hover {
+  color: var(--k-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.k-ava {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-right: 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(180deg, #262626, #1a1a1a);
+  font-size: 10px;
+  font-weight: 600;
+  vertical-align: -6px;
+}
+.k-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 8px;
+  border-radius: 999px;
+  background: var(--k-faint);
+  vertical-align: 1px;
+}
+.k-dot.ok {
+  background: #6ebe82;
+  box-shadow: 0 0 7px rgba(110, 190, 130, 0.7);
+}
+.k-dot.warn {
+  background: #d2a05a;
+  box-shadow: 0 0 7px rgba(210, 160, 90, 0.7);
+}
+.k-dot.err {
+  background: #c96b6b;
+}
+
+/* ————————————————— fields (recessed) ————————————————— */
+.k-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin: 14px 0 16px;
+}
+.k-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.k-field-l {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--k-faint);
+}
+.k-input {
+  padding: 10px 13px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.42), rgba(255, 255, 255, 0.02)) padding-box,
+    linear-gradient(180deg, rgba(0, 0, 0, 0.58) 0%, rgba(255, 255, 255, 0.04) 55%, rgba(255, 255, 255, 0.16) 100%)
+      border-box;
+  box-shadow: inset 0 2px 3px -1px rgba(0, 0, 0, 0.75);
+  color: var(--k-ink);
+  font: inherit;
+  font-size: 13.5px;
+  outline: none;
+}
+.k-input:focus {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.34), rgba(255, 255, 255, 0.04)) padding-box,
+    linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, rgba(255, 255, 255, 0.12) 50%, rgba(255, 255, 255, 0.38) 100%)
+      border-box;
+}
+.k-field-h {
+  font-size: 11.5px;
+  color: var(--k-faint);
+}
+
+.k-formfoot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 4px 0 16px;
+}
+
+/* ————————————————— switch ————————————————— */
+.k-switch {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  width: calc(100% + 40px);
+  margin: 8px -20px 0;
+  padding: 12px 20px;
+  border: 0;
+  border-top: 1px solid var(--k-line);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.16s ease;
+}
+.k-switch:hover {
+  background: rgba(255, 255, 255, 0.045);
+}
+.k-switch-track {
+  position: relative;
+  flex: 0 0 auto;
+  width: 38px;
+  height: 22px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  /* recess: shadowed top lip, lit bottom */
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.45), rgba(255, 255, 255, 0.03)) padding-box,
+    linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(255, 255, 255, 0.04) 55%, rgba(255, 255, 255, 0.2) 100%)
+      border-box;
+  box-shadow: inset 0 2px 3px -1px rgba(0, 0, 0, 0.8);
+  transition: background 0.34s var(--k-ease);
+}
+.k-switch-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  /* raised: lit along the top */
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.42));
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  transition: transform 0.34s var(--k-ease), background 0.34s var(--k-ease);
+}
+.k-switch.on .k-switch-track {
+  background: linear-gradient(180deg, rgba(var(--k-violet), 0.28), rgba(var(--k-violet), 0.14)) padding-box,
+    linear-gradient(180deg, rgba(var(--k-violet), 0.5) 0%, rgba(var(--k-violet), 0.3) 55%, rgba(var(--k-violet), 0.7) 100%)
+      border-box;
+}
+.k-switch.on .k-switch-knob {
+  transform: translateX(16px);
+  background: linear-gradient(180deg, rgb(178, 156, 255), rgb(140, 112, 250));
+}
+.k-switch-text {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 13.5px;
+}
+.k-switch-text em {
+  font-style: normal;
+  margin-top: 1px;
+  font-size: 12px;
+  color: var(--k-faint);
+}
+.k-switch-state {
+  flex: 0 0 auto;
+  font-size: 12px;
+  color: var(--k-faint);
+}
+.k-switch.on .k-switch-state {
+  color: rgb(178, 156, 255);
+}
+
+/* ————————————————— nothing here yet ————————————————— */
+.k-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 54px 30px 60px;
+  border: 1px dashed var(--k-line-2);
+  border-radius: 12px;
+  text-align: center;
+}
+.k-empty svg {
+  width: 26px;
+  height: 26px;
+  color: var(--k-faint);
+  opacity: 0.6;
+}
+.k-empty p {
+  margin: 0;
+  max-width: 46ch;
+  font-size: 13px;
+  color: var(--k-dim);
+}
+
+/* ————————————————— light ————————————————— */
+.k-console.day {
+  --k-ink: #14130f;
+  --k-dim: rgba(26, 25, 22, 0.66);
+  --k-faint: rgba(26, 25, 22, 0.46);
+  --k-line: rgba(26, 25, 22, 0.09);
+  --k-line-2: rgba(26, 25, 22, 0.14);
+  background: linear-gradient(180deg, #fbfaf6 0%, #f4f2ec 100%) padding-box,
+    linear-gradient(180deg, rgba(26, 25, 22, 0.2), rgba(26, 25, 22, 0.08)) border-box;
+}
+.k-console.day .k-side {
+  background: rgba(26, 25, 22, 0.022);
+}
+.k-console.day .k-brand img {
+  filter: invert(1) brightness(0.15);
+}
+.k-console.day .k-navitem.on {
+  background: #1a1916;
+  color: #f6f4ee;
+}
+.k-console.day .k-search,
+.k-console.day .k-input,
+.k-console.day .k-switch-track {
+  background: linear-gradient(180deg, rgba(26, 25, 22, 0.06), rgba(255, 255, 255, 0.5)) padding-box,
+    linear-gradient(180deg, rgba(26, 25, 22, 0.24), rgba(255, 255, 255, 0.9)) border-box;
+  box-shadow: inset 0 2px 3px -1px rgba(26, 25, 22, 0.18);
+}
+.k-console.day .k-card {
+  background: linear-gradient(180deg, #ffffff, #fdfcf8) padding-box,
+    linear-gradient(180deg, rgba(26, 25, 22, 0.14), rgba(26, 25, 22, 0.07)) border-box;
+}
+.k-console.day .k-btn {
+  background: linear-gradient(180deg, #ffffff, #f5f3ed) padding-box,
+    linear-gradient(180deg, rgba(26, 25, 22, 0.2), rgba(26, 25, 22, 0.1)) border-box;
+  color: #1a1916;
+}
+.k-console.day .k-btn.pri {
+  background: linear-gradient(180deg, #26251f, #1a1916) padding-box, linear-gradient(180deg, #3a3830, #1a1916) border-box;
+  color: #f6f4ee;
+  box-shadow: 0 2px 10px -6px rgba(26, 25, 22, 0.6);
+}
+.k-console.day .k-tag {
+  background: rgba(26, 25, 22, 0.05);
+}
+.k-console.day .k-row.is-link:hover,
+.k-console.day .k-switch:hover,
+.k-console.day .k-navitem:hover,
+.k-console.day .k-table tbody tr:hover td {
+  background: rgba(26, 25, 22, 0.04);
+}
+.k-console.day .k-who-ava,
+.k-console.day .k-ava {
+  background: linear-gradient(180deg, #ffffff, #eeece4);
+  border-color: rgba(26, 25, 22, 0.16);
+  color: #1a1916;
+}
+.k-console.day .k-meter {
+  background: rgba(26, 25, 22, 0.1);
+  box-shadow: inset 0 1px 2px rgba(26, 25, 22, 0.2);
+}
+.k-console.day .k-fig-v.ok {
+  color: #2f6b40;
+}
+.k-console.day .k-fig-v.warn {
+  color: #7a5320;
+}
+.k-console.day .k-tag.ok {
+  color: #2f6b40;
+}
+.k-console.day .k-tag.warn {
+  color: #7a5320;
+}
+.k-console.day .k-scroll {
+  scrollbar-color: rgba(26, 25, 22, 0.2) transparent;
+}
+
+/* ————————————————— narrow ————————————————— */
+@media (max-width: 900px) {
+  .k-console {
+    inset: 0;
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+  .k-side {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--k-line);
+  }
+  .k-side .k-search,
+  .k-side .k-side-foot,
+  .k-brand span {
+    display: none;
+  }
+  .k-nav {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+  }
+  .k-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .k-group + .k-group {
+    margin-top: 0;
+  }
+  .k-group-l {
+    padding: 0 4px 0 8px;
+    white-space: nowrap;
+  }
+  .k-navitem {
+    width: auto;
+    white-space: nowrap;
+  }
+  .k-page {
+    padding: 20px 18px 34px;
+  }
+  .k-head {
+    flex-direction: column;
+    gap: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .k-console,
+  .k-switch-knob,
+  .k-switch-track,
+  .k-row-go {
+    transition-duration: 0.01ms;
+  }
+}

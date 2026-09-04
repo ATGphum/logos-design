@@ -1,0 +1,120 @@
+/**
+ * The two capsules flanking the composer, in the hero and at the bottom of a
+ * conversation alike — it is one control bar, so it should not change shape depending on
+ * whether you have said anything yet.
+ *
+ * Neither holds its own state. The composer is rendered in two different places in the
+ * tree depending on whether there is a conversation, so a control that owned its setting
+ * would reset the moment you sent your first message. V2Design holds both.
+ *
+ * They sit outside the bar as its siblings rather than inside it, and take their height
+ * from it by stretching — see the aspect-ratio note in v2.css. That is why they stay
+ * exactly as tall as the bar and exactly round without a single hand-tuned number.
+ *
+ * Left is the bolt: how fast to answer, three settings, shown as an arc closing around
+ * the capsule's own outline — full ring is fastest, since that is what a bolt means. Right is Goal mode, drawn as the same bending lattice the thread uses while
+ * it thinks — off it sits at rest, on it bends. Speed on the left, depth on the right,
+ * and the same figure means the same thing in both places.
+ */
+
+/**
+ * What the glyph cannot say on its own.
+ *
+ * A 19px mark can carry a state but not a name, and a permanent caption beside a control
+ * this small is worse than the ambiguity it fixes. So the name is there and simply not
+ * drawn until asked for: it rises on hover and on keyboard focus, and it is a real
+ * element rather than the native `title`, which arrives a second late, cannot be styled,
+ * and looks like the operating system rather than the product.
+ *
+ * It carries the current setting as well as the name, so hovering answers both "what is
+ * this" and "what is it on" in one look.
+ */
+function Tip({ label, value }: { label: string; value: string }) {
+  return (
+    <span className="v2-tip" aria-hidden="true">
+      <b>{label}</b>
+      <i>{value}</i>
+    </span>
+  )
+}
+
+export const SPEED_COUNT = 3
+
+const SPEEDS = [
+  { name: "Instant", hint: "Answers immediately" },
+  { name: "Balanced", hint: "Thinks briefly first" },
+  { name: "Deep", hint: "Thinks it through" },
+]
+
+export function ThinkSpeed({ level, onCycle }: { level: number; onCycle: () => void }) {
+  const s = SPEEDS[level]
+
+  return (
+    <button
+      type="button"
+      className={"v2-bulb v2-bulb-speed lv" + level}
+      onClick={onCycle}
+      aria-label={`Thinking speed: ${s.name}`}
+    >
+      <Tip label="Speed" value={s.name} />
+      {/* The gauge traces the button, not a circle inside it. Drawn as a rounded rect
+          stretched to the capsule's box: rx equals half the width, so the top edge
+          collapses to a single point at dead centre and the path starts there and runs
+          clockwise — no rotation needed to get 12 o'clock.
+          pathLength="100" normalises the perimeter, so the thirds below are literal
+          percentages and stay correct at any button height; non-scaling-stroke keeps the
+          line an even weight despite the non-uniform stretch. */}
+      <svg className="v2-bulb-ring" viewBox="0 0 38 56" preserveAspectRatio="none" aria-hidden="true">
+        <rect className="v2-bulb-ring-track" x="4" y="4" width="30" height="48" rx="15" pathLength="100" />
+        <rect
+          className="v2-bulb-ring-arc"
+          x="4"
+          y="4"
+          width="30"
+          height="48"
+          rx="15"
+          pathLength="100"
+          /* Inverted against the list order: the glyph is a bolt and the control is
+             called Speed, so the arc has to measure speed. Full ring is Instant, a third
+             is Deep. Read the other way it said "how much thinking", which is the
+             opposite of what the bolt promises. */
+          style={{ strokeDasharray: `${((SPEED_COUNT - level) * 100) / 3} 100` }}
+        />
+      </svg>
+      <svg className="v2-bulb-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M13.4 2.5 5.6 13.1h5.3l-.9 8.4 8-10.9h-5.4z" />
+      </svg>
+    </button>
+  )
+}
+
+export function GoalBulb({ on, onToggle }: { on: boolean; onToggle: () => void }) {
+  return (
+    <button
+      type="button"
+      className={"v2-bulb v2-bulb-goal" + (on ? " on" : "")}
+      onClick={onToggle}
+      aria-pressed={on}
+      aria-label={"Goal mode " + (on ? "on" : "off")}
+    >
+      <Tip label="Goal mode" value={on ? "On — thinks it through" : "Off"} />
+      {/* The lattice, bending — the same figure and the same travelling wave as the
+          thinking mark, which is the point: Goal mode is that thinking, held longer.
+          Off it is the grid at rest, flat and still. Pressing it starts the bend. */}
+      <svg className="v2-bulb-lattice" viewBox="0 0 24 24" aria-hidden="true">
+        {[0, 1, 2].map((row) =>
+          [0, 1, 2].map((col) => (
+            <circle
+              key={`${row}-${col}`}
+              className="v2-bulb-node"
+              cx={5 + col * 7}
+              cy={5 + row * 7}
+              r="1.6"
+              style={{ animationDelay: `${(row + col) * 0.11}s` }}
+            />
+          )),
+        )}
+      </svg>
+    </button>
+  )
+}

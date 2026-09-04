@@ -1,0 +1,3704 @@
+/*
+ * V2-only chrome. Everything else is inherited from chat.css / console.css so the two
+ * shells cannot drift apart — if you need to change a shared surface, change it there
+ * and check both. Prefix every rule v2- and scope to .v2-root.
+ */
+
+/* ===== The auth pop-out ===== */
+/* Shows once on opening the site and is dismissable — the agent page underneath is
+   never modified, only covered. Providers and order follow #/login. */
+.v2-root .v2-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow: auto;
+}
+
+.v2-root .v2-gate-scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 10, 0.68);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.v2-root.light .v2-gate-scrim {
+  background: rgba(246, 244, 238, 0.76);
+}
+
+.v2-root .v2-gate-card {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  box-sizing: border-box;
+  padding: 44px 48px 34px;
+  border-radius: 22px;
+  background: #131313;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 28px 80px -20px rgba(0, 0, 0, 0.8);
+  color: #fff;
+  font-family: var(--app-font-sans);
+  text-align: center;
+  animation: v2-gate-in 0.28s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+.v2-root.light .v2-gate-card {
+  background: #fffefb;
+  border-color: rgba(26, 25, 22, 0.12);
+  box-shadow: 0 28px 80px -24px rgba(26, 25, 22, 0.35);
+  color: #1a1916;
+}
+
+@keyframes v2-gate-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .v2-root .v2-gate-card {
+    animation: none;
+  }
+}
+
+/* deliberately large: it is the way out of the pop-out, so it should be the easiest
+   thing on the card to hit */
+.v2-root .v2-gate-x {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: inherit;
+  opacity: 0.5;
+  cursor: pointer;
+  transition: opacity 0.18s ease, background 0.18s ease;
+}
+.v2-root .v2-gate-x svg {
+  width: 26px;
+  height: 26px;
+}
+.v2-root .v2-gate-x:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.07);
+}
+.v2-root.light .v2-gate-x:hover {
+  background: rgba(26, 25, 22, 0.06);
+}
+
+.v2-root .v2-gate-mark {
+  display: block;
+  margin: 0 auto;
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+  filter: invert(1) brightness(1.32) drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
+}
+.v2-root.light .v2-gate-mark {
+  filter: none;
+}
+
+.v2-root .v2-gate-title {
+  margin: 18px 0 6px;
+  font-family: "Julius Sans One", var(--app-font-sans), sans-serif;
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.v2-root .v2-gate-sub {
+  margin: 0 0 26px;
+  font-size: 13.5px;
+  font-weight: 300;
+  line-height: 1.5;
+  opacity: 0.62;
+}
+
+/* ===== Buttons: the enso ring, as in #/login =====
+   Every control on the card is a full 999px pill with a visible ring, the same shape
+   the old login gives its provider buttons. */
+.v2-root .v2-gate-providers {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.v2-root .v2-gate-social,
+.v2-root .v2-gate-go,
+.v2-root .v2-gate-input {
+  box-sizing: border-box;
+  width: 100%;
+  border-radius: 999px;
+  font-family: inherit;
+}
+
+.v2-root .v2-gate-social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  padding: 15px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+  color: inherit;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.16s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.v2-root.light .v2-gate-social {
+  border-color: rgba(26, 25, 22, 0.32);
+}
+.v2-root .v2-gate-social:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.55);
+  transform: translateY(-1px);
+}
+.v2-root.light .v2-gate-social:hover {
+  background: rgba(26, 25, 22, 0.05);
+  border-color: rgba(26, 25, 22, 0.55);
+}
+
+.v2-root .v2-gate-ico {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+}
+
+.v2-root .v2-gate-or {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 20px 0 16px;
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.4;
+}
+.v2-root .v2-gate-or::before,
+.v2-root .v2-gate-or::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.35;
+}
+
+.v2-root .v2-gate-form {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.v2-root .v2-gate-input {
+  padding: 15px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+  color: inherit;
+  font-size: 14px;
+  font-weight: 300;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.v2-root.light .v2-gate-input {
+  border-color: rgba(26, 25, 22, 0.32);
+}
+.v2-root .v2-gate-input::placeholder {
+  opacity: 0.42;
+}
+.v2-root .v2-gate-input:focus {
+  border-color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.04);
+}
+.v2-root.light .v2-gate-input:focus {
+  border-color: rgba(26, 25, 22, 0.7);
+  background: rgba(26, 25, 22, 0.03);
+}
+
+.v2-root .v2-gate-go {
+  padding: 15px 18px;
+  border: 1px solid transparent;
+  background: #fff;
+  color: #0e0e0e;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.16s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s ease;
+  box-shadow: 0 0 20px -6px rgba(255, 255, 255, 0.45);
+}
+.v2-root.light .v2-gate-go {
+  background: #1a1916;
+  color: #f6f4ee;
+  box-shadow: 0 3px 14px -7px rgba(26, 25, 22, 0.5);
+}
+.v2-root .v2-gate-go:hover {
+  transform: translateY(-1px);
+}
+
+.v2-root .v2-gate-switch {
+  margin: 22px 0 0;
+  font-size: 12.5px;
+  font-weight: 300;
+  opacity: 0.55;
+}
+.v2-root .v2-gate-switch button {
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.v2-root .v2-gate-switch button:hover {
+  opacity: 1;
+}
+
+/* ===== Mainpage is a button here, so it has to look like one ===== */
+/* In V1 the marketing site is where you come from, and .chat-home is a quiet way back.
+   In V2 it is the only route there, so it reads as a control rather than a hint. */
+.v2-root .chat-home {
+  opacity: 0.75;
+  transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.v2-root .chat-home:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+/* ===== Login / Sign up, top right of the agent page ===== */
+/* Sits to the left of the agent's own three controls, which end 24px from the right
+   edge and are 27px tall — these are deliberately bigger, since they are the primary
+   thing to do while signed out. */
+.v2-root .v2-top {
+  position: fixed;
+  top: 13px;
+  right: 130px;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/* AgentView draws its own unlabelled arrow to the same place. Two controls for one
+   destination, one of them a glyph nobody reads — the named one wins. */
+.v2-root .chat-home {
+  display: none;
+}
+
+.v2-root .v2-auth-btn {
+  padding: 11px 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: #fff;
+  font-family: var(--app-font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.16s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s ease,
+    border-color 0.2s ease, box-shadow 0.22s ease;
+}
+.v2-root.light .v2-auth-btn {
+  border-color: rgba(26, 25, 22, 0.22);
+  color: #1a1916;
+}
+.v2-root .v2-auth-btn:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.07);
+}
+.v2-root.light .v2-auth-btn:hover {
+  background: rgba(26, 25, 22, 0.05);
+}
+
+.v2-root .v2-auth-primary {
+  border-color: transparent;
+  background: #fff;
+  color: #0e0e0e;
+  box-shadow: 0 0 18px -6px rgba(255, 255, 255, 0.5);
+}
+.v2-root.light .v2-auth-primary {
+  background: #1a1916;
+  color: #f6f4ee;
+  box-shadow: 0 3px 14px -7px rgba(26, 25, 22, 0.5);
+}
+.v2-root .v2-auth-primary:hover {
+  background: #fff;
+}
+.v2-root.light .v2-auth-primary:hover {
+  background: #1a1916;
+}
+
+/* the agent's own controls crowd in below ~1100px — drop the auth pair under them */
+@media (max-width: 1100px) {
+  .v2-root .v2-auth {
+    top: 56px;
+    right: 24px;
+  }
+}
+
+/* ===== Hero: no suggestion pills ===== */
+/* V2-only — V1's agent page keeps them. */
+.v2-root .hero-suggestions {
+  display: none;
+}
+
+/* ===== The chats column folds like the console does =====
+ * The agent's fold is a hard swap: .sidebar snaps to width 0 and a separate fixed
+ * .collapsed-rail cross-fades in, positioned to overlay the expanded icons exactly so
+ * that nothing moves. That is the opposite of what the console does.
+ *
+ * Here the column closes on the console's clock, its contents clear early, and the rail
+ * icons grow and travel into place rather than appearing where they already were.
+ * Unlike the console's rail these stay anchored top-left — no centring on a rail axis.
+ */
+.v2-root {
+  --v2-fold: 0.28s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+
+/* The column closes on max-width, not width. The agent's collapsed rule forces
+   width: 0 !important and that simply does not interpolate here — the transition is
+   declared and only opacity ever fires, so the column snapped shut in one frame while
+   everything else eased. Holding width at its full value and clamping with max-width
+   gives the same end state and animates, which is the same reason the console's nav
+   labels use max-width. */
+.v2-root .sidebar {
+  max-width: var(--sidebar-width);
+  /* min-width has to go, not just be animated. The column carries
+     min-width: var(--sidebar-width), and the collapsed rule drops it to 0 with
+     !important — so on the way *out* it springs back to 292px the instant the class is
+     removed, and min-width beats max-width. The result was max-width easing 0 -> 292
+     over 280ms behind a box that was already fully open: the fold-in animated and the
+     fold-out did not. Pinning it to 0 leaves max-width in sole charge of both. */
+  min-width: 0;
+  transition: max-width var(--v2-fold), opacity 0.14s ease;
+}
+.v2-root.sidebar-collapsed .sidebar {
+  width: var(--sidebar-width) !important;
+  max-width: 0;
+}
+
+/* contents clear early so the column closes on empty, as in the console */
+.v2-root .sidebar > .sidebar-logo,
+.v2-root .sidebar > .sidebar-nav,
+.v2-root .sidebar > .sidebar-section,
+.v2-root .sidebar > .sidebar-footer {
+  transition: opacity 0.1s ease;
+}
+
+/* rail icons: bigger, and they arrive rather than appear */
+.v2-root .collapsed-rail {
+  transition: opacity var(--v2-fold), visibility 0s linear 0.28s;
+}
+.v2-root.sidebar-collapsed .collapsed-rail {
+  transition: opacity var(--v2-fold), visibility 0s;
+}
+
+.v2-root .collapsed-rail .rail-nav,
+.v2-root .collapsed-rail .rail-logo-box,
+.v2-root .collapsed-settings .rail-btn {
+  /* expanded resting place: slightly in and smaller, so folding in reads as the glyph
+     growing into the rail. transform-origin left keeps them on the left margin — the
+     structure stays top-left aligned, nothing centres. */
+  transform-origin: left center;
+  transform: translateX(5px) scale(0.78);
+  transition: transform var(--v2-fold);
+}
+.v2-root.sidebar-collapsed .collapsed-rail .rail-nav,
+.v2-root.sidebar-collapsed .collapsed-rail .rail-logo-box,
+.v2-root.sidebar-collapsed .collapsed-settings .rail-btn {
+  transform: none;
+}
+
+.v2-root .collapsed-rail .rail-nav svg {
+  width: 26px;
+  height: 26px;
+}
+.v2-root .collapsed-settings .rail-btn svg {
+  width: 28px;
+  height: 28px;
+}
+.v2-root .rail-logo-box,
+.v2-root .rail-logo {
+  width: 42px;
+  height: 42px;
+}
+.v2-root .rail-expand svg {
+  width: 26px;
+  height: 26px;
+}
+
+/* re-spaced for the larger glyphs, still hung off the top-left */
+.v2-root .rail-search {
+  top: 74px;
+}
+.v2-root .rail-newchat {
+  top: 122px;
+}
+.v2-root .rail-console {
+  top: 170px;
+}
+
+/* ===== Hero: the mark and the name, not a question ===== */
+.v2-root .v2-hero-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42em;
+}
+.v2-root .v2-hero-mark img {
+  width: 1.15em;
+  height: 1.15em;
+  object-fit: contain;
+  /* one tight glow — the stacked wide drop-shadows elsewhere make a small mark read
+     as soft rather than lit */
+  filter: brightness(1.28) drop-shadow(0 0 3px rgba(255, 255, 255, 0.32));
+}
+.v2-root.light .v2-hero-mark img {
+  filter: none;
+}
+.v2-root .v2-hero-word {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.v2-root .v2-hero-name {
+  letter-spacing: 0.3em;
+  padding-left: 0.1em;
+  line-height: 1;
+}
+
+/* ===== Sidebar lockup: mark only, aligned to the nav icons ===== */
+/* .sidebar-nav pads 10px and .nav-btn pads 11px, so the nav glyphs centre on x=21+10=31.
+   The lockup padded 16px around a 34px mark, centring it on 33 — two pixels out, which
+   is exactly the sort of thing that reads as "not aligned" without being obvious. */
+.v2-root .sidebar-logo {
+  /* 34 - 36/2: the nav glyphs centre on 34 now that they are 26px, not 20 */
+  padding-left: 16px;
+}
+.v2-root .sidebar-logo .logo-word {
+  display: none;
+}
+.v2-root .sidebar-logo img.logo-img {
+  width: 36px;
+  height: 36px;
+  margin: -3px 0;
+  filter: brightness(1.28) drop-shadow(0 0 3px rgba(255, 255, 255, 0.32));
+}
+.v2-root.light .sidebar-logo img.logo-img {
+  filter: none;
+}
+/* same correction in the rail: 42px mark, centred on the rail glyphs' x=33 */
+.v2-root .rail-logo-box {
+  left: 12px;
+}
+.v2-root .rail-logo {
+  filter: brightness(1.28) drop-shadow(0 0 3px rgba(255, 255, 255, 0.32));
+}
+.v2-root.light .rail-logo {
+  filter: none;
+}
+
+/* ===== Projects: a control you click, not a tree that unfolds ===== */
+.v2-root .proj-picker-wrap {
+  position: relative;
+  padding: 2px 10px 0;
+}
+.v2-root .proj-picker-btn {
+  width: 100%;
+}
+.v2-root .proj-picker {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: calc(100% + 4px);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+  border-radius: 12px;
+  background: var(--color-surface, #1a1a1a);
+  border: 1px solid var(--side-border, rgba(255, 255, 255, 0.12));
+  box-shadow: 0 18px 44px -16px rgba(0, 0, 0, 0.7);
+  animation: v2-pick-in 0.16s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+@keyframes v2-pick-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+.v2-root .proj-picker-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 11px;
+  border: none;
+  border-radius: 9px;
+  background: none;
+  color: var(--side-fg);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 510;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.v2-root .proj-picker-item:hover {
+  background: var(--side-hover);
+  color: var(--side-fg-strong);
+}
+.v2-root .proj-picker-item.active {
+  background: var(--hl-active);
+  color: var(--side-fg-strong);
+  font-weight: 600;
+}
+.v2-root .proj-picker-new {
+  margin-top: 4px;
+  border-top: 1px solid var(--side-border, rgba(255, 255, 255, 0.1));
+  border-radius: 0 0 9px 9px;
+  opacity: 0.75;
+}
+.v2-root .proj-picker-new svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ===== Pitch black ===== */
+/* Dark mode only — light mode keeps its cream. Both the page and the chats column go to
+   true black; the column's border is what keeps the seam readable now that the two
+   surfaces no longer differ (#0e0e0e vs #0d0d0d before). */
+.v2-root:not(.light) {
+  /* the console's own ground, #0e0e0e — true black turned out to be the single biggest
+     reason the two surfaces did not look related, and it is also what killed the
+     selected-row highlight, since that panel is darker than its surface */
+  --color-bg: #0a0a0a;
+  --side-bg: #0a0a0a;
+}
+/* no border here — the tapered ::after is the only division, and a border cannot fade
+   or narrow along its run. This rule outranked the later `border-right: none` because of
+   :not(.light), which is why the line kept running corner to corner. */
+
+/* ===== Hero: bigger lockup, no watermark ===== */
+/* The oversized enso behind the hero doubled up with the mark that now sits in the
+   lockup itself — two of the same symbol at two sizes. The lockup keeps it. */
+.v2-root .hero-watermark {
+  display: none;
+}
+.v2-root .hero-greeting {
+  font-size: 58px;
+}
+.v2-root .v2-hero-mark img {
+  /* The mark is a brush stroke with very fine spatter along its edge. Below roughly
+     150px those wisps land on fewer pixels than they need and alias into speckle, which
+     is what reads as the SVG being "pixelated" — it is not rasterisation, and it is not
+     the filter (identical with it off). It simply needs the room. 2.4em puts it at
+     ~140px, where the texture resolves.
+     The negative block margin keeps a mark this much taller than the line from opening
+     up the hero's line box. */
+  width: 2.4em;
+  height: 2.4em;
+  margin: -0.55em 0;
+}
+
+/* ===== Model chip: the headline, in the UI face ===== */
+/* It was set in the display font and capped at 118px, so a full identifier got cut to
+   an ellipsis. The name is short now, so neither is needed. */
+.v2-root .model-selector {
+  font-family: var(--app-font-sans);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+.v2-root #model-name {
+  max-width: none;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+/* ===== Account chip, chats column footer ===== */
+.v2-root .v2-acct {
+  position: relative;
+  width: 100%;
+}
+
+.v2-root .v2-acct-chip {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 7px 9px;
+  border: none;
+  border-radius: 11px;
+  background: none;
+  color: var(--side-fg);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 510;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.v2-root .v2-acct-chip:hover,
+.v2-root .v2-acct.open .v2-acct-chip {
+  background: var(--side-hover);
+  color: var(--side-fg-strong);
+}
+
+.v2-root .v2-acct-ava {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--color-surface, #2a2825);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: var(--side-fg-strong);
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.v2-root .v2-acct-ava.lg {
+  width: 36px;
+  height: 36px;
+  font-size: 14px;
+}
+
+.v2-root .v2-acct-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.v2-root .v2-acct-caret {
+  flex: none;
+  display: flex;
+  opacity: 0.5;
+  transition: transform 0.18s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+.v2-root .v2-acct-caret svg {
+  width: 14px;
+  height: 14px;
+}
+.v2-root .v2-acct.open .v2-acct-caret {
+  transform: rotate(180deg);
+}
+.v2-root .v2-acct-caret {
+  transform: rotate(180deg);
+}
+.v2-root .v2-acct.open .v2-acct-caret {
+  transform: rotate(0deg);
+}
+
+.v2-root .v2-acct-menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100% + 6px);
+  z-index: 40;
+  padding: 8px;
+  border-radius: 14px;
+  background: var(--color-surface, #1a1a1a);
+  border: 1px solid var(--side-border, rgba(255, 255, 255, 0.12));
+  box-shadow: 0 20px 50px -18px rgba(0, 0, 0, 0.75);
+  animation: v2-acct-in 0.16s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+@keyframes v2-acct-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+.v2-root .v2-acct-head {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 6px 7px 10px;
+}
+.v2-root .v2-acct-who {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.v2-root .v2-acct-who b {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--side-fg-strong);
+}
+.v2-root .v2-acct-who span {
+  font-size: 11.5px;
+  font-family: var(--font-mono);
+  opacity: 0.5;
+}
+
+.v2-root .v2-acct-tag {
+  margin: 0 7px 8px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  display: inline-block;
+}
+
+.v2-root .v2-acct-credit {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 0 7px 4px;
+  padding: 8px 0 2px;
+}
+.v2-root .v2-acct-credit-l {
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+.v2-root .v2-acct-credit-v {
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--side-fg-strong);
+}
+
+.v2-root .v2-acct-sep {
+  height: 1px;
+  margin: 8px 0;
+  background: var(--side-border, rgba(255, 255, 255, 0.1));
+}
+
+.v2-root .v2-acct-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 11px;
+  border: none;
+  border-radius: 9px;
+  background: none;
+  color: var(--side-fg);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 510;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.v2-root .v2-acct-row:hover {
+  background: var(--side-hover);
+  color: var(--side-fg-strong);
+}
+.v2-root .v2-acct-row svg {
+  width: 17px;
+  height: 17px;
+  flex: none;
+}
+.v2-root .v2-acct-out {
+  opacity: 0.6;
+}
+
+/* ===== Projects sits on the nav's axis ===== */
+/* The picker is inside the sections container, which already pads 10px — its own 10px
+   on top put the glyph at x=41 against the nav's 31. */
+.v2-root .proj-picker-wrap {
+  padding-left: 0;
+  padding-right: 0;
+}
+.v2-root .proj-picker {
+  left: 0;
+  right: 0;
+}
+
+/* ===== Glyphs are one size, folded or not ===== */
+/* They were 20px in the column and 26px in the rail, scaled between the two. Matching
+   them means the fold moves things without resizing them — the glyph you click is the
+   same glyph either way. */
+.v2-root .sidebar-nav .nav-btn svg,
+.v2-root .proj-picker-btn svg,
+.v2-root .collapsed-rail .rail-nav svg {
+  width: 26px;
+  height: 26px;
+}
+/* so nothing scales on the way in or out — only position changes */
+.v2-root .collapsed-rail .rail-nav,
+.v2-root .collapsed-rail .rail-logo-box,
+.v2-root .collapsed-settings .rail-btn {
+  transform: none;
+}
+.v2-root.sidebar-collapsed .collapsed-rail .rail-nav,
+.v2-root.sidebar-collapsed .collapsed-rail .rail-logo-box,
+.v2-root.sidebar-collapsed .collapsed-settings .rail-btn {
+  transform: none;
+}
+
+/* ===== A narrower column, with the chats closer together ===== */
+.v2-root {
+  --sidebar-width: 248px;
+}
+.v2-root .section-item {
+  padding: 5px 11px;
+  margin-bottom: 1px;
+}
+
+/* long titles fade out rather than ending in an ellipsis */
+.v2-root .item-title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: clip;
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 26px), transparent 100%);
+  mask-image: linear-gradient(to right, #000 calc(100% - 26px), transparent 100%);
+}
+
+/* ===== More light on the hero ===== */
+.v2-root .hero-greeting {
+  text-shadow: 0 0 18px rgba(255, 255, 255, 0.5), 0 0 44px rgba(255, 255, 255, 0.28),
+    0 0 90px rgba(255, 255, 255, 0.16);
+}
+.v2-root.light .hero-greeting {
+  text-shadow: none;
+}
+/* The hero mark's glow: one dithered radial, not stacked drop-shadows.
+ *
+ * Three drop-shadows at 10 / 34 / 72px summed into a curve with visible inflections, and
+ * each one is quantised on its own: white at 0.15 alpha over black spans about 38 of the
+ * 256 levels, so across a 72px radius the ramp changes value roughly every two pixels.
+ * That is what the concentric steps were — the falloff was fine, the bit depth was not.
+ *
+ * So the wide light is drawn once, as a radial with fourteen stops following a Gaussian
+ * curve, and the same fractal noise used on the page ground is laid over it. The noise
+ * scatters each boundary across a couple of pixels, which is what actually removes a
+ * band; more stops alone cannot, since the problem is the number of values available
+ * rather than the shape of the ramp.
+ *
+ * The tight near-edge light stays a drop-shadow — at 8px the ramp is too short to band.
+ */
+.v2-root .v2-hero-mark {
+  position: relative;
+}
+.v2-root .v2-hero-mark img {
+  position: relative;
+  z-index: 1;
+  filter: brightness(1.3) drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
+}
+.v2-root:not(.light) .v2-hero-mark::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  /* the mark is the first flex child and 2.4em wide, so its centre is at 1.2em */
+  left: 1.2em;
+  top: 50%;
+  width: 7.2em;
+  height: 7.2em;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"),
+    radial-gradient(
+      circle closest-side,
+      rgba(255, 255, 255, 0.25) 0%,
+      rgba(255, 255, 255, 0.222) 8%,
+      rgba(255, 255, 255, 0.188) 16%,
+      rgba(255, 255, 255, 0.152) 24%,
+      rgba(255, 255, 255, 0.119) 32%,
+      rgba(255, 255, 255, 0.09) 40%,
+      rgba(255, 255, 255, 0.066) 48%,
+      rgba(255, 255, 255, 0.046) 56%,
+      rgba(255, 255, 255, 0.031) 64%,
+      rgba(255, 255, 255, 0.019) 72%,
+      rgba(255, 255, 255, 0.011) 80%,
+      rgba(255, 255, 255, 0.0055) 87%,
+      rgba(255, 255, 255, 0.002) 94%,
+      rgba(255, 255, 255, 0) 100%
+    );
+  /* the noise must ride the glow, not the page — clipped to the same circle */
+  -webkit-mask-image: radial-gradient(circle closest-side, #000 0%, rgba(0, 0, 0, 0.6) 55%, transparent 100%);
+  mask-image: radial-gradient(circle closest-side, #000 0%, rgba(0, 0, 0, 0.6) 55%, transparent 100%);
+}
+.v2-root.light .v2-hero-mark img {
+  filter: none;
+}
+
+/* Avatar onto the same axis. The footer pads 15px where the nav pads 10, so the chip
+   inherits a different origin than every other glyph — 15 + 12 + 9 put the avatar at
+   x=49 against the nav's 34. Matching the nav's 10 + 11 lands it on 34. */
+.v2-root .sidebar-footer {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.v2-root .v2-acct {
+  padding: 0;
+}
+.v2-root .v2-acct-chip {
+  padding: 7px 11px;
+}
+
+/* ===== The definition line ===== */
+/* Dictionary furniture used as ornament: phonetic, rule, sense. It sits on its own line
+   under the lockup and is deliberately quiet — the wordmark is the statement, this is
+   the footnote that gives it its meaning. */
+.v2-root .v2-hero-def {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 11px;
+  /* .1em matches the wordmark's optical inset, so the gloss starts on the L's stem */
+  margin: 12px 0 0 0.1em;
+  font-family: var(--app-font-sans);
+  font-size: 15px;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-shadow: none;
+  opacity: 0.5;
+}
+.v2-root .v2-hero-def i {
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  opacity: 0.85;
+}
+.v2-root .v2-hero-arrow {
+  width: 28px;
+  height: 8px;
+  flex: none;
+  opacity: 0.55;
+}
+.v2-root .v2-hero-def em {
+  font-style: normal;
+  letter-spacing: 0.26em;
+  text-transform: lowercase;
+  padding-left: 0.06em;
+}
+
+/* ===== Lighter glyph weight ===== */
+/* 2.4 was set for 20px icons. Carried onto 26px ones it reads as a heavy outline —
+   the stroke does not scale with the box, so enlarging them thickened them in relative
+   terms too. 1.5 at this size matches the weight of the type beside them, and the
+   rounded joins stop the ends looking blunt. */
+.v2-root .sidebar-nav .nav-btn svg,
+.v2-root .proj-picker-btn svg,
+.v2-root .collapsed-rail .rail-nav svg,
+.v2-root .collapsed-settings .rail-btn svg,
+.v2-root .v2-acct-row svg {
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ===== Recent chats start lower ===== */
+/* The nav now carries four controls, so the list needs air under them rather than
+   butting straight up against Projects. */
+.v2-root .sidebar-section {
+  padding-top: 14px;
+}
+.v2-root .sidebar-section .section-label {
+  margin-top: 6px;
+}
+
+/* ===== Rail glyphs land exactly where the column's are ===== */
+/* The fold cross-fades two separate trees: the column's nav and the fixed rail. If their
+   glyphs do not coincide you watch one set leave and another arrive a few pixels away,
+   which is what stopped it reading as seamless. Measured, the rail sat 1px left and
+   3-7px low of every counterpart. These offsets put each one on its expanded position
+   exactly, so the swap is invisible.
+   Icon centre = rail top + 8px padding + 13px half-glyph, hence top = centre - 21. */
+.v2-root .rail-logo-box {
+  top: 14px;
+  left: 13px;
+}
+.v2-root .collapsed-rail .rail-nav {
+  left: 11px;
+}
+.v2-root .rail-search {
+  top: 69px;
+}
+.v2-root .rail-newchat {
+  top: 116px;
+}
+.v2-root .rail-console {
+  top: 163px;
+}
+.v2-root .rail-projects {
+  top: 212px;
+}
+
+/* the account keeps its place too: avatar only, on the same axis and baseline */
+.v2-root .collapsed-settings {
+  left: 10px;
+  bottom: 13px;
+}
+.v2-root .collapsed-settings .v2-acct-name,
+.v2-root .collapsed-settings .v2-acct-caret {
+  display: none;
+}
+.v2-root .collapsed-settings .v2-acct-chip {
+  width: auto;
+}
+.v2-root .collapsed-settings .v2-acct-menu {
+  left: 0;
+  right: auto;
+  width: 248px;
+}
+
+/* ===== Auth pair sits at the edge now the topbar icons have gone ===== */
+/* It was held 130px in to clear three controls that no longer exist on the landing
+   state. The terminal and side-panel toggles still appear once a chat starts, though,
+   and you can start one without signing in — so the tools step aside while the pair is
+   showing rather than the pair being permanently inset for them. */
+.v2-root .v2-top {
+  right: 24px;
+}
+.v2-root .topbar-tools {
+  margin-right: 300px;
+}
+
+/* ===== New chat leads ===== */
+/* Ordered in CSS rather than moved in the markup, so V1's nav keeps its own order. */
+.v2-root .sidebar-nav #new-chat-btn {
+  order: 1;
+}
+.v2-root .sidebar-nav .nav-btn:nth-of-type(1) {
+  order: 2;
+}
+.v2-root .sidebar-nav .nav-btn:nth-of-type(3) {
+  order: 3;
+}
+.v2-root .sidebar-nav .proj-picker-wrap {
+  order: 4;
+}
+/* the rail follows, or the two stop coinciding and the fold seams again */
+.v2-root .rail-newchat {
+  top: 69px;
+}
+.v2-root .rail-search {
+  top: 116px;
+}
+
+/* ===== Chats a little lower still ===== */
+.v2-root .sidebar-section {
+  padding-top: 22px;
+}
+
+/* ===== A darker hero bar ===== */
+/* It sat lighter than the page; against true black that made it the brightest thing
+   under the lockup. */
+.v2-root .input-bar-wrap.in-hero .input-bar {
+  background: rgba(255, 255, 255, 0.022);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.v2-root .input-bar-wrap.in-hero .input-bar:focus-within {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+.v2-root.light .input-bar-wrap.in-hero .input-bar {
+  background: rgba(26, 25, 22, 0.03);
+  border-color: rgba(26, 25, 22, 0.12);
+}
+
+/* ===== No chat name in the topbar ===== */
+/* The column already says which chat you are in, and the hero says what the product is.
+   A third label between them was the only thing in that corner. */
+.v2-root .topbar-title {
+  display: none;
+}
+
+/* ===== The selected chat reads as a tab ===== */
+/* --color-surface resolves to rgba(0,0,0,0.2) here: a *darker* panel, which worked when
+   the column was #0d0d0d and vanished entirely once it went to true black. All that was
+   left was the text turning white, which is why the highlight looked like it was only on
+   the words. On black it has to be lighter than the surface, not darker.
+   Rows also carry more height so the fill reads as a tab rather than a bar behind text —
+   the tightened pitch is kept by trimming the gap instead. */
+.v2-root:not(.light) .section-item {
+  padding: 8px 11px;
+  margin-bottom: 0;
+}
+.v2-root:not(.light) .section-item:hover {
+  background: rgba(255, 255, 255, 0.045);
+}
+.v2-root:not(.light) .section-item.active {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--side-fg-strong);
+}
+.v2-root:not(.light) .section-item.active:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ===== Brighter hero bar outline ===== */
+.v2-root .input-bar-wrap.in-hero .input-bar {
+  border-color: rgba(255, 255, 255, 0.17);
+}
+.v2-root .input-bar-wrap.in-hero .input-bar:focus-within {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ===== Fold control is a plain left chevron ===== */
+/* The panel glyph read as a diagram of the sidebar rather than an instruction. The
+   chevron already existed as a hover hint; it becomes the control itself, in place,
+   rather than an ornament that slides in beside one. */
+.v2-root .sidebar-fold > svg {
+  display: none;
+}
+.v2-root .fold-arrow {
+  position: static;
+  opacity: 0.65;
+  transform: none;
+  pointer-events: auto;
+  transition: opacity 0.15s ease;
+}
+.v2-root .sidebar-fold:hover .fold-arrow {
+  opacity: 1;
+  transform: none;
+}
+.v2-root .fold-arrow svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 1.6;
+}
+
+/* ===== Open, the lockup is the word; folded, it is the mark ===== */
+/* The rail has no room for type, so the mark carries it there — but with the column
+   open there is space for the wordmark, and it says more than the glyph does. */
+.v2-root .sidebar-logo img.logo-img {
+  display: none;
+}
+.v2-root .sidebar-logo .logo-word {
+  display: block;
+  /* onto the glyph axis: the nav icons start their box at x=21 */
+  margin-left: 5px;
+  font-size: 20px;
+  letter-spacing: 0.34em;
+}
+
+/* ===== Room above the account ===== */
+/* The list ran right up to it; the last row and the avatar were touching. */
+.v2-root .sidebar-section {
+  padding-bottom: 22px;
+  /* the space above the heading moves into the heading itself — as container padding it
+     was bare, so rows scrolled up into it and showed above the pinned label */
+  padding-top: 0;
+}
+.v2-root .sidebar-footer {
+  padding-top: 14px;
+}
+
+/* ===== The list scrolls, not the block around it ===== */
+/* .sidebar-section was the scroller and held the heading as well as the rows, so the
+   heading travelled with them and the scrollbar ran the full height of the block —
+   including alongside the heading.
+   Making the list itself the scroller fixes both at once: the heading is outside it and
+   cannot move, rows cannot pass over it because they are clipped by a box that starts
+   below it, and the scrollbar spans only the rows. The fold hook animates this element's
+   max-height and settles on `none`, so it is free to own overflow. */
+.v2-root .sidebar-section {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-top: 18px;
+  padding-bottom: 0;
+}
+.v2-root .sidebar-section .section-label {
+  position: static;
+  flex: none;
+  margin-top: 0 !important;
+  padding-top: 0;
+  padding-bottom: 8px;
+}
+.v2-root #recent-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  /* keeps the last row clear of the account control below */
+  padding-bottom: 20px;
+}
+
+/* ===== Scrollbar rides in the column's gutter ===== */
+/* The list stopped 13px short of the column edge, so its scrollbar ran alongside the
+   titles rather than in the margin. Stretching the list's box out to the edge — while
+   padding the rows back to where they were — puts the bar in the spacer and leaves the
+   text where it sits. */
+.v2-root #recent-list {
+  margin-right: -10px;
+  /* rows end level with the nav buttons above them; the bar sits in the 6px beyond */
+  padding-right: 4px;
+  scrollbar-gutter: auto;
+}
+
+/* ===== Account trigger matches the other glyphs ===== */
+.v2-root .v2-acct-ico {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  color: var(--side-fg-strong);
+}
+.v2-root .v2-acct-ico svg {
+  width: 26px;
+  height: 26px;
+}
+.v2-root .collapsed-settings .v2-acct-ico {
+  color: var(--side-fg-strong);
+}
+
+/* ===== Rail glyphs: the last 2px ===== */
+/* The nav sits 2px higher than it did when these were set, so every rail glyph was that
+   much low. Same correction to all four keeps them coincident. */
+.v2-root .rail-newchat {
+  top: 67px;
+}
+.v2-root .rail-search {
+  top: 114px;
+}
+.v2-root .rail-console {
+  top: 161px;
+}
+.v2-root .rail-projects {
+  top: 210px;
+}
+
+/* ===== A slower fold ===== */
+/* .28s was tuned against the console's, whose column is 96px wide. This one travels
+   248px in the same time, which is why it reads as instant by comparison. */
+.v2-root {
+  --v2-fold: 0.42s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+.v2-root .sidebar {
+  /* the column's own fade has to run the fold's clock too — at 0.2s it emptied the
+     column in the first half and left an empty box to finish closing, which is what
+     made folding in feel instant even though the box itself takes the same 420ms as
+     folding out */
+  transition: max-width var(--v2-fold), opacity var(--v2-fold);
+}
+.v2-root .sidebar > .sidebar-logo,
+.v2-root .sidebar > .sidebar-nav,
+.v2-root .sidebar > .sidebar-section,
+.v2-root .sidebar > .sidebar-footer {
+  transition: opacity 0.16s ease;
+}
+
+/* ===== Scrollbar hard against the edge ===== */
+.v2-root #recent-list {
+  margin-right: -13px;
+  padding-right: 7px;
+}
+
+/* ===== Hero bar: one flat grey ===== */
+/* The fill was a blurred white rectangle sitting behind a translucent bar — a blur is
+   brightest at its centre and falls away at the edges, so the bar read as a gradient
+   that thinned toward both ends. A solid fill and no backdrop gives one even grey. */
+.v2-root .input-bar-wrap.in-hero .input-bar::before {
+  display: none;
+}
+.v2-root .input-bar-wrap.in-hero .input-bar {
+  background: #131313;
+  box-shadow: none;
+}
+.v2-root .input-bar-wrap.in-hero .input-bar:focus-within {
+  background: #171717;
+}
+.v2-root.light .input-bar-wrap.in-hero .input-bar {
+  background: #f0eee6;
+  box-shadow: none;
+}
+
+/* ===== The glyphs never move, at all ===== */
+/* Two copies exist: the column's, which live inside a box that is narrowing, and the
+   rail's, which are position: fixed and cannot move. They sit at identical coordinates.
+   Cross-fading them doubled their opacity mid-fold (two half-opaque copies do not sum to
+   one), which was the flicker. Switching instantly fixed that but left the column's copy
+   on screen while its box was still narrow, so it got clipped from the right — read as
+   the icons sliding away.
+   So the rail's copy — the one that cannot move or be clipped — is the one shown for the
+   entire transition, in both directions. The handover happens only at the two ends, where
+   the column is fully open, and because the coordinates match it is invisible.
+   Opening: the swap waits for the fold to finish. Closing: it happens immediately. */
+.v2-root .collapsed-rail,
+.v2-root .collapsed-settings {
+  transition: opacity 0s linear 0.42s, visibility 0s linear 0.42s;
+}
+.v2-root .sidebar > .sidebar-logo,
+.v2-root .sidebar > .sidebar-nav,
+.v2-root .sidebar > .sidebar-footer {
+  transition: opacity 0s linear 0.42s;
+}
+.v2-root.sidebar-collapsed .collapsed-rail,
+.v2-root.sidebar-collapsed .collapsed-settings,
+.v2-root.sidebar-collapsed .sidebar > .sidebar-logo,
+.v2-root.sidebar-collapsed .sidebar > .sidebar-nav,
+.v2-root.sidebar-collapsed .sidebar > .sidebar-footer {
+  transition: opacity 0s, visibility 0s;
+}
+.v2-root .sidebar > .sidebar-section {
+  /* same: the chat list was fully gone by 124ms against a 374ms fold */
+  transition: opacity var(--v2-fold);
+}
+
+/* ===== The open lockup carries more light ===== */
+.v2-root .sidebar-logo .logo-word {
+  color: #ffffff;
+  text-shadow: 0 0 14px rgba(255, 255, 255, 0.6), 0 0 34px rgba(255, 255, 255, 0.32),
+    0 0 68px rgba(255, 255, 255, 0.16);
+}
+.v2-root.light .sidebar-logo .logo-word {
+  color: #21221d;
+  text-shadow: none;
+}
+
+/* ===== Labels fade; glyphs still switch ===== */
+/* The nav's opacity was carrying both, so the labels inherited the glyphs' instant
+   handover and popped in at the end of the fold. They have to be driven separately.
+   The glyph takes its colour from its own rule (.nav-btn svg sets --side-fg-strong),
+   so the button's `color` reaches the text alone — fading that fades the label and
+   leaves the icon untouched. The glyph keeps switching outright, so there is still only
+   ever one copy of it on screen. */
+.v2-root .sidebar > .sidebar-nav,
+.v2-root.sidebar-collapsed .sidebar > .sidebar-nav {
+  opacity: 1;
+  transition: none;
+}
+.v2-root .sidebar-nav .nav-btn svg,
+.v2-root .proj-picker-btn svg {
+  opacity: 1;
+  transition: opacity 0s linear 0.42s;
+}
+.v2-root.sidebar-collapsed .sidebar-nav .nav-btn svg,
+.v2-root.sidebar-collapsed .proj-picker-btn svg {
+  opacity: 0;
+  transition: opacity 0s;
+}
+/* on the fold's own clock and curve, both directions, so the type comes and goes with
+   the column rather than on a schedule of its own */
+.v2-root .sidebar-nav .nav-btn,
+.v2-root .proj-picker-btn {
+  transition: color var(--v2-fold), background 0.12s;
+}
+.v2-root.sidebar-collapsed .sidebar-nav .nav-btn,
+.v2-root.sidebar-collapsed .proj-picker-btn {
+  color: transparent;
+  transition: color var(--v2-fold), background 0.12s;
+}
+
+/* ===== The lockup folds the column ===== */
+.v2-root .logo-word-btn {
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+.v2-root .logo-word-btn:hover {
+  opacity: 0.72;
+}
+
+/* ===== Folded, a chevron beside the mark says it opens ===== */
+/* Drawn rather than added to the markup, since it is a hint and not a control — the
+   whole lockup is already the hit area. It only exists in the rail. */
+.v2-root.sidebar-collapsed .rail-logo-box::after {
+  content: "";
+  position: absolute;
+  left: 46px;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid currentColor;
+  border-top: 1.5px solid currentColor;
+  transform: translateY(-50%) rotate(45deg);
+  color: var(--side-fg-strong);
+  opacity: 0.42;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+.v2-root.sidebar-collapsed .rail-logo-box:hover::after {
+  opacity: 0.9;
+}
+
+/* ===== The lockup changes on the press, not at the end ===== */
+/* The nav glyphs hand over at the ends of the fold because they must never be seen
+   twice. The lockup is different: the mark and the word are not the same shape, so
+   there is nothing to double — and holding the mark until the fold finished meant the
+   word appeared as a pop after the column had already opened. Swapping on the press
+   lets the word wipe in with the column instead. */
+.v2-root .sidebar > .sidebar-logo {
+  transition: opacity 0s;
+}
+.v2-root .rail-logo-box {
+  opacity: 0;
+  transition: opacity 0s;
+}
+.v2-root.sidebar-collapsed .rail-logo-box {
+  opacity: 1;
+  transition: opacity 0s;
+}
+
+/* the chevron is part of the lockup's hit area, so pressing it opens the column */
+.v2-root.sidebar-collapsed .rail-logo-box::after {
+  pointer-events: none;
+}
+.v2-root.sidebar-collapsed .rail-expand {
+  inset: -6px -14px -6px -6px;
+}
+
+/* ===== The lockup arrives already in its hover state ===== */
+/* Folding in leaves the cursor sitting on the lockup, so the rail appears already
+   hovered. Its hover swap — mark down to 0.1, expand control up to 1 — ran a 150ms
+   cross-fade, so you saw the mark at full strength first and it then dissolved into the
+   control: a flip the user never asked for, on a button they had just pressed.
+   Resolving it instantly means the control is simply there under the cursor, and the
+   mark returns the moment they move off. */
+.v2-root .rail-logo,
+.v2-root .rail-expand {
+  transition: none;
+}
+
+/* the mark is dimmed to 0.1 on hover, not hidden, so it sat visible behind the expand
+   icon — the two overlap exactly, so anything above zero reads as a ghost */
+.v2-root .rail-logo-box:hover .rail-logo {
+  opacity: 0;
+}
+
+/* ===== The console is a window over the agent, not a second site ===== */
+/* V1 opens it full-bleed, which reads as having left the product. Inset with the agent
+   page visible around it, it reads as something you opened and can close — which is
+   what V2 is arguing the control plane is. */
+.v2-cs-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 449;
+  background: rgba(0, 0, 0, 0.62);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  opacity: 1;
+  transition: opacity 0.42s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+.v2-cs-scrim.out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.v2-root #cs-view {
+  /* A window, not a page with a margin. 3.4vh/2.6vw left so little of the agent showing
+     that it read as full-bleed with a rounded corner; this leaves a real border of the
+     surface it opened from. Capped so it stops growing on a wide display — past about
+     1180px the console is stretched rather than filled — and `margin: auto` centres it
+     inside the inset once a cap binds. */
+  inset: 7vh 7vw;
+  max-width: 1180px;
+  max-height: 790px;
+  margin: auto;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 44px 130px -34px rgba(0, 0, 0, 0.92), 0 0 0 1px rgba(255, 255, 255, 0.09);
+}
+/* the console's own rounded corners have to clip its chrome too */
+.v2-root #cs-view .cs-wrap,
+.v2-root #cs-view .cs-side {
+  border-bottom-left-radius: 18px;
+}
+
+/* ===== Console cleanup =====
+ *
+ * Three things were fighting each other in here.
+ *
+ * The chips came in three saturated colours — amber, blue, neutral — that encode
+ * nothing: 'review instances' and 'health signals' share amber, 'config / policy' and
+ * '12 visible' share blue, and no rule connects either pair. Colour that does not mean
+ * anything is just noise, and on a page that is otherwise ink and cream it was the
+ * loudest thing on screen. One quiet treatment for all of them; if a state ever needs
+ * calling out, it can have the colour back and it will actually read.
+ *
+ * The action buttons were hard-cornered against a page of pills and rounded chips.
+ *
+ * And the nav had two kinds of item — icon rows for Workspace, slash-prefixed text for
+ * Operations — which made one list look like two lists that had been pasted together.
+ * The slashes are gone (state.ts, V2's nav only) and the labels now sit on one axis
+ * whether they carry an icon or not.
+ */
+.v2-root #cs-view .chip,
+.v2-root #cs-view .chip-o,
+.v2-root #cs-view .chip-b,
+.v2-root #cs-view .chip-n {
+  background: rgba(244, 242, 236, 0.07);
+  border: 1px solid rgba(244, 242, 236, 0.1);
+  color: rgba(255, 255, 255, 0.82);
+  border-radius: 6px;
+  font-weight: 400;
+}
+.v2-root #cs-view.cs-day .chip,
+.v2-root #cs-view:not(.cs-night) .chip {
+  background: rgba(26, 25, 22, 0.055);
+  border-color: rgba(26, 25, 22, 0.1);
+  color: rgba(26, 25, 22, 0.78);
+}
+
+.v2-root #cs-view .cs-btn {
+  border-radius: 7px;
+  padding: 13px 20px;
+  /* They were `flex: 0 1 auto` in a nowrap row, so a narrower window shrank all three
+     below their own text — measured 153px against 186px of content. The overflow is
+     visible, so each label ran under the next button's background and read as truncated.
+     They keep their natural width now and the row wraps if there is not room for it. */
+  flex: 0 0 auto;
+}
+.v2-root #cs-view .acts {
+  flex-wrap: wrap;
+  /* wrapped rows stay flush with the row above rather than ragging left */
+  justify-content: flex-end;
+}
+/* Same shape of bug one line up: the budget summary is `flex: 0 1 auto` with
+   overflow: hidden, so the action row squeezed it to 126px against 222px of content and
+   the token count was genuinely cut off — not an artefact of the smaller window, just
+   newly visible in it. It holds its width now and the header row wraps instead. */
+.v2-root #cs-view .ov-btop {
+  flex-wrap: wrap;
+  row-gap: 14px;
+}
+.v2-root #cs-view .ov-spent {
+  flex: 0 0 auto;
+  overflow: visible;
+}
+
+/* The module tiles were cramped in every panel, not just this one — a sweep found them
+   236px wide against 243-295px of content on Dashboard, Usage, API Keys, Users and
+   Machines. The grid is auto-fit with a 230px floor, which is low enough that three
+   columns still "fit" at a width none of the tiles can actually use. Raising the floor
+   drops it to two columns, where each tile gets ~370px and nothing is squeezed. This is
+   what most of the messiness was: label and value colliding inside every tile. */
+.v2-root #cs-view .cs-mods {
+  grid-template-columns: repeat(auto-fit, minmax(272px, 1fr));
+}
+
+/* labels onto one axis, icon or not — the icon column is 26px plus its 10px gap */
+.v2-root #cs-view .cs-item .cs-item-lb {
+  display: inline-block;
+}
+.v2-root #cs-view .cs-item:not(:has(.cs-navico)) .cs-item-lb {
+  padding-left: 36px;
+}
+
+/* full-bleed below tablet, where an inset window leaves too little room */
+@media (max-width: 900px) {
+  .v2-root #cs-view {
+    inset: 0;
+    border-radius: 0;
+  }
+}
+
+/* ===== The chats column adopts the console's type system ===== */
+/* The two columns looked unrelated because they are set on opposite principles:
+ *
+ *   console nav    15px / 500 / +0.16em / uppercase
+ *   agent nav      14px / 510 / -0.005em / sentence case
+ *   console group  11.5px / 500 / +0.34em
+ *   agent label    11px / 700 / +0.07em
+ *
+ * Wide tracking on uppercase reads as air; tight sentence case reads as density. And the
+ * chat titles were 15.5px — larger than the nav above them — so the longest, densest list
+ * was also the loudest thing in the column. That is most of the difference.
+ *
+ * The glyphs stay the size they are; only the type changes. */
+.v2-root .sidebar-nav .nav-btn,
+.v2-root .proj-picker-btn {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.v2-root .sidebar-section .section-label {
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.34em;
+}
+/* the list becomes a second layer rather than the headline */
+.v2-root .section-item {
+  font-size: 13.5px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+.v2-root:not(.light) .section-item {
+  color: rgba(255, 255, 255, 0.62);
+}
+.v2-root:not(.light) .section-item.active {
+  color: #ffffff;
+  font-weight: 500;
+}
+/* and the account line joins the nav's treatment */
+.v2-root .v2-acct-chip {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* ===== The nav reads at full strength ===== */
+/* It was on --color-text-secondary with the glyphs a step brighter than the words, so
+   the row read as two tones. Both go to white; the chat list below stays at 62%, which
+   is what keeps the nav ahead of it. */
+.v2-root:not(.light) .sidebar-nav .nav-btn,
+.v2-root:not(.light) .proj-picker-btn {
+  color: #ffffff;
+}
+.v2-root:not(.light) .sidebar-nav .nav-btn svg,
+.v2-root:not(.light) .proj-picker-btn svg,
+.v2-root:not(.light) .collapsed-rail .rail-nav svg,
+.v2-root:not(.light) .collapsed-settings .v2-acct-ico,
+.v2-root:not(.light) .v2-acct-chip {
+  color: #ffffff;
+}
+/* collapsed still hands the label off to transparent, so the fade is unaffected */
+.v2-root:not(.light).sidebar-collapsed .sidebar-nav .nav-btn,
+.v2-root:not(.light).sidebar-collapsed .proj-picker-btn {
+  color: transparent;
+}
+
+/* ===== The last of the type differences ===== */
+/* Both columns are already MiSans — the font was never the difference. What was left:
+     console item   15px / 500 / 2.40px      agent nav    14px / 500 / 2.24px
+     console group  12.5px / 700 / 3.25px    agent label  11.5px / 500 / 3.90px
+   The group label was the bigger gap: lighter, smaller and wider than the console's,
+   which is why it read as a faint caption rather than a section heading. */
+.v2-root .sidebar-nav .nav-btn,
+.v2-root .proj-picker-btn {
+  font-size: 15px;
+  letter-spacing: 0.16em;
+}
+.v2-root .sidebar-section .section-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.26em;
+}
+.v2-root:not(.light) .sidebar-section .section-label {
+  color: #ffffff;
+}
+
+/* ===== Page and column are the same surface ===== */
+/* They were both #0e0e0e, but the page carried two extra layers the column did not: a
+   fractal-noise texture and a radial gradient lifting the bottom centre by up to 3%
+   white. That gradient is why the middle of the page read lighter than the column
+   beside it. The gradient goes; the noise stays and is given to the column too, so the
+   two are literally the same surface rather than merely the same colour. */
+.v2-root {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+.v2-root .sidebar {
+  background-color: var(--side-bg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+/* ===== The nav carries light ===== */
+/* Same treatment as the lockup, a step quieter — enough to lift the row off the ground
+   without competing with the wordmark above it. */
+.v2-root:not(.light) .sidebar-nav .nav-btn,
+.v2-root:not(.light) .proj-picker-btn {
+  /* one tight stop rather than two wide ones — the white stays, the halo does not */
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.2);
+}
+.v2-root:not(.light) .sidebar-nav .nav-btn svg,
+.v2-root:not(.light) .proj-picker-btn svg,
+.v2-root:not(.light) .collapsed-rail .rail-nav svg {
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.22));
+}
+
+/* ===== The selected row is a white pill, as in the console ===== */
+/* The console marks the current page with a solid --cs-ink fill and --cs-bg type. The
+   chats column was using a 8% white wash instead, which reads as a hover state rather
+   than a selection. Same treatment here: full white, ground-coloured text, and the
+   glow comes off since a white halo on white is only fringing. */
+.v2-root:not(.light) .section-item.active,
+.v2-root:not(.light) .section-item.active:hover,
+.v2-root:not(.light) .sidebar-nav .nav-btn.active {
+  background: #ffffff;
+  color: #0a0a0a;
+  font-weight: 500;
+  text-shadow: none;
+}
+.v2-root:not(.light) .sidebar-nav .nav-btn.active svg,
+.v2-root:not(.light) .section-item.active svg {
+  color: #0a0a0a;
+  filter: none;
+}
+/* the status dot and row actions have to invert with it */
+.v2-root:not(.light) .section-item.active .item-dot {
+  background: #0a0a0a;
+}
+.v2-root:not(.light) .section-item.active .chat-action {
+  color: rgba(10, 10, 10, 0.62);
+}
+.v2-root:not(.light) .section-item.active .chat-action:hover {
+  color: #0a0a0a;
+}
+
+/* ===== Search is a window, not a takeover ===== */
+/* It already floated a 740px panel, but behind a 30px blur across the whole page, which
+   is what made it feel like the app had been replaced. Same scrim the console window
+   uses, and the panel gets an edge and a shadow so it reads as an object sitting on the
+   page rather than the page itself changing. */
+.v2-root .search-overlay {
+  padding-top: 14vh;
+  background: rgba(0, 0, 0, 0.62);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+.v2-root .search-inner {
+  width: min(620px, 100%);
+  border-radius: 18px;
+  overflow: hidden;
+  background: #131313;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 34px 90px -26px rgba(0, 0, 0, 0.85);
+}
+.v2-root.light .search-inner {
+  background: #fffefb;
+  border-color: rgba(26, 25, 22, 0.12);
+}
+
+/* ===== Search, Console and Projects stay lit while open ===== */
+/* Same full-white pill the selected chat uses, so "this is the thing you are in" looks
+   the same whether it is a chat, a picker or a window over the page. */
+.v2-root:not(.light) .sidebar-nav .nav-btn.active,
+.v2-root:not(.light) .proj-picker-btn.active {
+  background: #ffffff;
+  color: #0a0a0a;
+  text-shadow: none;
+}
+.v2-root:not(.light) .sidebar-nav .nav-btn.active svg,
+.v2-root:not(.light) .proj-picker-btn.active svg {
+  color: #0a0a0a;
+  filter: none;
+}
+/* and it stops short of the fold, so the page frames it on all four sides */
+.v2-root .search-results {
+  max-height: 46vh;
+  overflow-y: auto;
+}
+
+/* ===== Smaller glyphs ===== */
+/* 26px was set to match the rail when the two were being reconciled; against 15px type
+   it sits heavy. 20px reads with the words rather than over them. Both copies move
+   together — the fold depends on them being identical. */
+.v2-root .sidebar-nav .nav-btn svg,
+.v2-root .proj-picker-btn svg,
+.v2-root .collapsed-rail .rail-nav svg {
+  width: 20px;
+  height: 20px;
+}
+.v2-root .v2-acct-ico,
+.v2-root .v2-acct-ico svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* rail re-registered after the glyphs shrank — smaller icons shortened the rows, so the
+   fixed copies drifted low by up to 9px down the list */
+.v2-root .rail-newchat {
+  top: 67.3px;
+}
+.v2-root .rail-search {
+  top: 110.8px;
+}
+.v2-root .rail-console {
+  top: 154.3px;
+}
+.v2-root .rail-projects {
+  top: 199.8px;
+}
+
+/* ===== Glyphs on the enso's axis, a touch larger ===== */
+/* The rail's mark centres on x=34 (13px in, 42px wide). At 20px the nav glyphs centred
+   on 31 — three pixels left of it — because their box starts at 21 (10 nav + 11 button).
+   22px glyphs starting at 23 centre on 34, under the mark. Column and rail take the same
+   numbers, since the fold depends on them being identical. */
+.v2-root .sidebar-nav .nav-btn svg,
+.v2-root .proj-picker-btn svg,
+.v2-root .collapsed-rail .rail-nav svg,
+.v2-root .v2-acct-ico,
+.v2-root .v2-acct-ico svg {
+  width: 22px;
+  height: 22px;
+}
+.v2-root .sidebar-nav .nav-btn,
+.v2-root .proj-picker-btn {
+  padding-left: 13px;
+}
+.v2-root .collapsed-rail .rail-nav {
+  left: 13px;
+}
+.v2-root .v2-acct-chip {
+  padding-left: 13px;
+}
+
+/* ===== The list keeps clear of the account ===== */
+.v2-root #recent-list {
+  padding-bottom: 34px;
+}
+.v2-root .sidebar-footer {
+  padding-top: 18px;
+}
+
+/* ===== The column's edge stops short of the corners ===== */
+/* A full-height rule reads as a frame; inset top and bottom it reads as a seam between
+   two surfaces, which is what it is. */
+.v2-root .sidebar {
+  position: relative;
+  border-right: none;
+}
+.v2-root:not(.light) .sidebar::after {
+  content: "";
+  position: absolute;
+  top: 22px;
+  bottom: 22px;
+  right: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+
+/* ===== The page darkens away from the column ===== */
+/* The column keeps its tone and the page falls off to true black on the right, so the
+   two surfaces are read as lit from the same side rather than as one flat field. The
+   gradient's first 14% sits under the column, hence starting it at the column's own
+   value — the visible part begins already stepping down. */
+.v2-root:not(.light) {
+  --color-bg: #000000;
+}
+.v2-root:not(.light) {
+  background-color: #000000;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"),
+    linear-gradient(90deg, #0a0a0a 0%, #060606 26%, #020202 52%, #000000 74%);
+  background-repeat: repeat, no-repeat;
+}
+/* the column stays the brighter of the two */
+.v2-root:not(.light) {
+  --side-bg: #0c0c0c;
+}
+
+/* ===== Falloff reaches black sooner, and the right is untextured ===== */
+/* The noise was lifting the whole page by a few values, so "black" was never quite
+   black. The page drops the texture and keeps it on the column, which is the surface
+   that should read as lit. */
+.v2-root:not(.light) {
+  background-image: linear-gradient(90deg, #0b0b0b 0%, #050505 18%, #000000 36%);
+  background-repeat: no-repeat;
+}
+
+/* ===== The scrollbar is not the column's edge ===== */
+/* Inset the seam and the scrollbar becomes the long vertical line instead — it runs the
+   full list. Idle it is invisible; it appears on hover over the column. */
+.v2-root #recent-list::-webkit-scrollbar {
+  width: 3px;
+}
+.v2-root #recent-list::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 999px;
+  transition: background 0.2s ease;
+}
+.v2-root .sidebar:hover #recent-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+}
+/* deliberately not setting scrollbar-width: once it is set, Chromium sizes the bar
+   itself and ignores ::-webkit-scrollbar, which is why the thumb was 11px rather than
+   the 3px asked for. */
+
+/* ===== One continuous falloff, no join ===== */
+/* The column was painting its own flat tone against a gradient page, so however close
+   the two values got there was still a switch at the boundary. The column paints
+   nothing now — its brightness is the page's gradient showing through — so left-to-right
+   there is a single ramp with the column sitting in its bright end. */
+.v2-root:not(.light) .sidebar {
+  background-color: transparent;
+  background-image: none;
+}
+.v2-root:not(.light) {
+  background-color: #000000;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"),
+    linear-gradient(90deg, #151515 0%, #101010 9%, #090909 18%, #030303 30%, #000000 44%);
+  background-repeat: repeat, no-repeat;
+}
+
+/* ===== The seam is a taper, not a rule ===== */
+/* Widest and brightest at the middle, narrowing and fading to nothing at both ends, so
+   it reads as a soft division rather than a drawn border. The clip is a lens: the
+   element is 3px wide and pinched to a point top and bottom, while the gradient takes
+   the opacity down over the same run. */
+.v2-root:not(.light) .sidebar::after {
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  /* Measured against the column: the nav ends at 19% and the chat list at 95%, so the
+     seam is nothing beside New chat / Search / Console / Projects, comes up through the
+     first chats, and is gone again before the last of them. */
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0) 20%,
+    rgba(255, 255, 255, 0.13) 34%,
+    rgba(255, 255, 255, 0.13) 72%,
+    rgba(255, 255, 255, 0) 88%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  /* a true vertical lens — the earlier polygon was a horizontal wedge, full height at the
+     right edge and pointed at the left, which tapers across the width rather than along
+     the run. This one is 0 wide at both ends and 3px across the middle. */
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+/* ===== The scroll thumb rides in the seam ===== */
+/* Both already sit at x=245-248; the thumb was just invisible until hover. Standing
+   visible and toned to match, it reads as the seam thickening where you are in the list
+   rather than as a second line beside it. */
+.v2-root:not(.light) #recent-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+}
+.v2-root:not(.light) .sidebar:hover #recent-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+
+/* ===== The thumb is a thin white line in the seam ===== */
+.v2-root #recent-list::-webkit-scrollbar {
+  width: 0;
+}
+.v2-root #recent-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+/* full radius on a 2px bar rounds the ends to a point, which is as close as a native
+   thumb gets to tapering — its width cannot vary along its own length */
+.v2-root:not(.light) #recent-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 999px;
+}
+.v2-root:not(.light) .sidebar:hover #recent-list::-webkit-scrollbar-thumb {
+  background: #ffffff;
+}
+
+/* ===== The seam glows rather than rules ===== */
+/* An illumination: brightest across the middle and gone at either end, with a soft
+   bloom either side of the line so it reads as light on the edge rather than a drawn
+   border. */
+.v2-root:not(.light) .sidebar::after {
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 18%,
+    rgba(255, 255, 255, 0.26) 40%,
+    rgba(255, 255, 255, 0.32) 50%,
+    rgba(255, 255, 255, 0.26) 60%,
+    rgba(255, 255, 255, 0) 82%
+  );
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  filter: blur(0.4px);
+  /* biased left and tighter, so the bloom sits on the column's edge instead of spilling
+     out across the page */
+  box-shadow: -2px 0 6px rgba(255, 255, 255, 0.13);
+}
+
+/* ===== The drawn scroll indicator ===== */
+/* Replaces the native thumb, which could not taper. Same 2px lane as the seam, clipped
+   to a lens and faded at both ends, so it reads as the seam brightening at your place
+   in the list. */
+.v2-seam-scroll {
+  position: fixed;
+  z-index: 45;
+  width: 2px;
+  pointer-events: none;
+  border-radius: 999px;
+  /* A mask, not a clip. The polygon had six corners, and every one of them was a visible
+     facet in a 2px-wide bar — that is what made the taper look stepped. A mask fades
+     continuously and needs no geometry. */
+  background: #ffffff;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.6) 12%,
+    #000 32%,
+    #000 68%,
+    rgba(0, 0, 0, 0.6) 88%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.6) 12%,
+    #000 32%,
+    #000 68%,
+    rgba(0, 0, 0, 0.6) 88%,
+    transparent 100%
+  );
+  box-shadow: -1px 0 8px rgba(255, 255, 255, 0.3);
+}
+.console-root.light .v2-seam-scroll {
+  background: linear-gradient(
+    to bottom,
+    rgba(26, 25, 22, 0) 0%,
+    rgba(26, 25, 22, 0.8) 26%,
+    rgba(26, 25, 22, 0.9) 50%,
+    rgba(26, 25, 22, 0.8) 74%,
+    rgba(26, 25, 22, 0) 100%
+  );
+  box-shadow: none;
+}
+
+/* ===== Smoother ground ramp ===== */
+/* #151515 to black across a wide area is only 21 steps of an 8-bit channel, so the ramp
+   bands — visible as stepping, and the pop-out's blurred scrim amplifies it. More stops
+   shorten each band and the noise dithers across them. */
+.v2-root:not(.light) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E"),
+    linear-gradient(90deg, #151515 0%, #131313 5%, #111111 9%, #0f0f0f 13%,
+      #0d0d0d 17%, #0b0b0b 21%, #090909 25%, #070707 29%, #050505 33%,
+      #030303 37%, #010101 41%, #000000 46%);
+}
+.v2-root .v2-gate-scrim {
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+/* ===== The hero bar, on the column's terms ===== */
+/* Its glyphs were a 31px plus at stroke 2, a text-character star for the model, and
+   16px controls at stroke 2 — three different weights in one bar. They take the nav's
+   weight and a consistent size instead. The plus is the same mark New chat uses, which
+   is the point: attaching and starting are the same gesture. */
+/* .input-plus also carries .icon-btn, so this needs the extra class to outrank the
+   generic control size below it */
+.v2-root .icon-btn.input-plus svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 1.5;
+}
+.v2-root .icon-btn svg {
+  width: 17px;
+  height: 17px;
+  stroke-width: 1.5;
+}
+.v2-root .model-selector svg {
+  stroke-width: 1.5;
+}
+
+/* the marker is a real glyph now, not a restyled text character */
+.v2-root .model-icon {
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.8;
+}
+.v2-root .model-icon svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* ===== A lit edge rather than an outline ===== */
+/* The flat 1px border reads as a drawn box. This is the seam's language: a hairline that
+   is brightest along the top, where light would catch it, falling away down the sides. */
+.v2-root:not(.light) .input-bar-wrap.in-hero .input-bar {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(#131313, #131313) padding-box,
+    linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.22) 0%,
+        rgba(255, 255, 255, 0.1) 34%,
+        rgba(255, 255, 255, 0.05) 70%,
+        rgba(255, 255, 255, 0.04) 100%
+      )
+      border-box;
+}
+.v2-root:not(.light) .input-bar-wrap.in-hero .input-bar:focus-within {
+  background:
+    linear-gradient(#171717, #171717) padding-box,
+    linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.4) 0%,
+        rgba(255, 255, 255, 0.18) 34%,
+        rgba(255, 255, 255, 0.1) 70%,
+        rgba(255, 255, 255, 0.08) 100%
+      )
+      border-box;
+}
+
+/* ===== Goal mode =====
+ *
+ * One block. This control had eight generations of stacked overrides appended to it, each
+ * partially defeating the last — which is why nothing lined up. Everything below is the
+ * only description of it.
+ *
+ * The channel and the bulb are lit as OPPOSITES, because they are opposite things.
+ *
+ * A bright top rim is how a raised surface catches light — right for the hero bar, and
+ * right for the bulb, which sits proud in the groove. It is wrong for the groove itself,
+ * and lighting the channel that way is what made this read as a flat pill with a stroke
+ * on it. So the channel's lip is shadowed along the top and catches light along the
+ * bottom, its floor is darkest immediately under the upper lip, and the bulb casts a
+ * contact shadow into it. The bulb keeps its lit rim.
+ *
+ * Both are built the same way — fill on padding-box under a gradient on border-box —
+ * only the direction of the light differs. Nothing is painted onto either face, so it
+ * stays matte.
+ *
+ * Still matte and still transparent: the fill is a few percent white over a 16px backdrop
+ * blur, so the ground shows through and moves under it.
+ *
+ * The liquid is in the travel, not in a filter. The bulb is pinned by BOTH insets, and
+ * they transition on different delays: the leading edge leaves immediately, the trailing
+ * edge follows 0.1s later. Mid-travel the circle is a stretched lozenge; at rest it is a
+ * circle again. Which edge leads is swapped between the two rules, so the stretch reads
+ * the same going out and coming back.
+ *
+ * Geometry — track 94x38 border-box (2.47:1, the reference's proportion), 1px border, so
+ * the padding box is 92x36. Bulb inset 3px all round => 30px circle: left 3/right 59 off,
+ * left 59/right 3 on, 56px of travel. Resizing the track means moving the far inset by
+ * the same amount or the bulb stops being round.
+ */
+.v2-root .v2-goal {
+  --v2-violet: 150, 122, 255;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: -14px auto 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.v2-root .v2-goal-track {
+  position: relative;
+  display: block;
+  width: 94px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  /* Floor, then lip. The floor is darkest immediately under the upper lip and opens up
+     toward the bottom, which is where light that gets in ends up. */
+  background: linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.5) 0%,
+        rgba(0, 0, 0, 0.22) 45%,
+        rgba(255, 255, 255, 0.035) 100%
+      )
+      padding-box,
+    linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.72) 0%,
+        rgba(255, 255, 255, 0.035) 52%,
+        rgba(255, 255, 255, 0.26) 100%
+      )
+      border-box;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  /* Three shadows, each doing one physical job: occlusion tight under the upper lip,
+     light bouncing off the floor along the lower inside, and a single lit pixel on the
+     page just below the groove — the surface itself catching light at the far edge. */
+  box-shadow: inset 0 2px 3px -1px rgba(0, 0, 0, 0.85), inset 0 4px 8px -4px rgba(0, 0, 0, 0.6),
+    inset 0 -1px 1.5px rgba(255, 255, 255, 0.09), 0 1px 0 rgba(255, 255, 255, 0.045);
+  transition: background 0.42s cubic-bezier(0.33, 0.45, 0.25, 1),
+    box-shadow 0.42s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+
+/* on: the pane takes the tint and the glow sits on the TRACK — concentric with it and
+   sharing its radius. It used to be on the button, which also contains the label, so the
+   halo was a rounded box drawn around the pair. That was the misalignment. */
+.v2-root .v2-goal.on .v2-goal-track {
+  background: linear-gradient(
+        180deg,
+        rgba(24, 12, 60, 0.55) 0%,
+        rgba(var(--v2-violet), 0.16) 48%,
+        rgba(var(--v2-violet), 0.3) 100%
+      )
+      padding-box,
+    linear-gradient(
+        180deg,
+        rgba(10, 4, 32, 0.75) 0%,
+        rgba(var(--v2-violet), 0.24) 52%,
+        rgba(var(--v2-violet), 0.72) 100%
+      )
+      border-box;
+  box-shadow: inset 0 2px 3px -1px rgba(0, 0, 0, 0.7), inset 0 4px 8px -4px rgba(0, 0, 0, 0.45),
+    inset 0 -1px 1.5px rgba(var(--v2-violet), 0.5), 0 1px 0 rgba(255, 255, 255, 0.045),
+    0 0 22px -7px rgba(var(--v2-violet), 0.6);
+}
+
+.v2-root .v2-goal-knob {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  right: 59px;
+  border-radius: 999px;
+  /* Built the same way as the hero bar: matte fill on padding-box, a gradient on
+     border-box. That leaves a hairline lit along the top of the bulb that falls off
+     downward — the small highlight that gives the bar its depth. It is a rim, not a
+     specular: nothing is painted on the face, so it stays matte.
+     The insets fix the margin box, so the 1px border eats inward and the bulb is still
+     30px across. */
+  border: 1px solid transparent;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.31), rgba(255, 255, 255, 0.25)) padding-box,
+    linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.62) 0%,
+        rgba(255, 255, 255, 0.24) 38%,
+        rgba(255, 255, 255, 0.08) 100%
+      )
+      border-box;
+  /* it sits IN the groove, so it needs contact: a tight dark line where it meets the
+     floor, then the cast shadow falling away under it */
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.55), 0 3px 7px -2px rgba(0, 0, 0, 0.85);
+  /* off state: on the way back `left` is the leading edge, so it goes first */
+  transition: left 0.5s cubic-bezier(0.42, 0.02, 0.18, 1),
+    right 0.5s cubic-bezier(0.42, 0.02, 0.18, 1) 0.1s,
+    background 0.42s cubic-bezier(0.33, 0.45, 0.25, 1),
+    box-shadow 0.42s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+
+.v2-root .v2-goal.on .v2-goal-knob {
+  left: 59px;
+  right: 3px;
+  background: linear-gradient(180deg, rgba(168, 143, 255, 0.95), rgba(134, 104, 248, 0.92)) padding-box,
+    linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.72) 0%,
+        rgba(255, 255, 255, 0.26) 38%,
+        rgba(var(--v2-violet), 0.35) 100%
+      )
+      border-box;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.45), 0 3px 8px -2px rgba(0, 0, 0, 0.7),
+    0 0 14px -3px rgba(var(--v2-violet), 0.75);
+  /* going out `right` leads and `left` trails — mirror of the rule above */
+  transition: right 0.5s cubic-bezier(0.42, 0.02, 0.18, 1),
+    left 0.5s cubic-bezier(0.42, 0.02, 0.18, 1) 0.1s,
+    background 0.42s cubic-bezier(0.33, 0.45, 0.25, 1),
+    box-shadow 0.42s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+
+/* pressing settles the bulb deeper into the recess */
+.v2-root .v2-goal:active .v2-goal-knob {
+  top: 4px;
+  bottom: 4px;
+  box-shadow: 0 1px 3px -1px rgba(0, 0, 0, 0.8);
+}
+
+.v2-root .v2-goal-label {
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+  transition: color 0.42s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+.v2-root .v2-goal.on .v2-goal-label {
+  color: rgba(var(--v2-violet), 0.9);
+}
+
+/* the goo filter is gone — the merge was one frame of the reference's animation, not the
+   thing it was showing. This keeps the leftover nodes from occupying space. */
+.v2-root .v2-goal-goo {
+  display: contents;
+}
+.v2-root .v2-goal-fill,
+.v2-root .v2-goal-defs {
+  display: none;
+}
+
+.v2-root.light .v2-goal-track {
+  background: linear-gradient(180deg, rgba(26, 25, 22, 0.14) 0%, rgba(26, 25, 22, 0.05) 55%, rgba(255, 255, 255, 0.5) 100%)
+      padding-box,
+    linear-gradient(180deg, rgba(26, 25, 22, 0.3) 0%, rgba(26, 25, 22, 0.08) 55%, rgba(255, 255, 255, 0.85) 100%)
+      border-box;
+  box-shadow: inset 0 2px 3px -1px rgba(26, 25, 22, 0.3), inset 0 -1px 1.5px rgba(255, 255, 255, 0.8),
+    0 1px 0 rgba(255, 255, 255, 0.7);
+}
+.v2-root.light .v2-goal-knob {
+  background: linear-gradient(180deg, rgba(26, 25, 22, 0.36), rgba(26, 25, 22, 0.3)) padding-box,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(26, 25, 22, 0.18) 100%) border-box;
+}
+.v2-root.light .v2-goal-label {
+  color: rgba(26, 25, 22, 0.42);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v2-root .v2-goal-knob,
+  .v2-root .v2-goal-track,
+  .v2-root .v2-goal-label {
+    transition-duration: 0.01ms;
+    transition-delay: 0ms;
+  }
+}
+
+/* ===== The open lockup sits on the glyph axis ===== *
+ * Measured: the wordmark's box started at x=21 and the nav glyphs at x=23, so LOGOS hung
+ * two pixels past the column of icons under it. The margin carries it onto their axis and
+ * the extra allowance below covers the font's own left side bearing, which is not part of
+ * the box. Bigger and lit harder — it is the one piece of type at the top of the column.
+ */
+.v2-root .sidebar-logo .logo-word {
+  margin-left: 7px;
+  font-size: 23px;
+  color: #ffffff;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.75), 0 0 30px rgba(255, 255, 255, 0.42),
+    0 0 62px rgba(255, 255, 255, 0.2);
+}
+.v2-root.light .sidebar-logo .logo-word {
+  color: #1a1916;
+  text-shadow: none;
+}
+
+/* ===== V2 conversation =====
+ *
+ * Only the person gets a bubble. A bubble is a container, and a container earns its
+ * keep when something sits beside it — the user's turn is short and needs an edge to
+ * end at; the agent's turn is the body of the page and does not. Boxing both made the
+ * answer read as a quoted excerpt of itself, which is what made the old thread look
+ * dated.
+ *
+ * Text is brighter across the board. The agent's prose is the product, and it was
+ * running at the same weight as the chrome around it.
+ */
+.v2-root .v2-tk {
+  width: 100%;
+  max-width: 768px;
+  margin: 0 auto;
+  padding: 30px 0 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* ————— the person ————— */
+.v2-root .v2-tk-user {
+  display: flex;
+  justify-content: flex-end;
+}
+.v2-root .v2-tk-bubble {
+  max-width: 78%;
+  padding: 11px 16px;
+  border-radius: 18px;
+  border: 1px solid transparent;
+  /* the hero bar's construction, at bubble scale — this is a raised surface, so the
+     rim is lit along the top */
+  background: linear-gradient(180deg, #1c1c1c, #171717) padding-box,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.06) 55%, rgba(255, 255, 255, 0.04) 100%)
+      border-box;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 14.5px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* ————— the agent ————— */
+.v2-root .v2-tk-agent {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* the reasoning strip: steps on a hairline rail, then one line you can reopen */
+.v2-root .v2-tk-think {
+  align-self: flex-start;
+  max-width: 100%;
+}
+.v2-root .v2-tk-think-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12.5px;
+  letter-spacing: 0.01em;
+  transition: color 0.2s ease;
+}
+.v2-root .v2-tk-think-head:hover {
+  color: rgba(255, 255, 255, 0.78);
+}
+/* The thinking mark: four strands, flexing.
+ *
+ * Same language as before — small elements running one wave, each delayed by its
+ * position so the deformation travels rather than everything moving in unison. Bars
+ * instead of a dot lattice: they hold their shape at 20px where nine dots start to mush
+ * together, and a height changing reads as movement more directly than a dot shifting.
+ *
+ * Idle is the same four bars at a flat, even rest. The mark keeps its identity between
+ * states and simply stops moving — no spinner, no circle.
+ */
+.v2-root .v2-tk-grid {
+  width: 19px;
+  height: 19px;
+  overflow: visible;
+}
+.v2-root .v2-tk-node {
+  fill: rgb(var(--v2-violet, 150, 122, 255));
+  opacity: 0.45;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity 0.45s ease, fill 0.45s ease, transform 0.45s cubic-bezier(0.33, 0.45, 0.25, 1);
+  transform: scaleY(0.34);
+}
+.v2-root .v2-tk-think:not(.done) .v2-tk-grid {
+  /* a finer bar carries less of its own light, so the bloom comes down with it —
+     otherwise the glow does the work the stroke used to and it reads fat again */
+  filter: drop-shadow(0 0 4px rgba(var(--v2-violet, 150, 122, 255), 0.8))
+    drop-shadow(0 0 10px rgba(var(--v2-violet, 150, 122, 255), 0.4));
+}
+.v2-root .v2-tk-think:not(.done) .v2-tk-node {
+  opacity: 1;
+  transition: none;
+  animation: v2-tk-bend 1.15s ease-in-out infinite;
+}
+@keyframes v2-tk-bend {
+  0%, 100% { transform: scaleY(0.28); opacity: 0.5; }
+  45% { transform: scaleY(1); opacity: 1; }
+}
+/* resolved: the strands settle level and the light goes out */
+.v2-root .v2-tk-think.done .v2-tk-node {
+  fill: rgba(var(--v2-violet, 150, 122, 255), 0.6);
+}
+
+/* the title shimmers while it is working, which is the one place motion belongs */
+.v2-root .v2-tk-think:not(.done) .v2-tk-think-title {
+  background: linear-gradient(
+      100deg,
+      rgba(255, 255, 255, 0.42) 30%,
+      rgba(255, 255, 255, 0.95) 50%,
+      rgba(255, 255, 255, 0.42) 70%
+    )
+    0 0 / 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: v2-tk-shimmer 1.9s linear infinite;
+}
+@keyframes v2-tk-shimmer {
+  to { background-position: -220% 0; }
+}
+.v2-root .v2-tk-think-caret {
+  width: 13px;
+  height: 13px;
+  opacity: 0.55;
+  transition: transform 0.28s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+.v2-root .v2-tk-think.open .v2-tk-think-caret {
+  transform: rotate(180deg);
+}
+
+/* grid-template-rows animates where max-height cannot: no dead zone, and no cap to
+   guess at when the step list is longer than expected */
+.v2-root .v2-tk-think-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.34s cubic-bezier(0.33, 0.45, 0.25, 1),
+    opacity 0.28s ease;
+  opacity: 0;
+}
+.v2-root .v2-tk-think.open .v2-tk-think-body {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+.v2-root .v2-tk-think-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+.v2-root .v2-tk-step {
+  position: relative;
+  margin-left: 2px;
+  padding: 5px 0 5px 16px;
+  border-left: 1px solid rgba(255, 255, 255, 0.13);
+  color: rgba(255, 255, 255, 0.46);
+  font-size: 12.5px;
+  line-height: 1.5;
+  animation: v2-tk-step-in 0.34s cubic-bezier(0.33, 0.45, 0.25, 1) both;
+}
+.v2-root .v2-tk-step:first-child {
+  padding-top: 9px;
+}
+.v2-root .v2-tk-step::before {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  margin-top: -2.5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.28);
+}
+@keyframes v2-tk-step-in {
+  from { opacity: 0; transform: translateY(-3px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ————— the answer ————— */
+.v2-root .v2-tk-body {
+  color: rgba(255, 255, 255, 0.93);
+  font-size: 15px;
+  line-height: 1.72;
+  overflow-wrap: anywhere;
+}
+.v2-root .v2-tk-body > *:first-child {
+  margin-top: 0;
+}
+.v2-root .v2-tk-body > *:last-child {
+  margin-bottom: 0;
+}
+.v2-root .v2-tk-body p {
+  margin: 0 0 15px;
+}
+.v2-root .v2-tk-body h3 {
+  margin: 26px 0 11px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #ffffff;
+}
+.v2-root .v2-tk-body strong {
+  font-weight: 600;
+  color: #ffffff;
+}
+.v2-root .v2-tk-body ul {
+  margin: 0 0 15px;
+  padding-left: 3px;
+  list-style: none;
+}
+.v2-root .v2-tk-body li {
+  position: relative;
+  padding-left: 18px;
+  margin-bottom: 7px;
+}
+.v2-root .v2-tk-body li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 0.72em;
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.4);
+}
+.v2-root .v2-tk-code {
+  padding: 1.5px 5px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.86em;
+  color: #e8e2d4;
+}
+.v2-root .v2-tk-pre {
+  position: relative;
+  margin: 0 0 16px;
+  padding: 15px 16px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  /* a code block is inset in the page, so it is lit as a recess: shadowed top lip,
+     lit bottom lip — the same rule the goal-mode channel follows */
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.24)) padding-box,
+    linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(255, 255, 255, 0.04) 55%, rgba(255, 255, 255, 0.14) 100%)
+      border-box;
+  box-shadow: inset 0 2px 4px -2px rgba(0, 0, 0, 0.8);
+  overflow-x: auto;
+}
+.v2-root .v2-tk-pre code {
+  font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12.6px;
+  line-height: 1.68;
+  color: #ddd6c6;
+  white-space: pre;
+}
+.v2-root .v2-tk-lang {
+  position: absolute;
+  top: 9px;
+  right: 12px;
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.26);
+}
+
+/* the caret rides the last line while tokens are arriving */
+.v2-root .v2-tk-body.streaming > *:last-child::after {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 1.02em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  border-radius: 1px;
+  background: rgba(var(--v2-violet, 150, 122, 255), 0.95);
+  animation: v2-tk-caret 1s steps(2, start) infinite;
+}
+@keyframes v2-tk-caret {
+  50% { opacity: 0; }
+}
+
+/* ————— per-turn actions ————— */
+.v2-root .v2-tk-actions {
+  display: flex;
+  gap: 2px;
+  margin-top: -2px;
+  opacity: 0;
+  transition: opacity 0.22s ease;
+}
+.v2-root .v2-tk-agent:hover .v2-tk-actions {
+  opacity: 1;
+}
+.v2-root .v2-tk-actions button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.42);
+  transition: color 0.18s ease, background 0.18s ease;
+}
+.v2-root .v2-tk-actions button:hover {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.07);
+}
+.v2-root .v2-tk-actions svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ————— light ————— */
+.v2-root.light .v2-tk-bubble {
+  background: linear-gradient(180deg, #ffffff, #f7f5ef) padding-box,
+    linear-gradient(180deg, rgba(26, 25, 22, 0.14), rgba(26, 25, 22, 0.08)) border-box;
+  color: #1a1916;
+}
+.v2-root.light .v2-tk-body {
+  color: #26251f;
+}
+.v2-root.light .v2-tk-body h3,
+.v2-root.light .v2-tk-body strong {
+  color: #14130f;
+}
+.v2-root.light .v2-tk-think-head {
+  color: rgba(26, 25, 22, 0.55);
+}
+.v2-root.light .v2-tk-step {
+  color: rgba(26, 25, 22, 0.5);
+  border-left-color: rgba(26, 25, 22, 0.14);
+}
+.v2-root.light .v2-tk-pre {
+  background: linear-gradient(180deg, rgba(26, 25, 22, 0.06), rgba(26, 25, 22, 0.03)) padding-box,
+    linear-gradient(180deg, rgba(26, 25, 22, 0.16), rgba(255, 255, 255, 0.9)) border-box;
+}
+.v2-root.light .v2-tk-pre code,
+.v2-root.light .v2-tk-code {
+  color: #2b2a24;
+}
+.v2-root.light .v2-tk-code {
+  background: rgba(26, 25, 22, 0.07);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v2-root .v2-tk-think-title,
+  .v2-root .v2-tk-node,
+  .v2-root .v2-tk-step,
+  .v2-root .v2-tk-body.streaming > *:last-child::after {
+    animation: none;
+  }
+}
+
+/* ===== The composer keeps the hero bar's material once it drops to the bottom =====
+ * It was reverting to the plain chat.css bar down there, so the surface you had just
+ * been typing into changed material as soon as you sent — the same control should not
+ * be made of two different things.
+ */
+.v2-root:not(.light) .input-bar-wrap:not(.in-hero) .input-bar,
+.v2-root:not(.light) .input-bar-wrap.in-hero .input-bar {
+  border: 1px solid transparent;
+  background: linear-gradient(#131313, #131313) padding-box,
+    linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.22) 0%,
+        rgba(255, 255, 255, 0.1) 34%,
+        rgba(255, 255, 255, 0.05) 70%,
+        rgba(255, 255, 255, 0.04) 100%
+      )
+      border-box;
+  box-shadow: 0 8px 30px -14px rgba(0, 0, 0, 0.9);
+}
+.v2-root:not(.light) .input-bar-wrap:not(.in-hero) .input-bar:focus-within {
+  background: linear-gradient(#171717, #171717) padding-box,
+    linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.4) 0%,
+        rgba(255, 255, 255, 0.18) 34%,
+        rgba(255, 255, 255, 0.1) 70%,
+        rgba(255, 255, 255, 0.08) 100%
+      )
+      border-box;
+}
+.v2-root.light .input-bar-wrap:not(.in-hero) .input-bar {
+  background: #f0eee6;
+}
+
+/* ===== Composer bulbs =====
+ * Only in the bottom bar — the hero states Goal mode at full size below itself instead.
+ *
+ * Same material as the bar they sit in, and lit as raised objects: dark fill on
+ * padding-box, a rim on border-box that is brightest along the top. That is the rule the
+ * hero bar and the goal-mode knob both follow; the channel and the code blocks follow
+ * the inverse because they are recesses.
+ */
+/* the wrap becomes the row that holds them; .nav-arrows is absolutely positioned, so
+   it is unaffected by the switch to flex */
+/* One control bar, the same shape whether or not you have said anything yet. */
+.v2-root .input-bar-wrap {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 11px;
+}
+/* the bar centres itself with `margin: 0 auto`, and an auto margin in a flex row eats
+   every pixel of free space — measured 583px a side, which threw the capsules out to the
+   viewport edges. The row centres the group instead. */
+.v2-root .input-bar-wrap .input-bar {
+  flex: 0 1 auto;
+  width: 100%;
+  margin: 0;
+  min-width: 0;
+}
+
+.v2-root .v2-bulb {
+  --v2-violet: 150, 122, 255;
+  position: relative;
+  /* Capsules, not circles. They were circles by aspect-ratio, which only proposes a
+     width — at a narrow viewport flex shrank it and they came out as ovals by accident.
+     The oval is the better shape, so it is stated outright: a fixed width that cannot be
+     shrunk, height still taken from the bar by stretching. Both are given the same width,
+     so the pair always matches whatever the bar does. */
+  flex: 0 0 38px;
+  width: 38px;
+  align-self: stretch;
+  height: auto;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #1b1b1b, #151515) padding-box,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.08) 55%, rgba(255, 255, 255, 0.05) 100%)
+      border-box;
+  box-shadow: 0 2px 8px -3px rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 0.24s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+.v2-root .v2-bulb:hover {
+  color: rgba(255, 255, 255, 0.95);
+}
+.v2-root .v2-bulb:active {
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+.v2-root .v2-bulb-glyph {
+  width: 19px;
+  height: 19px;
+  /* the glyph sits under the ring, both centred on the same box */
+  grid-area: 1 / 1;
+}
+
+/* the speed ring: the same arc language the thread's thinking mark uses, so a ring
+   closing means the same thing in both places. Cream, not violet — violet is Goal
+   mode's, and two violet controls either side of the bar would read as one setting
+   split in half. */
+.v2-root .v2-bulb-ring {
+  /* fills the button rather than sitting in the grid cell, so the gauge is the button's
+     own outline; the glyph keeps the cell to itself and stays centred */
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  /* an SVG clips to its own viewport by default, so the arc's drop-shadow was being cut
+     off square — that was the box visible around the ring, not a border */
+  overflow: visible;
+}
+.v2-root .v2-bulb-ring-track,
+.v2-root .v2-bulb-ring-arc {
+  /* the box is stretched to the capsule, so the stroke must not stretch with it */
+  vector-effect: non-scaling-stroke;
+}
+.v2-root .v2-bulb-ring-track {
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 1.5;
+}
+.v2-root .v2-bulb-ring-arc {
+  stroke: rgb(var(--v2-violet));
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 5px rgba(var(--v2-violet), 0.9)) drop-shadow(0 0 12px rgba(var(--v2-violet), 0.55));
+  transition: stroke-dasharray 0.42s cubic-bezier(0.33, 0.45, 0.25, 1), opacity 0.24s ease;
+  opacity: 1;
+}
+/* the bolt is the bright thing, the ring is the gauge around it — both lit */
+.v2-root .v2-bulb-speed {
+  color: #ffffff;
+}
+.v2-root .v2-bulb-speed .v2-bulb-glyph {
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.65)) drop-shadow(0 0 11px rgba(255, 255, 255, 0.3));
+}
+.v2-root .v2-bulb-speed:hover .v2-bulb-ring-arc {
+  opacity: 1;
+}
+/* deepest setting reads as committed: the glyph brightens with the ring */
+/* the brightest ring belongs to the full one, which is now Instant */
+.v2-root .v2-bulb-speed.lv0 .v2-bulb-ring-arc {
+  opacity: 1;
+  filter: drop-shadow(0 0 7px rgba(var(--v2-violet), 1)) drop-shadow(0 0 16px rgba(var(--v2-violet), 0.6));
+}
+
+/* goal: off is dim and flush, on is the violet the big toggle uses */
+/* On, quietly. Flooding the orb violet made the loudest thing on the page a switch you
+   set once, so the body stays exactly as it is and three smaller signals carry the state
+   together: the glyph lights, the rim takes the colour, and a soft bloom sits under it.
+   Read at a glance it is unmistakable; read from across the screen it is not shouting. */
+.v2-root .v2-bulb-goal.on {
+  color: rgb(178, 156, 255);
+  background: linear-gradient(180deg, #1f1c2c, #17151f) padding-box,
+    linear-gradient(
+        180deg,
+        rgba(var(--v2-violet), 0.75) 0%,
+        rgba(var(--v2-violet), 0.4) 50%,
+        rgba(var(--v2-violet), 0.22) 100%
+      )
+      border-box;
+  box-shadow: 0 2px 8px -3px rgba(0, 0, 0, 0.7), 0 0 20px -4px rgba(var(--v2-violet), 0.85),
+    0 0 40px -10px rgba(var(--v2-violet), 0.6);
+}
+/* Goal mode's glyph is the thinking lattice, and it behaves the same way: at rest while
+ * off, bending while on. Same nine nodes, same travelling wave, same delays — the figure
+ * carries one meaning in both places, and switching it on literally starts it thinking.
+ */
+.v2-root .v2-bulb-lattice {
+  width: 19px;
+  height: 19px;
+  overflow: visible;
+  transition: filter 0.32s ease;
+}
+.v2-root .v2-bulb-node {
+  fill: currentColor;
+  transform-box: fill-box;
+  transform-origin: center;
+  /* off: flat, still, and a touch smaller — fragile rather than solid */
+  transform: scale(0.82);
+  transition: transform 0.42s cubic-bezier(0.33, 0.45, 0.25, 1), opacity 0.32s ease;
+  opacity: 0.85;
+}
+.v2-root .v2-bulb-goal.on .v2-bulb-lattice {
+  filter: drop-shadow(0 0 6px rgba(var(--v2-violet), 0.9)) drop-shadow(0 0 14px rgba(var(--v2-violet), 0.5));
+}
+.v2-root .v2-bulb-goal.on .v2-bulb-node {
+  opacity: 1;
+  transition: none;
+  animation: v2-bulb-bend 1.5s ease-in-out infinite;
+}
+@keyframes v2-bulb-bend {
+  0%, 100% { transform: translateY(1.9px) scale(0.7); opacity: 0.5; }
+  45% { transform: translateY(-2.4px) scale(1.12); opacity: 1; }
+}
+
+.v2-root.light .v2-bulb {
+  background: linear-gradient(180deg, #ffffff, #f4f2ea) padding-box,
+    linear-gradient(180deg, rgba(26, 25, 22, 0.16), rgba(26, 25, 22, 0.08)) border-box;
+  color: rgba(26, 25, 22, 0.62);
+}
+.v2-root.light .v2-bulb:hover {
+  color: #1a1916;
+}
+.v2-root.light .v2-bulb-ring-track {
+  stroke: rgba(26, 25, 22, 0.12);
+}
+.v2-root.light .v2-bulb-speed {
+  color: #1a1916;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v2-root .v2-bulb-node,
+  .v2-root .v2-bulb-node,
+  .v2-root .v2-bulb-ring-arc {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* ===== Console: refit to the smaller window =====
+ *
+ * The grid row was the root problem. `.cs-side` and `.cs-main` are grid items, and a grid
+ * item's automatic minimum size is its content — so with min-height: auto the sidebar's
+ * 811px of content forced the row 37px taller than the 774px window, and everything past
+ * the fold (version, footer links) was clipped by the window's overflow: hidden rather
+ * than scrolled. Pinning min-height: 0 lets the track win; the column then scrolls its
+ * own overflow instead of pushing the row.
+ */
+.v2-root #cs-view .cs-side,
+.v2-root #cs-view .cs-main {
+  min-height: 0;
+}
+.v2-root #cs-view .cs-side {
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.v2-root #cs-view .cs-side::-webkit-scrollbar {
+  width: 0;
+}
+
+/* The search field's bottom edge sat exactly on WORKSPACE — measured 0px between them,
+   which is what read as clipping into it. */
+.v2-root #cs-view .cs-tmold {
+  margin-bottom: 15px;
+  width: 100%;
+}
+.v2-root #cs-view .cs-group {
+  margin-top: 20px;
+}
+.v2-root #cs-view .cs-group-lead {
+  margin-top: 0;
+}
+
+/* Chrome was taking 100px of a 774px window before any content. 76 is enough for the
+   title and the profile, and the 24px it returns is a row of content back. */
+.v2-root #cs-view .cs-topbar {
+  height: 76px;
+}
+.v2-root #cs-view .cs-main {
+  padding-top: 92px;
+}
+
+/* Tighter section rhythm, and buttons that fit on one line: at 20px of side padding the
+   three came to 563px against 561px of room and wrapped, which cost a whole row of
+   height for two pixels. 16px brings them to 539. */
+.v2-root #cs-view .cs-sec {
+  margin-top: 18px;
+}
+.v2-root #cs-view .cs-btn {
+  padding: 12px 16px;
+}
+.v2-root #cs-view #cs-panel-overview .cs-mods {
+  gap: 4px 34px;
+}
+
+/* The section rhythm is set by `#cs-panel-overview .cs-sec + .cs-sec`, which outranks a
+   plain `.cs-sec` rule — the 18px above never applied. Matched here so it does. */
+.v2-root #cs-view .cs-sec + .cs-sec {
+  margin-top: 20px;
+}
+
+/* The nav needed 41px it did not have, so it scrolled and hid its own footer. Taken back
+   from padding that was tuned for a full-height column, not a 774px window — nothing
+   here changes a row height, so the list reads the same, it just fits. */
+.v2-root #cs-view .cs-side {
+  padding-bottom: 14px;
+}
+.v2-root #cs-view .cs-brand {
+  padding-bottom: 8px;
+}
+.v2-root #cs-view .cs-sideacc {
+  margin-top: 14px;
+  margin-bottom: 14px;
+}
+.v2-root #cs-view .cs-vers {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+.v2-root #cs-view .cs-side-foot {
+  margin-top: 4px;
+}
+.v2-root #cs-view .cs-group {
+  margin-top: 15px;
+}
+.v2-root #cs-view .cs-group-lead {
+  margin-top: 0;
+}
+
+/* A second badge family, and this one earns its colour: .cs-tag.ok / .cs-tag.warn mark
+ * state, unlike the chips, whose amber and blue tracked nothing. So the hue stays and
+ * only the volume comes down — from a filled block at 0.42 alpha to a tint with a rim
+ * and coloured ink. That also makes the two families finally distinguishable: neutral
+ * means it is a link somewhere, colour means something is true.
+ */
+.v2-root #cs-view .cs-tag {
+  border-radius: 6px;
+  border: 1px solid rgba(244, 242, 236, 0.1);
+}
+.v2-root #cs-view .cs-tag.ok {
+  background: rgba(110, 190, 130, 0.13);
+  border-color: rgba(110, 190, 130, 0.34);
+  color: #a6dfb6;
+}
+.v2-root #cs-view .cs-tag.warn {
+  background: rgba(210, 160, 90, 0.14);
+  border-color: rgba(210, 160, 90, 0.38);
+  color: #e9c694;
+}
+.v2-root #cs-view:not(.cs-night) .cs-tag {
+  border-color: rgba(26, 25, 22, 0.1);
+}
+.v2-root #cs-view:not(.cs-night) .cs-tag.ok {
+  color: #2f6b40;
+}
+.v2-root #cs-view:not(.cs-night) .cs-tag.warn {
+  color: #7a5320;
+}
+
+/* ===== The name, drawn only when asked for =====
+ *
+ * A 19px glyph can carry a state but not a name, and a permanent caption beside a control
+ * this small is worse than the ambiguity it fixes. So the name exists and simply is not
+ * drawn until you go looking: it rises on hover and on keyboard focus.
+ *
+ * A real element rather than the native `title`, which arrives about a second late,
+ * cannot be styled, and looks like the operating system rather than the product. Built
+ * from the same material as everything else in the bar — dark fill on padding-box, rim
+ * lit along the top on border-box — so it reads as part of the surface it came out of.
+ */
+.v2-root .v2-tip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  padding: 7px 11px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: linear-gradient(180deg, #1c1c1c, #151515) padding-box,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.07) 60%, rgba(255, 255, 255, 0.05) 100%)
+      border-box;
+  box-shadow: 0 10px 26px -12px rgba(0, 0, 0, 0.9);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  /* the 4px of travel is what makes it feel like it came from the button */
+  transform: translate(-50%, 4px);
+  transition: opacity 0.18s ease, transform 0.24s cubic-bezier(0.33, 0.45, 0.25, 1);
+}
+.v2-root .v2-bulb:hover .v2-tip,
+.v2-root .v2-bulb:focus-visible .v2-tip {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  /* a short delay so sweeping across the bar does not flash them */
+  transition-delay: 0.22s;
+}
+.v2-root .v2-tip b {
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+.v2-root .v2-tip i {
+  font-style: normal;
+  font-size: 12.5px;
+  color: #ffffff;
+}
+/* on, the reading is the violet one — the tip says the same thing the glyph does */
+.v2-root .v2-bulb-goal.on .v2-tip i {
+  color: rgb(186, 166, 255);
+}
+
+.v2-root.light .v2-tip {
+  background: linear-gradient(180deg, #ffffff, #f4f2ea) padding-box,
+    linear-gradient(180deg, rgba(26, 25, 22, 0.18), rgba(26, 25, 22, 0.1)) border-box;
+}
+.v2-root.light .v2-tip b {
+  color: rgba(26, 25, 22, 0.55);
+}
+.v2-root.light .v2-tip i {
+  color: #1a1916;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v2-root .v2-tip {
+    transition: opacity 0.01ms;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* ===== The terminal stays shut until it is opened =====
+ *
+ * Closed, the drawer is not hidden — it is a fully visible element parked below the fold
+ * by `transform: translateY(100%)`, with opacity 1, visibility visible and pointer-events
+ * auto. Measured, its top edge sat 5px below the viewport: five pixels of clearance, and
+ * a box-shadow drawn upward out of it that has nothing to be clipped by. Any rounding,
+ * any zoom, any browser chrome that changes the viewport height by a few pixels and the
+ * shadow — or the drawer's own top edge — appears along the bottom of the page looking
+ * like it is opening on its own.
+ *
+ * Closed it now clears the fold by a real margin, drops the shadow that was the visible
+ * part, and takes itself out of hit-testing so nothing in it can be clicked or tabbed to
+ * while it is away. The transform is still what animates, so opening is unchanged.
+ */
+.v2-root:not(.terminal-open) .terminal-panel {
+  transform: translateY(calc(100% + 28px));
+  box-shadow: none;
+  pointer-events: none;
+}
+.v2-root:not(.terminal-open) .terminal-panel * {
+  pointer-events: none;
+}
+
+/* And the button that opens it sat 23px from the sidebar's fold control, in the same
+   top-left corner — and only appears once there is a conversation, so it arrives
+   unannounced exactly where you have been clicking to fold the column. More room. */
+.v2-root .topbar-tools {
+  margin-left: 22px;
+}
+
+/* ===== Login =====
+ *
+ * Third time on the same lesson, so it is written down here: the composer's material —
+ * a fill fading down the height under a rim lit along the top, or its inverse for
+ * fields — works on ONE large control alone on a page. It does not survive a stack.
+ *
+ * This card is six controls in a column. Given the raised treatment they read as a rack
+ * of bevelled buttons, and the e-mail field, lit as a recess, reads as engraved. Around
+ * them the card carried a gradient fill, a gradient border, a black drop shadow AND a
+ * white outer bloom — four separate things all describing one edge.
+ *
+ * So: flat fill, one hairline all the way round, one restrained shadow to lift it off
+ * the page, and nothing else. The providers are a tint of the card, Continue is solid
+ * white because it is the recommended action, the field is a step darker because you
+ * type into it. Rank comes from value, not from lighting.
+ */
+.v2-root .v2-gate-card {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #141414;
+  box-shadow: 0 24px 70px -28px rgba(0, 0, 0, 0.8);
+}
+.v2-root.light .v2-gate-card {
+  border-color: rgba(26, 25, 22, 0.12);
+  background: #ffffff;
+  box-shadow: 0 24px 70px -32px rgba(26, 25, 22, 0.3);
+}
+
+.v2-root .v2-gate-title {
+  font-size: 23px;
+  color: #ffffff;
+  text-shadow: none;
+}
+.v2-root.light .v2-gate-title {
+  color: #14130f;
+}
+.v2-root .v2-gate-sub {
+  font-weight: 400;
+  font-size: 13.5px;
+  opacity: 1;
+  color: rgba(255, 255, 255, 0.62);
+}
+.v2-root.light .v2-gate-sub {
+  color: rgba(26, 25, 22, 0.64);
+}
+
+.v2-root .v2-gate-social {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: none;
+  font-weight: 500;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.94);
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+.v2-root .v2-gate-social:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.26);
+  transform: none;
+}
+.v2-root.light .v2-gate-social {
+  border-color: rgba(26, 25, 22, 0.16);
+  background: #ffffff;
+  color: #1a1916;
+}
+.v2-root.light .v2-gate-social:hover {
+  background: #f5f3ed;
+  border-color: rgba(26, 25, 22, 0.26);
+}
+
+.v2-root .v2-gate-input {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.28);
+  box-shadow: none;
+  font-weight: 400;
+  color: #ffffff;
+  transition: border-color 0.18s ease;
+}
+.v2-root .v2-gate-input::placeholder {
+  opacity: 1;
+  color: rgba(255, 255, 255, 0.4);
+}
+.v2-root .v2-gate-input:focus {
+  background: rgba(0, 0, 0, 0.28);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+.v2-root.light .v2-gate-input {
+  border-color: rgba(26, 25, 22, 0.16);
+  background: rgba(26, 25, 22, 0.04);
+  color: #1a1916;
+}
+.v2-root.light .v2-gate-input:focus {
+  border-color: rgba(26, 25, 22, 0.36);
+  background: rgba(26, 25, 22, 0.04);
+}
+.v2-root.light .v2-gate-input::placeholder {
+  color: rgba(26, 25, 22, 0.42);
+}
+
+.v2-root .v2-gate-go {
+  border-color: transparent;
+  background: #ffffff;
+  box-shadow: none;
+  font-weight: 700;
+  font-size: 12.5px;
+  transition: background 0.18s ease;
+}
+.v2-root .v2-gate-go:hover {
+  background: #eceae3;
+  transform: none;
+  box-shadow: none;
+}
+.v2-root.light .v2-gate-go {
+  background: #1a1916;
+  color: #f6f4ee;
+  box-shadow: none;
+}
+.v2-root.light .v2-gate-go:hover {
+  background: #333129;
+}
+
+.v2-root .v2-gate-or {
+  font-weight: 500;
+  opacity: 1;
+  color: rgba(255, 255, 255, 0.4);
+}
+.v2-root.light .v2-gate-or {
+  color: rgba(26, 25, 22, 0.45);
+}
+.v2-root .v2-gate-switch {
+  font-weight: 400;
+  opacity: 1;
+  color: rgba(255, 255, 255, 0.58);
+}
+.v2-root.light .v2-gate-switch {
+  color: rgba(26, 25, 22, 0.6);
+}
+.v2-root .v2-gate-switch button {
+  font-weight: 600;
+  color: #ffffff;
+}
+.v2-root.light .v2-gate-switch button {
+  color: #1a1916;
+}
+
+/* the scrim was doing the same job twice over — a dark wash AND a blur AND the card's
+   own outer bloom. One wash, lighter; the blur stays, since it is what separates the
+   two planes. */
+.v2-root .v2-gate-scrim {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+/* Flat, like the console's.
+ *
+ * These carried the composer's material — a fill fading down the height under a rim lit
+ * along the top, a drop shadow, and on Sign up an outward glow and an inset highlight.
+ * At 38px in a corner that is not lighting, it is a bevel, and it is the oldest-looking
+ * thing on the page.
+ *
+ * Rank comes from value instead: Mainpage and Login are a tint of the ground, Sign up is
+ * solid white because it is the one being recommended. Nothing glows.
+ */
+.v2-root .v2-auth-btn {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.055);
+  box-shadow: none;
+  font-weight: 600;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.92);
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+.v2-root .v2-auth-btn:hover {
+  background: rgba(255, 255, 255, 0.11);
+  border-color: rgba(255, 255, 255, 0.26);
+  transform: none;
+}
+.v2-root .v2-auth-btn.v2-auth-primary {
+  border-color: transparent;
+  background: #ffffff;
+  color: #0e0e0e;
+  box-shadow: none;
+}
+.v2-root .v2-auth-btn.v2-auth-primary:hover {
+  background: #eceae3;
+  border-color: transparent;
+}
+.v2-root.light .v2-auth-btn {
+  border-color: rgba(26, 25, 22, 0.18);
+  background: rgba(255, 255, 255, 0.8);
+  color: #1a1916;
+}
+.v2-root.light .v2-auth-btn.v2-auth-primary {
+  background: #1a1916;
+  color: #f6f4ee;
+  border-color: transparent;
+}
+
+/* ===== Model selector =====
+ *
+ * The trigger says which model is answering you, and it was the quietest thing in the
+ * bar — same weight and colour as the placeholder beside it. It is the one piece of
+ * state the composer carries, so it now reads as state: brighter, a little heavier, and
+ * lit just enough to separate it from the chrome.
+ *
+ * The menu is built like every other panel in V2 — flat fill, one hairline, one shadow.
+ * It was a 3px-radius box with 2px-radius rows and an inset white bar marking the
+ * selection, which is a menu from a different decade. Selection is now a violet dot in
+ * a fixed column, so the rows share a left edge whether they are selected or not.
+ *
+ * It also stands above the bar rather than centred over the trigger — see
+ * modelMenuAbove in AgentView. Centring put the list across the control that opened it.
+ */
+.v2-root .model-selector {
+  color: rgba(255, 255, 255, 0.96);
+  font-weight: 500;
+  border-radius: 8px;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+.v2-root .model-selector:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+.v2-root #model-name {
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+.v2-root .model-selector .model-icon {
+  color: rgb(178, 156, 255);
+  filter: drop-shadow(0 0 5px rgba(var(--v2-violet, 150, 122, 255), 0.55));
+}
+.v2-root .model-selector svg {
+  opacity: 0.75;
+}
+
+.v2-root .model-menu {
+  /* the hero centres its whole column, and the menu was inheriting it — a list of names
+     reads down its left edge, not down its middle */
+  text-align: left;
+  min-width: 300px;
+  padding: 6px;
+  border-radius: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #141414;
+  box-shadow: 0 22px 60px -24px rgba(0, 0, 0, 0.85);
+  /* a short rise rather than a bounce: the menu arrives from the bar it belongs to */
+  transform: translateX(-50%) translateY(6px) scale(0.99);
+  transition: opacity 0.16s ease, transform 0.24s cubic-bezier(0.33, 0.45, 0.25, 1),
+    visibility 0s linear 0.24s;
+}
+.v2-root .model-menu.open {
+  transform: translateX(-50%) translateY(0) scale(1);
+  transition: opacity 0.16s ease, transform 0.26s cubic-bezier(0.33, 0.45, 0.25, 1), visibility 0s;
+}
+.v2-root.light .model-menu {
+  border-color: rgba(26, 25, 22, 0.12);
+  background: #ffffff;
+  box-shadow: 0 22px 60px -28px rgba(26, 25, 22, 0.32);
+}
+
+.v2-root .model-menu-head {
+  text-align: left;
+  padding: 7px 12px 9px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  margin-bottom: 5px;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.4);
+}
+.v2-root.light .model-menu-head {
+  border-bottom-color: rgba(26, 25, 22, 0.09);
+  color: rgba(26, 25, 22, 0.45);
+}
+
+/* the marker sits in its own column, so every row starts on the same left edge */
+.v2-root .model-item {
+  gap: 12px;
+  padding: 9px 12px;
+  border-radius: 9px;
+}
+.v2-root .model-item::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  transition: background 0.18s ease, box-shadow 0.18s ease;
+}
+.v2-root .model-item.selected {
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: none;
+}
+.v2-root .model-item.selected::before {
+  background: rgb(168, 145, 255);
+  box-shadow: 0 0 8px rgba(var(--v2-violet, 150, 122, 255), 0.75);
+}
+.v2-root.light .model-item.selected {
+  background: rgba(26, 25, 22, 0.05);
+}
+.v2-root.light .model-item::before {
+  background: rgba(26, 25, 22, 0.16);
+}
+.v2-root .model-item .m-name {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.v2-root .model-item .m-sum {
+  font-size: 11.5px;
+  margin-top: 1px;
+}
+/* the dot already says which one is on */
+.v2-root .model-item .m-check {
+  display: none;
+}
+
+/* ===== Credit left, above the account =====
+ *
+ * Two shapes, one component. AgentView renders the account slot twice — once in the
+ * column footer, once in the fixed rail — so the meter is already mounted in both, and
+ * which shape shows is decided by which of the two it landed in. Nothing needs to be
+ * told whether the sidebar is folded, and the two copies cannot fall out of step.
+ *
+ * Open: a meter with the figure above it. Folded: a ring with the percentage inside,
+ * sitting on the rail's glyph axis.
+ */
+.v2-root .v2-usage {
+  display: block;
+}
+
+/* ————— open: the bar ————— */
+.v2-root .sidebar-footer .v2-usage-ring {
+  display: none;
+}
+.v2-root .sidebar-footer .v2-usage-bar {
+  display: block;
+  padding: 0 11px 9px;
+}
+.v2-root .v2-usage-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 10.5px;
+  color: rgba(255, 255, 255, 0.46);
+}
+.v2-root .v2-usage-line b {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.v2-root .v2-usage-track {
+  height: 3px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.09);
+  overflow: hidden;
+}
+.v2-root .v2-usage-track span {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.42s cubic-bezier(0.33, 0.45, 0.25, 1), background 0.42s ease;
+}
+
+/* ————— folded: the ring ————— */
+.v2-root .collapsed-settings .v2-usage-bar {
+  display: none;
+}
+/* Every glyph in the rail — the four nav icons and the account's own — is a 22px box
+   sitting at the same x, because they all start from the chip's left padding. Centring
+   the ring in its 46px container instead put it on 33 against their 34.
+   So the two numbers that define that axis are declared once below and the ring's offset
+   is derived from them: it cannot drift if either changes, and there is no nudge to
+   re-tune. Measured after: ring centre 34.0, glyph centres 34.0. */
+.v2-root .collapsed-settings {
+  --v2-rail-inset: 13px;
+  --v2-rail-glyph: 22px;
+}
+.v2-root .collapsed-settings .v2-acct-chip {
+  padding-left: var(--v2-rail-inset);
+}
+.v2-root .collapsed-settings .v2-usage-ring {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  margin: 0 0 10px calc(var(--v2-rail-inset) + (var(--v2-rail-glyph) - 26px) / 2);
+}
+.v2-root .v2-usage-ring svg {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  overflow: visible;
+  /* the arc starts at 12 o'clock and empties clockwise, the way a gauge drains */
+  transform: rotate(-90deg);
+}
+.v2-root .v2-usage-ring-track {
+  stroke: rgba(255, 255, 255, 0.11);
+  stroke-width: 2.4;
+}
+.v2-root .v2-usage-ring-arc {
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.42s cubic-bezier(0.33, 0.45, 0.25, 1), stroke 0.42s ease;
+}
+.v2-root .v2-usage-pct {
+  grid-area: 1 / 1;
+  font-size: 10px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  transition: color 0.42s ease;
+}
+
+/* the rail's copy of the chip is the person glyph alone, so the ring sits above it on
+   the same axis rather than beside it */
+.v2-root .collapsed-settings .v2-acct {
+  display: flex;
+  flex-direction: column;
+  /* start, not center — the ring places itself off the glyph axis above, and centring
+     here would override that with the container's own middle */
+  align-items: flex-start;
+}
+
+.v2-root.light .v2-usage-line {
+  color: rgba(26, 25, 22, 0.5);
+}
+.v2-root.light .v2-usage-track {
+  background: rgba(26, 25, 22, 0.11);
+}
+.v2-root.light .v2-usage-ring-track {
+  stroke: rgba(26, 25, 22, 0.13);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v2-root .v2-usage-track span,
+  .v2-root .v2-usage-ring-arc {
+    transition: none;
+  }
+}
+
+/* ===== The credit meter arrives with the fold, not after it =====
+ *
+ * The footer's opacity is held for the whole 0.42s fold and then snapped — that hold is
+ * the glyph handover: the column's icons and the rail's icons are two copies of the same
+ * mark at the same coordinates, so cross-fading them doubles their opacity and flickers.
+ * The one that cannot move is shown for the entire transition and the swap happens at
+ * the end.
+ *
+ * The credit meter is not that. Its two forms are a bar and a ring — different shapes in
+ * different places, with nothing to double against — so it has no reason to wait. The
+ * hold moves off the footer and onto the chip, which does have a twin, and the meter
+ * cross-fades across the fold instead: the ring dissolving as the bar arrives reads as
+ * one becoming the other.
+ */
+.v2-root .sidebar > .sidebar-footer {
+  transition: opacity var(--v2-fold);
+}
+.v2-root.sidebar-collapsed .sidebar > .sidebar-footer {
+  transition: opacity 0.12s ease;
+}
+/* the account glyph keeps the hold it needs */
+.v2-root .v2-acct-chip {
+  transition: background 0.2s ease, opacity 0s linear 0.42s;
+}
+.v2-root.sidebar-collapsed .v2-acct-chip {
+  opacity: 0;
+  transition: opacity 0s;
+}
+/* the ring leaves over the fold rather than snapping out at the end of it */
+.v2-root .collapsed-settings .v2-usage-ring {
+  opacity: 0;
+  transition: opacity var(--v2-fold);
+}
+.v2-root.sidebar-collapsed .collapsed-settings .v2-usage-ring {
+  opacity: 1;
+}
+
+/* ===== Brighter, and the value in white =====
+ * Colour says how much is left; the number says exactly how much. Keeping the figure
+ * white in both forms means the reading is always at full contrast and the colour is
+ * free to go as saturated as it needs to without costing legibility.
+ */
+.v2-root .v2-usage {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.v2-root .sidebar-footer .v2-usage {
+  border-radius: 9px;
+  transition: background 0.16s ease;
+}
+.v2-root .sidebar-footer .v2-usage:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+.v2-root .v2-usage-line span {
+  color: #ffffff;
+  font-weight: 500;
+}
+.v2-root .v2-usage-line {
+  color: rgba(255, 255, 255, 0.5);
+}
+.v2-root .v2-usage-pct {
+  color: #ffffff;
+}
+.v2-root .v2-usage-ring-track {
+  stroke: rgba(255, 255, 255, 0.14);
+}
+.v2-root .collapsed-settings .v2-usage:hover .v2-usage-ring-arc {
+  stroke-width: 3;
+}
+.v2-root.light .v2-usage-line span,
+.v2-root.light .v2-usage-pct {
+  color: #14130f;
+}
+.v2-root.light .sidebar-footer .v2-usage:hover {
+  background: rgba(26, 25, 22, 0.05);
+}

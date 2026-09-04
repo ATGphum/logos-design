@@ -4,16 +4,16 @@
  * (prototype csEnter() / body.chat-reveal). Ported from
  * marketing/llm-interface.html lines 4186-4882 + chat scripts 4883-5535.
  */
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, type ReactNode } from "react"
 import ensoWhite from "../assets/enso.svg"
 import ensoInk from "../assets/enso-ink.svg"
 import { initialRecentChats, isMobileViewport, MODELS, PROJECTS, type ChatItem, type Project } from "../state"
 import { AgentSidebar } from "./AgentSidebar"
-import { ConsoleIcon, GearIcon, NewChatIcon, SearchIcon, SidebarFoldIcon } from "./icons"
+import { ConsoleIcon, ConsoleIconV2, FolderIcon, GearIcon, MicIconV2, NewChatIcon, NewChatIconV2, ProjectsIconV2, SearchIcon, SearchIconV2, SidebarFoldIcon, SparkIconV2 } from "./icons"
 import { SearchOverlay } from "./SearchOverlay"
 import { SettingsView } from "./SettingsView"
 
-interface Message {
+export interface Message {
   key: number
   role: "user" | "agent"
   text: string
@@ -26,6 +26,19 @@ const SunPaths = () => (
     <path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4" />
   </>
 )
+
+/**
+ * V2: just the headline — "qwen3.7-max-2026-06-08" -> "Qwen 3.7". Drops the date, the
+ * tier suffix and the hyphenation, so the bar names the model rather than reciting its
+ * full identifier and truncating it to an ellipsis.
+ */
+function headlineModel(label: string): string {
+  const base = label.replace(/-\d{4}-\d{2}-\d{2}.*$/, "").split("-")[0]
+  const parts = base.match(/^([a-zA-Z]+)([\d.]*)$/)
+  if (!parts) return base
+  const name = parts[1].charAt(0).toUpperCase() + parts[1].slice(1)
+  return parts[2] ? name + " " + parts[2] : name
+}
 
 /** friendly model name on mobile: strip date suffixes, dashes to spaces (prettyModel) */
 function prettyModel(label: string): string {
@@ -50,6 +63,44 @@ export interface AgentViewProps {
   isMobile: boolean
   onOpenConsole: () => void
   onBackHome: () => void
+  /** V2: replaces the hero's greeting line. Omitted elsewhere. */
+  heroGreetingNode?: ReactNode
+  /** V2: Projects becomes a picker rather than a folding tree. Omitted elsewhere. */
+  projectsAsPicker?: boolean
+  /** V2: the bar shows the model's headline only. Omitted elsewhere. */
+  shortModelName?: boolean
+  /**
+   * V2: the terminal and side-panel toggles appear only once there is a conversation
+   * for them to act on. Omitted elsewhere, where both are always present.
+   */
+  contextualTools?: boolean
+  /** V2: an account control in the sidebar footer and the rail. Omitted elsewhere. */
+  accountSlot?: ReactNode
+  /** V2: open on a new chat rather than an existing conversation. */
+  freshOnOpen?: boolean
+  /** V2: the lockup folds the column too. Omitted elsewhere. */
+  logoFolds?: boolean
+  /** V2: keeps Console lit while the console window is open. */
+  consoleActive?: boolean
+  /** V2: use the leaner nav glyphs, in the rail as well as the column */
+  v2Icons?: boolean
+  /** V2: sits under the composer in the hero — the Goal mode toggle. */
+  heroBelow?: ReactNode
+  /** V2: the model menu stands above the bar rather than centred over the trigger. */
+  modelMenuAbove?: boolean
+  /**
+   * V2: renders the conversation itself. Given the whole message list, so the renderer
+   * can pair each agent turn with the prompt that caused it and drive its own thinking
+   * and streaming. Omitted elsewhere, where the built-in stub renders instead.
+   */
+  transcript?: (messages: Message[]) => ReactNode
+  /**
+   * V2: controls flanking the composer, in the hero and at the foot of a conversation
+   * alike. They sit OUTSIDE the bar, as its siblings, so they can stretch to its height
+   * rather than being sized against it by hand. Omitted elsewhere.
+   */
+  barLeading?: ReactNode
+  barTrailing?: ReactNode
 }
 
 export function AgentView(props: AgentViewProps) {
@@ -64,15 +115,30 @@ export function AgentView(props: AgentViewProps) {
     watermarkOn,
     onToggleWatermark,
     isMobile,
+    sidebarCollapsed,
     onOpenConsole,
     onBackHome,
+    heroGreetingNode,
+    projectsAsPicker,
+    shortModelName,
+    contextualTools,
+    accountSlot,
+    logoFolds,
+    consoleActive,
+    v2Icons,
+    heroBelow,
+    modelMenuAbove,
+    transcript,
+    barLeading,
+    barTrailing,
   } = props
 
   const [chats, setChats] = useState<ChatItem[]>(initialRecentChats)
   const [projects, setProjects] = useState<Project[]>(PROJECTS)
   const [activeChatId, setActiveChatId] = useState<string | null>("chat-0")
   const [newChatActive, setNewChatActive] = useState(false)
-  const [chatTitle, setChatTitle] = useState("Bittensor TAO explained")
+  /* V2 opens on a fresh chat rather than dropping you into an existing conversation */
+  const [chatTitle, setChatTitle] = useState(props.freshOnOpen ? "New chat" : "Bittensor TAO explained")
   const [heroGreeting, setHeroGreeting] = useState("What shall we reason through?")
   const [messages, setMessages] = useState<Message[]>([])
   const msgKey = useRef(0)
@@ -186,10 +252,21 @@ export function AgentView(props: AgentViewProps) {
       menu.style.left = tr.left + tr.width / 2 + "px"
       menu.style.top = "0px"
       const mr = menu.getBoundingClientRect()
-      let top = tr.top + tr.height / 2 - mr.height / 2
-      top = Math.max(14, Math.min(top, window.innerHeight - mr.height - 14))
-      menu.style.top = top + "px"
-      menu.style.transformOrigin = "50% 50%"
+      if (modelMenuAbove) {
+        /* V2: stand it on top of the trigger rather than centred over it. Centring puts
+           the menu across the control that opened it, so the thing you just clicked
+           disappears under its own list — and on the hero it lands over the wordmark.
+           Flipping below only if there is genuinely no room above. */
+        const gap = 10
+        const above = tr.top - mr.height - gap
+        menu.style.top = (above >= 14 ? above : Math.min(tr.bottom + gap, window.innerHeight - mr.height - 14)) + "px"
+        menu.style.transformOrigin = above >= 14 ? "50% 100%" : "50% 0%"
+      } else {
+        let top = tr.top + tr.height / 2 - mr.height / 2
+        top = Math.max(14, Math.min(top, window.innerHeight - mr.height - 14))
+        menu.style.top = top + "px"
+        menu.style.transformOrigin = "50% 50%"
+      }
     }
     setModelMenuOpen(true)
   }
@@ -221,6 +298,7 @@ export function AgentView(props: AgentViewProps) {
 
   const inputBar = (
     <div className={"input-bar-wrap" + (emptyState ? " in-hero" : "")}>
+      {barLeading}
       <div className="input-bar">
         <button className="icon-btn input-plus" title="Attach">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -243,8 +321,10 @@ export function AgentView(props: AgentViewProps) {
 
         <div className={"model-wrap" + (modelMenuOpen ? " mm-open" : "")}>
           <button className="model-selector" ref={modelBtnRef} onClick={toggleModelMenu} title="Select model">
-            <span className="model-icon">✦</span>
-            <span id="model-name">{isMobile ? prettyModel(model) : model}</span>
+            <span className="model-icon">{v2Icons ? <SparkIconV2 /> : "✦"}</span>
+            <span id="model-name">
+              {shortModelName ? headlineModel(model) : isMobile ? prettyModel(model) : model}
+            </span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <polyline points="6 9 12 15 18 9" />
             </svg>
@@ -283,12 +363,16 @@ export function AgentView(props: AgentViewProps) {
         </div>
 
         <button className="icon-btn mic-btn" title="Voice input">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
-            <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-            <line x1="12" y1="19" x2="12" y2="23" />
-            <line x1="8" y1="23" x2="16" y2="23" />
-          </svg>
+          {v2Icons ? (
+            <MicIconV2 />
+          ) : (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+              <line x1="12" y1="19" x2="12" y2="23" />
+              <line x1="8" y1="23" x2="16" y2="23" />
+            </svg>
+          )}
         </button>
 
         <button className={"send-btn" + (input.trim() === "" ? " hidden" : "")} id="send-btn" onClick={sendMessage} title="Send">
@@ -298,6 +382,7 @@ export function AgentView(props: AgentViewProps) {
           </svg>
         </button>
       </div>
+      {barTrailing}
 
       <div className="nav-arrows">
         <button title="Previous">↑</button>
@@ -322,21 +407,31 @@ export function AgentView(props: AgentViewProps) {
           </button>
         </div>
         <button className="rail-nav rail-newchat" onClick={newChat} title="New Chat">
-          <NewChatIcon />
+          {v2Icons ? <NewChatIconV2 /> : <NewChatIcon />}
         </button>
         <button className="rail-nav rail-search" onClick={() => setSearchOpen(true)} title="Search">
-          <SearchIcon />
+          {v2Icons ? <SearchIconV2 /> : <SearchIcon />}
         </button>
         <button className="rail-nav rail-console" onClick={onOpenConsole} title="Console">
-          <ConsoleIcon />
+          {v2Icons ? <ConsoleIconV2 /> : <ConsoleIcon />}
         </button>
+        {/* V2 carries Projects in the nav, so the rail needs it too — otherwise that
+            glyph has nothing to fold into and simply disappears. */}
+        {projectsAsPicker ? (
+          <button className="rail-nav rail-projects" title="Projects">
+            {v2Icons ? <ProjectsIconV2 /> : <FolderIcon />}
+          </button>
+        ) : null}
       </div>
 
-      {/* collapsed settings: gear stays bottom-left when sidebar is folded in */}
+      {/* bottom-left while folded in: whatever the sidebar's footer carries, so the two
+          states show the same thing in the same place */}
       <div className="collapsed-settings" id="collapsed-settings">
-        <button className="rail-btn" onClick={openSettings} title="Settings">
-          <GearIcon />
-        </button>
+        {accountSlot ?? (
+          <button className="rail-btn" onClick={openSettings} title="Settings">
+            <GearIcon />
+          </button>
+        )}
       </div>
 
       <AgentSidebar
@@ -354,6 +449,13 @@ export function AgentView(props: AgentViewProps) {
         onNewChat={newChat}
         onOpenSearch={() => setSearchOpen(true)}
         onOpenConsole={onOpenConsole}
+        projectsAsPicker={projectsAsPicker}
+        accountSlot={accountSlot}
+        logoFolds={logoFolds}
+        sidebarCollapsed={sidebarCollapsed}
+        searchActive={searchOpen}
+        consoleActive={consoleActive}
+        v2Icons={v2Icons}
         onOpenSettings={openSettings}
         onToggleSidebar={onToggleSidebar}
       />
@@ -390,23 +492,33 @@ export function AgentView(props: AgentViewProps) {
           </div>
 
           <div className="topbar-tools">
-            <button id="terminal-toggle" className={terminalOpen ? "active" : undefined} onClick={onToggleTerminal} title="Toggle terminal">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                <rect x="3" y="3" width="18" height="18" rx="2" />
-                <line x1="3" y1="15" x2="21" y2="15" />
-              </svg>
-            </button>
-            <button title="Toggle side panel">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                <rect x="3" y="3" width="18" height="18" rx="2" />
-                <line x1="15" y1="3" x2="15" y2="21" />
-              </svg>
-            </button>
+            {/* Nothing to toggle before a conversation exists: the terminal has no
+                session to show and the side panel no content. They arrive with the
+                first message. */}
+            {contextualTools && emptyState ? null : (
+              <>
+                <button id="terminal-toggle" className={terminalOpen ? "active" : undefined} onClick={onToggleTerminal} title="Toggle terminal">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <line x1="3" y1="15" x2="21" y2="15" />
+                  </svg>
+                </button>
+                <button title="Toggle side panel">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <line x1="15" y1="3" x2="15" y2="21" />
+                  </svg>
+                </button>
+              </>
+            )}
+            {/* V2 moves this into the account menu */}
+            {accountSlot ? null : (
             <button id="mode-toggle" onClick={onToggleLight} title="Toggle light / dark">
               <svg id="mode-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 {light ? <SunPaths /> : <MoonPath />}
               </svg>
             </button>
+            )}
           </div>
         </div>
 
@@ -421,8 +533,9 @@ export function AgentView(props: AgentViewProps) {
                     <use href={ensoWhite + "#enso"} />
                   </svg>
                 </div>
-                <div className="hero-greeting">{heroGreeting}</div>
+                <div className="hero-greeting">{heroGreetingNode ?? heroGreeting}</div>
                 <div id="hero-input-slot">{inputBar}</div>
+                {heroBelow}
                 <div className="hero-suggestions">
                   <button className="suggestion-pill" onClick={() => startProject("Coding project", "What shall we code?")}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -448,6 +561,8 @@ export function AgentView(props: AgentViewProps) {
                 </div>
               </div>
             </div>
+          ) : transcript ? (
+            transcript(messages)
           ) : (
             messages.map((m) =>
               m.role === "user" ? (

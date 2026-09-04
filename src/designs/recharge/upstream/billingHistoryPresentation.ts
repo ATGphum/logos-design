@@ -45,20 +45,20 @@ export function billingHistoryPresentation(history: BillingHistory, plans: reado
     const dateLabel = item.refundedAt ? 'Refunded' : item.paidAt ? 'Paid' : 'Created'
     const date = item.refundedAt ?? item.paidAt ?? item.createdAt
     const payments = item.payments.map((payment): BillingHistoryPaymentView => {
-      const eventLabel = payment.finalizedAt ? 'Finalized' : payment.paidAt ? 'Paid' : 'Recorded'
+      const eventLabel = payment.paidAt ? 'Paid' : 'Recorded'
       return Object.freeze({
         payment,
-        kindLabel: payment.kind === 'stripe_invoice' ? 'Stripe invoice' : payment.kind === 'stripe_payment' ? 'Stripe payment' : 'TAO transaction',
+        kindLabel: payment.kind === 'stripe_invoice' ? 'Stripe invoice' : 'Stripe payment',
         statusLabel: humanize(payment.status),
         eventLabel,
-        eventAt: payment.finalizedAt ?? payment.paidAt ?? payment.recordedAt,
+        eventAt: payment.paidAt ?? payment.recordedAt,
         canViewStripeReceipt: payment.kind === 'stripe_invoice' && history.actions.canViewStripeReceipts,
       })
     })
     result.push(Object.freeze({
       item,
       plan,
-      providerLabel: item.provider === 'stripe' ? 'Stripe' : 'Native TAO',
+      providerLabel: 'Stripe',
       renewalLabel: item.renewalMode === 'automatic'
         ? item.orderType === 'renewal' ? 'Automatic renewal' : 'Automatic subscription'
         : item.renewalMode === 'manual' ? 'Manual renewal' : 'One-time purchase',

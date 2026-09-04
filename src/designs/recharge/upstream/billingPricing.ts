@@ -31,43 +31,19 @@ function stripeRenewal(plan: BillingPlan): Pick<BillingPricePresentation, 'renew
   }
 }
 
-function taoRenewal(): Pick<BillingPricePresentation, 'renewalKind' | 'renewalLabel' | 'renewalDescription'> {
-  return {
-    renewalKind: 'manual',
-    renewalLabel: 'Manual renewal with TAO',
-    renewalDescription: 'TAO does not renew automatically. It is a one-time on-chain payment, and access must be renewed manually after the selected term expires.',
-  }
-}
-
 export function billingPricePresentation(plan: BillingPlan, selectedMethod: BillingPaymentMethod | null): BillingPricePresentation {
   const method = selectedMethod !== null && plan.paymentMethods[selectedMethod] ? selectedMethod : null
   let renewal: Pick<BillingPricePresentation, 'renewalKind' | 'renewalLabel' | 'renewalDescription'>
 
   if (method === 'stripe') {
     renewal = stripeRenewal(plan)
-  } else if (method === 'tao') {
-    renewal = taoRenewal()
-  } else if (plan.paymentMethods.stripe && !plan.paymentMethods.tao) {
+  } else if (plan.paymentMethods.stripe) {
     renewal = stripeRenewal(plan)
-  } else if (plan.paymentMethods.tao && !plan.paymentMethods.stripe) {
-    renewal = taoRenewal()
-  } else if (!plan.paymentMethods.stripe && !plan.paymentMethods.tao) {
+  } else {
     renewal = {
       renewalKind: 'unavailable',
       renewalLabel: 'Checkout unavailable',
       renewalDescription: 'No payment method is enabled for this term yet. The displayed price is for review only.',
-    }
-  } else if (plan.billingMode === 'recurring') {
-    renewal = {
-      renewalKind: 'choice_required',
-      renewalLabel: 'Renewal depends on payment method',
-      renewalDescription: 'Stripe renews this term automatically unless canceled. TAO is a one-time payment and must be renewed manually.',
-    }
-  } else {
-    renewal = {
-      renewalKind: 'one_time',
-      renewalLabel: 'No automatic renewal',
-      renewalDescription: 'This fixed term does not renew automatically with Stripe or TAO. Purchase another term to continue Pro access.',
     }
   }
 

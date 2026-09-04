@@ -41,7 +41,7 @@ export function useBillingPublicConfig() {
         ...current,
         fresh: false,
         loading: false,
-        error: apiErrorMessage(error, pageText('dynamic.billing.browserWalletRefreshFailed')),
+        error: apiErrorMessage(error, pageText('dynamic.billing.paymentMethodsRefreshFailed')),
       }))
     }
   }, [])

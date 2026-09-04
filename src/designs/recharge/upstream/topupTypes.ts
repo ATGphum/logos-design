@@ -1,5 +1,5 @@
 import {
-  billingCreditMicrosValid,
+  billingIntegerAmountValid,
   billingOrderLifecycleStatuses,
   billingPaymentStatuses,
   billingTopupProductIDValid,
@@ -15,8 +15,8 @@ export type BillingTopupCreditStatus = (typeof billingTopupCreditStatuses)[numbe
 
 export type BillingTopupCredit = Readonly<{
   ledgerEntryId: string
-  deltaMicros: string
-  balanceMicros: string
+  amountNanos: string
+  balanceNanos: string
   creditedAt: string
   refundEntryId?: string
   reversedAt?: string
@@ -31,7 +31,7 @@ export type BillingTopupOrderStatus = Readonly<{
   paymentStatus: BillingPaymentStatus
   creditStatus: BillingTopupCreditStatus
   paidMicros: string
-  creditedMicros: string
+  creditedNanos: string
   expiresAt?: string
   credit: BillingTopupCredit | null
   failure: null | Readonly<{ code: string; message: string }>
@@ -39,13 +39,10 @@ export type BillingTopupOrderStatus = Readonly<{
 
 export type BillingTopupHistoryPayment = Readonly<{
   paymentId: string
-  kind: 'stripe_payment' | 'stripe_invoice' | 'tao_transaction'
+  kind: 'stripe_payment' | 'stripe_invoice'
   status: string
   recordedAt: string
   paidAt?: string
-  finalizedAt?: string
-  transactionHash?: string
-  transactionURL?: string
 }>
 
 export type BillingTopupHistoryItem = Readonly<{
@@ -55,7 +52,7 @@ export type BillingTopupHistoryItem = Readonly<{
   provider: BillingPaymentMethod
   amountUSD: string
   paidMicros: string
-  creditedMicros: string
+  creditedNanos: string
   status: BillingOrderLifecycleStatus
   creditStatus: BillingTopupCreditStatus
   createdAt: string
@@ -73,19 +70,19 @@ export type BillingTopupHistory = Readonly<{
 type UnknownRecord = Record<string, unknown>
 
 const orderStatusKeys = new Set([
-  'credit', 'creditedMicros', 'creditStatus', 'entitlementStatus', 'expiresAt', 'failure', 'id',
+  'credit', 'creditedNanos', 'creditStatus', 'entitlementStatus', 'expiresAt', 'failure', 'id',
   'orderNo', 'paidMicros', 'paymentStatus', 'planId', 'productId', 'provider', 'status',
 ])
 const historyItemKeys = new Set([
-  'amountUSD', 'createdAt', 'credit', 'creditedMicros', 'creditStatus', 'orderId', 'orderNo',
+  'amountUSD', 'createdAt', 'credit', 'creditedNanos', 'creditStatus', 'orderId', 'orderNo',
   'orderType', 'paidAt', 'paidMicros', 'payments', 'planId', 'provider', 'purchaseKind',
   'refundedAt', 'refundStatus', 'renewalMode', 'status',
 ])
 const historyPaymentKeys = new Set([
-  'finalizedAt', 'kind', 'paidAt', 'paymentId', 'recordedAt', 'status', 'transactionHash', 'transactionURL',
+  'kind', 'paidAt', 'paymentId', 'recordedAt', 'status',
 ])
 const creditKeys = new Set([
-  'balanceMicros', 'creditedAt', 'deltaMicros', 'ledgerEntryId', 'refundEntryId', 'reversedAt',
+  'balanceNanos', 'creditedAt', 'amountNanos', 'ledgerEntryId', 'refundEntryId', 'reversedAt',
 ])
 
 function isRecord(value: unknown): value is UnknownRecord {
@@ -108,8 +105,8 @@ function isoDate(value: unknown): value is string {
   return typeof value === 'string' && value.length <= 64 && /^\d{4}-\d{2}-\d{2}T/.test(value) && Number.isFinite(Date.parse(value))
 }
 
-function positiveMicros(value: unknown): value is string {
-  return billingCreditMicrosValid(value) && BigInt(value) > 0n
+function positiveAmount(value: unknown): value is string {
+  return billingIntegerAmountValid(value) && BigInt(value) > 0n
 }
 
 function decimalUSD(value: unknown): value is string {
@@ -121,16 +118,16 @@ function decimalUSDMicros(value: string) {
   return BigInt(whole) * 1_000_000n + BigInt(cents) * 10_000n
 }
 
-function parseTopupCredit(value: unknown, creditedMicros: string, status: BillingTopupCreditStatus): BillingTopupCredit | null {
+function parseTopupCredit(value: unknown, creditedNanos: string, status: BillingTopupCreditStatus): BillingTopupCredit | null {
   if (!isRecord(value) || !onlyKnownKeys(value, creditKeys) || !billingID(value.ledgerEntryId, 'tok') ||
-      value.deltaMicros !== creditedMicros || !billingCreditMicrosValid(value.balanceMicros) || !isoDate(value.creditedAt)) return null
+      value.amountNanos !== creditedNanos || !billingIntegerAmountValid(value.balanceNanos) || !isoDate(value.creditedAt)) return null
   const reversed = status === 'reversed'
   if (reversed !== billingID(value.refundEntryId, 'tok') || reversed !== isoDate(value.reversedAt)) return null
   if (reversed && Date.parse(value.reversedAt as string) < Date.parse(value.creditedAt)) return null
   return Object.freeze({
     ledgerEntryId: value.ledgerEntryId as string,
-    deltaMicros: value.deltaMicros as string,
-    balanceMicros: value.balanceMicros as string,
+    amountNanos: value.amountNanos as string,
+    balanceNanos: value.balanceNanos as string,
     creditedAt: value.creditedAt,
     ...(reversed ? { refundEntryId: value.refundEntryId as string, reversedAt: value.reversedAt as string } : {}),
   })
@@ -144,12 +141,10 @@ function topupStateConsistent(
   credit: BillingTopupCredit | null,
 ) {
   if (status === 'paid') {
-    return creditStatus === 'credited' && credit !== null &&
-      (provider === 'tao' ? paymentStatus === 'finalized' : paymentStatus === 'succeeded')
+    return provider === 'stripe' && creditStatus === 'credited' && credit !== null && paymentStatus === 'succeeded'
   }
   if (status === 'refunded') {
-    return creditStatus === 'reversed' && credit !== null &&
-      (provider === 'tao' ? paymentStatus === 'finalized' : paymentStatus === 'refunded')
+    return provider === 'stripe' && creditStatus === 'reversed' && credit !== null && paymentStatus === 'refunded'
   }
   if (['failed', 'expired', 'underpaid', 'overpaid', 'manual_review', 'canceled'].includes(status)) {
     return creditStatus === 'not_applicable' && credit === null
@@ -160,14 +155,15 @@ function topupStateConsistent(
 export function parseBillingTopupOrderStatus(value: unknown): BillingTopupOrderStatus | null {
   if (!isRecord(value) || !onlyKnownKeys(value, orderStatusKeys) || !billingID(value.id, 'bord') ||
       !safeText(value.orderNo, 64) || !billingTopupProductIDValid(value.productId) || value.planId !== value.productId ||
-      !['tao', 'stripe'].includes(String(value.provider)) ||
+      value.provider !== 'stripe' ||
       !billingOrderLifecycleStatuses.includes(value.status as BillingOrderLifecycleStatus) ||
       !billingPaymentStatuses.includes(value.paymentStatus as BillingPaymentStatus) ||
-      value.entitlementStatus !== 'not_applicable' || !positiveMicros(value.paidMicros) ||
-      !positiveMicros(value.creditedMicros) || (value.expiresAt !== undefined && !isoDate(value.expiresAt))) return null
+      value.entitlementStatus !== 'not_applicable' || !positiveAmount(value.paidMicros) ||
+      !positiveAmount(value.creditedNanos) || BigInt(value.creditedNanos) !== BigInt(value.paidMicros) * 1_000n ||
+      (value.expiresAt !== undefined && !isoDate(value.expiresAt))) return null
   const creditStatus = value.creditStatus as BillingTopupCreditStatus
   if (!billingTopupCreditStatuses.includes(creditStatus)) return null
-  const credit = value.credit === null ? null : parseTopupCredit(value.credit, value.creditedMicros, creditStatus)
+  const credit = value.credit === null ? null : parseTopupCredit(value.credit, value.creditedNanos, creditStatus)
   if (value.credit !== null && credit === null) return null
   const provider = value.provider as BillingPaymentMethod
   const status = value.status as BillingOrderLifecycleStatus
@@ -187,7 +183,7 @@ export function parseBillingTopupOrderStatus(value: unknown): BillingTopupOrderS
     paymentStatus: value.paymentStatus as BillingPaymentStatus,
     creditStatus,
     paidMicros: value.paidMicros,
-    creditedMicros: value.creditedMicros,
+    creditedNanos: value.creditedNanos,
     ...(typeof value.expiresAt === 'string' ? { expiresAt: value.expiresAt } : {}),
     credit,
     failure,
@@ -195,45 +191,34 @@ export function parseBillingTopupOrderStatus(value: unknown): BillingTopupOrderS
 }
 
 function parseTopupHistoryPayment(value: unknown, provider: BillingPaymentMethod): BillingTopupHistoryPayment | null {
+  if (provider !== 'stripe') return null
   if (!isRecord(value) || !onlyKnownKeys(value, historyPaymentKeys) || !billingID(value.paymentId, 'bpay') ||
       !safeText(value.status, 48) || !isoDate(value.recordedAt) ||
-      (value.paidAt !== undefined && !isoDate(value.paidAt)) ||
-      (value.finalizedAt !== undefined && !isoDate(value.finalizedAt)) ||
-      (value.transactionHash !== undefined && (typeof value.transactionHash !== 'string' || !/^0x[0-9a-f]{64}$/.test(value.transactionHash))) ||
-      (value.transactionURL !== undefined && value.transactionURL !== `https://taostats.io/extrinsic/${String(value.transactionHash ?? '')}`)) return null
-  const tao = provider === 'tao'
-  const taoStatus = ['not_found', 'submitted', 'in_block', 'finalized', 'failed', 'reverted', 'duplicate',
-    'invalid_recipient', 'invalid_amount', 'invalid_sender', 'expired_quote'].includes(String(value.status))
+      (value.paidAt !== undefined && !isoDate(value.paidAt))) return null
   const stripeStatus = ['pending', 'processing', 'succeeded', 'failed', 'canceled', 'refunded'].includes(String(value.status))
-  if (tao !== (value.kind === 'tao_transaction') || (tao ? !taoStatus :
-    !['stripe_payment', 'stripe_invoice'].includes(String(value.kind)) || !stripeStatus)) return null
-  if (tao && (value.paidAt !== undefined || (value.transactionHash === undefined) !== (value.transactionURL === undefined) ||
-      (value.status === 'finalized') !== (value.finalizedAt !== undefined))) return null
-  if (!tao && (value.finalizedAt !== undefined || value.transactionHash !== undefined || value.transactionURL !== undefined)) return null
+  if (!['stripe_payment', 'stripe_invoice'].includes(String(value.kind)) || !stripeStatus) return null
   return Object.freeze({
     paymentId: value.paymentId as string,
     kind: value.kind as BillingTopupHistoryPayment['kind'],
     status: value.status as string,
     recordedAt: value.recordedAt,
     ...(typeof value.paidAt === 'string' ? { paidAt: value.paidAt } : {}),
-    ...(typeof value.finalizedAt === 'string' ? { finalizedAt: value.finalizedAt } : {}),
-    ...(typeof value.transactionHash === 'string' ? { transactionHash: value.transactionHash } : {}),
-    ...(typeof value.transactionURL === 'string' ? { transactionURL: value.transactionURL } : {}),
   })
 }
 
 function parseTopupHistoryItem(value: unknown): BillingTopupHistoryItem | null {
   if (!isRecord(value) || !onlyKnownKeys(value, historyItemKeys) || value.purchaseKind !== 'topup' ||
       !billingID(value.orderId, 'bord') || !safeText(value.orderNo, 64) ||
-      !billingTopupProductIDValid(value.planId) || !['tao', 'stripe'].includes(String(value.provider)) ||
-      value.orderType !== 'one_time' || !decimalUSD(value.amountUSD) || !positiveMicros(value.paidMicros) ||
-      decimalUSDMicros(value.amountUSD) !== BigInt(value.paidMicros) || !positiveMicros(value.creditedMicros) ||
+      !billingTopupProductIDValid(value.planId) || value.provider !== 'stripe' ||
+      value.orderType !== 'one_time' || !decimalUSD(value.amountUSD) || !positiveAmount(value.paidMicros) ||
+      decimalUSDMicros(value.amountUSD) !== BigInt(value.paidMicros) || !positiveAmount(value.creditedNanos) ||
+      BigInt(value.creditedNanos) !== BigInt(value.paidMicros) * 1_000n ||
       !billingOrderLifecycleStatuses.includes(value.status as BillingOrderLifecycleStatus) || !isoDate(value.createdAt) ||
       (value.paidAt !== undefined && !isoDate(value.paidAt)) ||
       !['not_refunded', 'refunded'].includes(String(value.refundStatus)) ||
       (value.refundedAt !== undefined && !isoDate(value.refundedAt)) || !Array.isArray(value.payments) || value.payments.length > 20) return null
   const provider = value.provider as BillingPaymentMethod
-  if ((provider === 'tao' && value.renewalMode !== 'manual') || (provider === 'stripe' && value.renewalMode !== 'one_time')) return null
+  if (provider !== 'stripe' || value.renewalMode !== 'one_time') return null
   const status = value.status as BillingOrderLifecycleStatus
   const paid = status === 'paid' || status === 'refunded'
   const refunded = status === 'refunded'
@@ -241,7 +226,7 @@ function parseTopupHistoryItem(value: unknown): BillingTopupHistoryItem | null {
       refunded !== (value.refundedAt !== undefined)) return null
   const creditStatus = value.creditStatus as BillingTopupCreditStatus
   if (!billingTopupCreditStatuses.includes(creditStatus)) return null
-  const credit = value.credit === null ? null : parseTopupCredit(value.credit, value.creditedMicros, creditStatus)
+  const credit = value.credit === null ? null : parseTopupCredit(value.credit, value.creditedNanos, creditStatus)
   if (value.credit !== null && credit === null) return null
   const payments: BillingTopupHistoryPayment[] = []
   const paymentIDs = new Set<string>()
@@ -262,7 +247,7 @@ function parseTopupHistoryItem(value: unknown): BillingTopupHistoryItem | null {
     provider,
     amountUSD: value.amountUSD,
     paidMicros: value.paidMicros,
-    creditedMicros: value.creditedMicros,
+    creditedNanos: value.creditedNanos,
     status,
     creditStatus,
     createdAt: value.createdAt,

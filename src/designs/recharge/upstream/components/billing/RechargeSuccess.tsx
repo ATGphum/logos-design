@@ -16,11 +16,11 @@ export function RechargeSuccess({ status, canStartAnother, onStartAnother, onVie
       <span className="billing-eyebrow">{pageText('billing.rechargeSuccess.ledgerVerified')}</span>
       <h2>{pageText('billing.rechargeSuccess.rechargeComplete')}</h2>
       <p>{pageText('billing.rechargeSuccess.theFinalizedPaymentAddedCreditExactlyOnce')}</p>
-      <div className="recharge-success__balance"><small>{pageText('billing.rechargeSuccess.availableBalance')}</small><strong>{formatBillingCreditUSD(status.credit.balanceMicros)}</strong></div>
+      <div className="recharge-success__balance"><small>{pageText('billing.rechargeSuccess.availableBalance')}</small><strong>{formatBillingCreditUSD(status.credit.balanceNanos)}</strong></div>
       <dl>
-        <div><dt>{pageText('billing.rechargeSuccess.creditAdded')}</dt><dd>{formatBillingCreditUSD(status.credit.deltaMicros)}</dd></div>
+        <div><dt>{pageText('billing.rechargeSuccess.creditAdded')}</dt><dd>{formatBillingCreditUSD(status.credit.amountNanos)}</dd></div>
         <div><dt>{pageText('billing.rechargeSuccess.order')}</dt><dd><code>{status.orderNo}</code></dd></div>
-        <div><dt>{pageText('billing.rechargeSuccess.payment')}</dt><dd>{status.provider === 'tao' ? pageText('billing.rechargeSuccess.taoFinalized') : pageText('billing.rechargeSuccess.cardSucceeded')}</dd></div>
+        <div><dt>{pageText('billing.rechargeSuccess.payment')}</dt><dd>{pageText('billing.rechargeSuccess.cardSucceeded')}</dd></div>
         <div><dt>{pageText('billing.rechargeSuccess.ledgerEntry')}</dt><dd><code>{status.credit.ledgerEntryId}</code></dd></div>
       </dl>
       <div>

@@ -16,7 +16,7 @@
   margin: 0 auto;
 }
 
-/* DESIGN SHIM styling — recharge history folds away.
+/* DESIGN HANDOFF styling — recharge history folds away.
    Lives here rather than in upstream/billing.css so `npm run sync` has one less
    file to reconcile; the markup change itself is marked in RechargeHistory.tsx. */
 .logos-console-root.cs-billing-root .recharge-history__header--foldable {

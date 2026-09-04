@@ -23,9 +23,9 @@ export const designs: DesignEntry[] = [
     id: "login",
     title: "Login",
     description:
-      "Full login screen — sign-in gate, ring login, night theme. Ported from llm-interface.html #login-view.",
+      "Original stage-two ring gate — waitlist first, beta OAuth access inside the enso, responsive night theme.",
     status: "proposed",
-    maps_to: "logos-webui login / auth surface",
+    maps_to: "logos-infra marketing hero / auth orchestration",
     component: lazy(() => import("./login/LoginDesign")),
   },
   {

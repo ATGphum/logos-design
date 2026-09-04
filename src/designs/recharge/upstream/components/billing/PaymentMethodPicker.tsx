@@ -1,12 +1,12 @@
-import { CreditCard, Orbit } from 'lucide-react'
+import { CreditCard } from 'lucide-react'
 import { billingPaymentMethodAvailability } from '../../billingPaymentMethods'
 import type { BillingPaymentMethod, BillingPlan, BillingPublicConfig } from '../../billingTypes'
 import { pageText } from '../../i18n/pageText'
 
 const methods = () => ({
   stripe: { label: pageText('billing.paymentMethodPicker.stripe'), detail: pageText('billing.paymentMethodPicker.cardAndEligibleExpressMethods'), icon: CreditCard },
-  tao: { label: pageText('billing.paymentMethodPicker.payWithTao'), detail: pageText('billing.paymentMethodPicker.oneTimeTransferOnBittensorMainnet'), icon: Orbit },
 })
+const methodOrder = ['stripe'] as const
 
 export function PaymentMethodPicker({ plan, config, value, onChange }: {
   plan: BillingPlan
@@ -15,12 +15,12 @@ export function PaymentMethodPicker({ plan, config, value, onChange }: {
   onChange: (method: BillingPaymentMethod) => void
 }) {
   const availability = billingPaymentMethodAvailability(plan, config)
-  const anyEnabled = availability.stripe.enabled || availability.tao.enabled
+  const anyEnabled = availability.stripe.enabled
 
   return (
     <fieldset className="billing-method-picker">
       <legend>{pageText('billing.paymentMethodPicker.paymentMethod')}</legend>
-      {(Object.keys(methods()) as BillingPaymentMethod[]).map((id) => {
+      {methodOrder.map((id) => {
         const method = methods()[id]
         const capability = availability[id]
         const Icon = method.icon

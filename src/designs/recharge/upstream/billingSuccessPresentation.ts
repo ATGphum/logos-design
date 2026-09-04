@@ -6,7 +6,7 @@ export type BillingSuccessPresentation = Readonly<{
   headline: string
   summary: string
   accessLabel: string
-  providerLabel: 'Stripe' | 'TAO · Bittensor Mainnet'
+  providerLabel: 'Stripe'
   renewalLabel: string
   renewalDetail: string
   periodLabel: string
@@ -32,21 +32,6 @@ export function billingSuccessPresentation(
     periodLabel: scheduled ? pageText('billing.billingSuccess.scheduledAccessPeriod') : pageText('billing.billingSuccess.currentAccessPeriod'),
     startsAt: entitlement.startsAt,
     expiresAt: entitlement.expiresAt,
-  }
-
-  if (status.provider === 'tao') {
-    if (status.subscription !== undefined || status.subscriptionId !== undefined) return null
-    return Object.freeze({
-      ...base,
-      summary: scheduled
-        ? pageText('billing.billingSuccess.bittensorScheduledSummary', { plan: plan.name })
-        : pageText('billing.billingSuccess.bittensorActiveSummary', { plan: plan.name }),
-      providerLabel: 'TAO · Bittensor Mainnet',
-      renewalLabel: pageText('billing.billingSuccess.manualRenewal'),
-      renewalDetail: pageText('billing.billingSuccess.taoManualRenewalDetail'),
-      nextDateLabel: pageText('billing.billingSuccess.accessExpires'),
-      nextDate: entitlement.expiresAt,
-    })
   }
 
   if (plan.billingMode === 'recurring') {

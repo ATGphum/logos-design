@@ -12,7 +12,7 @@
  * exactly as tall as the bar and exactly round without a single hand-tuned number.
  *
  * Left is the bolt: how fast to answer, three settings, shown as an arc closing around
- * the capsule's own outline. Right is Goal mode, drawn as the same bending lattice the thread uses while
+ * the capsule's own outline — full ring is fastest, since that is what a bolt means. Right is Goal mode, drawn as the same bending lattice the thread uses while
  * it thinks — off it sits at rest, on it bends. Speed on the left, depth on the right,
  * and the same figure means the same thing in both places.
  */
@@ -74,7 +74,11 @@ export function ThinkSpeed({ level, onCycle }: { level: number; onCycle: () => v
           height="48"
           rx="15"
           pathLength="100"
-          style={{ strokeDasharray: `${((level + 1) * 100) / 3} 100` }}
+          /* Inverted against the list order: the glyph is a bolt and the control is
+             called Speed, so the arc has to measure speed. Full ring is Instant, a third
+             is Deep. Read the other way it said "how much thinking", which is the
+             opposite of what the bolt promises. */
+          style={{ strokeDasharray: `${((SPEED_COUNT - level) * 100) / 3} 100` }}
         />
       </svg>
       <svg className="v2-bulb-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

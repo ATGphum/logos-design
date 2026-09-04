@@ -2872,7 +2872,8 @@
   opacity: 1;
 }
 /* deepest setting reads as committed: the glyph brightens with the ring */
-.v2-root .v2-bulb-speed.lv2 .v2-bulb-ring-arc {
+/* the brightest ring belongs to the full one, which is now Instant */
+.v2-root .v2-bulb-speed.lv0 .v2-bulb-ring-arc {
   opacity: 1;
   filter: drop-shadow(0 0 7px rgba(var(--v2-violet), 1)) drop-shadow(0 0 16px rgba(var(--v2-violet), 0.6));
 }

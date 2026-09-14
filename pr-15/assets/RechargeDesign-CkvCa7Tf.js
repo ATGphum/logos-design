@@ -1,1 +1,0 @@
-import{a,j as r}from"./index-Co9KMP3V.js";import{A as t}from"./AdoptedRechargePage-t07F_4tv.js";import"./arrow-left-5QqmhDPu.js";function i(){const{resolvedMode:e}=a();return r.jsx("div",{className:`rc-adopted-frame${e==="dark"?" rc-adopted-night":""}`,children:r.jsx(t,{night:e==="dark"})})}export{i as default};

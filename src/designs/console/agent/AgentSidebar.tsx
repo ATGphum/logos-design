@@ -3,16 +3,32 @@
  * Ported from marketing/llm-interface.html lines 4212-4410 plus the sidebar
  * behaviors in the chat script (pin/delete, section fold, resize, flash).
  */
-import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from "react"
+import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent, type ReactNode } from "react"
 import ensoWhite from "../assets/enso.svg"
 import ensoInk from "../assets/enso-ink.svg"
 import type { ChatItem, Project } from "../state"
-import { ChevronDown, ConsoleIcon, GearIcon, NewChatIcon, PinIcon, PlusIcon, SearchIcon, SidebarFoldIcon, TrashIcon } from "./icons"
+import { ChevronDown, ConsoleIcon, ConsoleIconV2, FolderIcon, GearIcon, NewChatIcon, NewChatIconV2, PinIcon, PlusIcon, ProjectsIconV2, SearchIcon, SearchIconV2, SidebarFoldIcon, TrashIcon } from "./icons"
 
 export interface AgentSidebarProps {
   light: boolean
   chats: ChatItem[]
   projects: Project[]
+  /**
+   * V2: Projects becomes a control you click to pick one, rather than a section that
+   * unfolds a tree. Off everywhere else, which leaves the section exactly as it was.
+   */
+  projectsAsPicker?: boolean
+  /** V2: an account control in the footer, in the Settings button's place. */
+  accountSlot?: ReactNode
+  /** V2: the lockup itself folds the column, as well as the arrow beside it. */
+  logoFolds?: boolean
+  /** folding the column dismisses any open picker — see the effect below */
+  sidebarCollapsed?: boolean
+  /** V2: the nav item stays lit while the thing it opened is open */
+  searchActive?: boolean
+  consoleActive?: boolean
+  /** V2: use the leaner nav glyphs */
+  v2Icons?: boolean
   activeChatId: string | null
   newChatActive: boolean
   isMobile: boolean
@@ -135,6 +151,13 @@ export function AgentSidebar(props: AgentSidebarProps) {
     light,
     chats,
     projects,
+    projectsAsPicker,
+    accountSlot,
+    logoFolds,
+    sidebarCollapsed,
+    searchActive,
+    consoleActive,
+    v2Icons,
     activeChatId,
     newChatActive,
     isMobile,
@@ -152,6 +175,18 @@ export function AgentSidebar(props: AgentSidebarProps) {
 
   const sidebarRef = useRef<HTMLElement>(null)
   const [openProjects, setOpenProjects] = useState<Record<string, boolean>>({})
+  const [pickerOpen, setPickerOpen] = useState(false)
+  /* V2 draws its own, leaner nav set; everything else keeps the stock glyphs */
+  const Search = v2Icons ? SearchIconV2 : SearchIcon
+  const Compose = v2Icons ? NewChatIconV2 : NewChatIcon
+  const Term = v2Icons ? ConsoleIconV2 : ConsoleIcon
+  const Projects = v2Icons ? ProjectsIconV2 : FolderIcon
+
+  /* Folding the column leaves the picker open behind it, so the rail shows Projects
+     lit as a full white pill with nothing under it. The fold dismisses it. */
+  useEffect(() => {
+    setPickerOpen(false)
+  }, [sidebarCollapsed])
   const [subsOpen, setSubsOpen] = useState(false)
   const projectsFold = useSectionFold()
   const recentFold = useSectionFold()
@@ -212,7 +247,13 @@ export function AgentSidebar(props: AgentSidebarProps) {
       <div className="sidebar-logo">
         {/* Logo icon: enso mark, swapped to ink in light mode (prototype ensoURI) */}
         <img className="logo-img" alt="LOGOS" src={light ? ensoInk : ensoWhite} />
-        <span className="logo-word">LOGOS</span>
+        <span
+          className={"logo-word" + (logoFolds ? " logo-word-btn" : "")}
+          onClick={logoFolds ? onToggleSidebar : undefined}
+          title={logoFolds ? "Collapse sidebar" : undefined}
+        >
+          LOGOS
+        </span>
         <button className="sidebar-fold" onClick={onToggleSidebar} title="Collapse sidebar">
           <span className="fold-arrow">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
@@ -225,18 +266,51 @@ export function AgentSidebar(props: AgentSidebarProps) {
       <div className="sidebar-resizer" id="sidebar-resizer" title="Drag to resize" ref={resizerRef}></div>
 
       <nav className="sidebar-nav">
-        <button className="nav-btn" onClick={onOpenSearch}>
-          <SearchIcon />
+        <button className={"nav-btn" + (searchActive ? " active" : "")} onClick={onOpenSearch}>
+          <Search />
           Search
         </button>
         <button className={"nav-btn" + (newChatActive ? " active" : "")} id="new-chat-btn" onClick={onNewChat}>
-          <NewChatIcon />
+          <Compose />
           New chat
         </button>
-        <button className="nav-btn" onClick={onOpenConsole}>
-          <ConsoleIcon />
+        <button className={"nav-btn" + (consoleActive ? " active" : "")} onClick={onOpenConsole}>
+          <Term />
           Console
         </button>
+        {/* PROJECTS — picker form (V2). One control: click it, choose a project. */}
+        {projectsAsPicker ? (
+          <div className="proj-picker-wrap">
+            <button
+              className={"nav-btn proj-picker-btn" + (pickerOpen ? " active" : "")}
+              onClick={() => setPickerOpen((v) => !v)}
+              title="Choose a project"
+            >
+              <Projects />
+              Projects
+            </button>
+            {pickerOpen ? (
+              <div className="proj-picker">
+                {projects.map((proj) => (
+                  <button
+                    key={proj.id}
+                    className={"proj-picker-item" + (proj.id === activeChatId ? " active" : "")}
+                    onClick={() => {
+                      onSelectChat(proj.id, proj.chatKey)
+                      setPickerOpen(false)
+                    }}
+                  >
+                    {proj.title}
+                  </button>
+                ))}
+                <button className="proj-picker-item proj-picker-new" onClick={() => setPickerOpen(false)}>
+                  <PlusIcon />
+                  New project
+                </button>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
       </nav>
 
       <div className="sidebar-section">
@@ -263,8 +337,9 @@ export function AgentSidebar(props: AgentSidebarProps) {
           ))}
         </div>
 
-        {/* PROJECTS */}
+        {/* PROJECTS — original folding section */}
         <div
+          hidden={projectsAsPicker}
           className={"section-label sec-toggle" + (projectsFold.collapsed ? " collapsed" : "")}
           style={{ marginTop: 2 }}
           onClick={projectsFold.toggle}
@@ -287,7 +362,12 @@ export function AgentSidebar(props: AgentSidebarProps) {
             </button>
           </span>
         </div>
-        <div id="projects-list" className={subsOpen ? "subs-open" : undefined} ref={projectsFold.listRef}>
+        <div
+          hidden={projectsAsPicker}
+          id="projects-list"
+          className={subsOpen ? "subs-open" : undefined}
+          ref={projectsFold.listRef}
+        >
           {projects.map((proj) => (
             <div key={proj.id} className={"project" + (openProjects[proj.id] ? " open" : "")}>
               <div
@@ -379,10 +459,14 @@ export function AgentSidebar(props: AgentSidebarProps) {
       </div>
 
       <div className="sidebar-footer">
-        <button className="nav-btn" onClick={onOpenSettings}>
-          <GearIcon />
-          Settings
-        </button>
+        {/* V2 puts the account here and folds Settings into its menu; without the slot
+            the footer is the Settings button, as before. */}
+        {accountSlot ?? (
+          <button className="nav-btn" onClick={onOpenSettings}>
+            <GearIcon />
+            Settings
+          </button>
+        )}
         {/* mobile: new-chat bubble next to the settings bubble */}
         {isMobile ? (
           <button className="nav-btn mfoot-new" title="New chat" onClick={onNewChat}>

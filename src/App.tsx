@@ -86,7 +86,8 @@ export default function App() {
             </Suspense>
             <div className="gal-chrome">
               {/* only the console has admin-only surfaces to hide */}
-              {active.id === "console" ? <ViewAsSwitch /> : null}
+              {/* both console shells honour it — V2 renders the same ConsoleView */}
+              {active.id === "console" || active.id === "v2" ? <ViewAsSwitch /> : null}
               <a className="gal-back" href="#/" title="Back to gallery">
                 ⌂
               </a>

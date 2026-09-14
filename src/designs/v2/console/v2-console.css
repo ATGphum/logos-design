@@ -1,0 +1,1078 @@
+/* ===========================================================================
+   V2 console
+   ---------------------------------------------------------------------------
+   Flat surfaces, even edges, one hairline.
+
+   The agent page's raised/recessed material — a fill fading down the height under a
+   rim lit along the top, or its inverse — is right there and wrong here. It reads as
+   a highlight on one large control on an empty page; on a console, where every screen
+   is thirty controls at once, the same treatment is a wash on the panels and a bevel
+   on the buttons, and the whole thing dates.
+
+   So: fill and a hairline, and rank carried by value. A field is one step darker than
+   its surroundings; a primary button is solid white; nothing glows. The console shares
+   the agent's palette, type and spacing rather than its lighting model.
+
+   One scale, used everywhere:
+     28 / 20 / 15 / 13.5 / 12 / 10.5px
+     radii 16 (window) / 12 (card) / 9 (control) / 999 (pill)
+     the page gutter is 30px and the rhythm between cards is 18px
+   =========================================================================== */
+
+.k-console {
+  --k-ink: #ffffff;
+  --k-dim: rgba(255, 255, 255, 0.62);
+  --k-faint: rgba(255, 255, 255, 0.4);
+  --k-line: rgba(255, 255, 255, 0.08);
+  --k-line-2: rgba(255, 255, 255, 0.13);
+  --k-violet: 150, 122, 255;
+  --k-ease: cubic-bezier(0.33, 0.45, 0.25, 1);
+
+  position: fixed;
+  inset: 7vh 7vw;
+  max-width: 1180px;
+  max-height: 790px;
+  margin: auto;
+  z-index: 450;
+  display: grid;
+  grid-template-columns: 224px 1fr;
+  border-radius: 16px;
+  border: 1px solid transparent;
+  overflow: hidden;
+  /* same reasoning as the cards, and more so at 1180x790: an even edge, flat ground */
+  background: #101010;
+  border-color: rgba(255, 255, 255, 0.13);
+  box-shadow: 0 44px 130px -34px rgba(0, 0, 0, 0.92);
+  color: var(--k-ink);
+  font-family: var(--app-font-sans, "Inter", system-ui, sans-serif);
+  font-size: 13.5px;
+  line-height: 1.55;
+  opacity: 1;
+  transition: opacity 0.42s var(--k-ease), transform 0.42s var(--k-ease);
+}
+.k-console.out {
+  opacity: 0;
+  transform: scale(0.985);
+  pointer-events: none;
+}
+
+/* ————————————————— sidebar ————————————————— */
+.k-side {
+  /* min-height: 0 — a grid item's automatic minimum is its content, and without this
+     a long nav pushes the row taller than the window and the footer falls outside it */
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 12px 12px;
+  border-right: 1px solid var(--k-line);
+  background: rgba(255, 255, 255, 0.016);
+}
+
+.k-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 3px 10px 15px;
+}
+.k-brand img {
+  width: 22px;
+  height: 22px;
+  filter: brightness(1.2) drop-shadow(0 0 5px rgba(255, 255, 255, 0.35));
+}
+.k-brand span {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--k-ink);
+}
+
+/* A field still reads as a field one step darker than its surroundings — it does not
+   also need a lit lower lip and an inset shadow. That machining is legible on a single
+   large control and merely heavy on a 32px box in a sidebar. */
+.k-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 0 10px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--k-line);
+  background: rgba(0, 0, 0, 0.22);
+  transition: border-color 0.18s ease;
+}
+.k-search:focus-within {
+  border-color: var(--k-line-2);
+}
+.k-search svg {
+  width: 13px;
+  height: 13px;
+  flex: 0 0 auto;
+  color: var(--k-faint);
+}
+.k-search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  background: none;
+  outline: none;
+  color: var(--k-ink);
+  font: inherit;
+  font-size: 12.5px;
+}
+.k-search input::placeholder {
+  color: var(--k-faint);
+}
+
+.k-nav {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.k-nav::-webkit-scrollbar {
+  width: 0;
+}
+.k-group + .k-group {
+  margin-top: 16px;
+}
+.k-group-l {
+  padding: 0 10px 6px;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  /* token, not a literal — hardcoded white here vanished entirely on the light ground */
+  color: var(--k-faint);
+  opacity: 0.85;
+}
+
+.k-navitem {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--k-dim);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+.k-navitem svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+}
+.k-navitem:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--k-ink);
+}
+/* the selected page is the one white thing in the column, as on the agent page */
+.k-navitem.on {
+  background: #ffffff;
+  color: #0e0e0e;
+  font-weight: 500;
+}
+.k-nav-none {
+  padding: 8px 10px;
+  color: var(--k-faint);
+  font-size: 12.5px;
+}
+
+.k-side-foot {
+  flex: 0 0 auto;
+  padding-top: 12px;
+  margin-top: 10px;
+  border-top: 1px solid var(--k-line);
+}
+.k-vers {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 10px 0;
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: var(--k-faint);
+  opacity: 0.8;
+}
+
+/* ————————————————— main ————————————————— */
+.k-main {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.k-topbar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  height: 52px;
+  padding: 0 16px 0 30px;
+  border-bottom: 1px solid var(--k-line);
+}
+/* A breadcrumb rather than a banner: it says where you are AND how to get out, in one
+   line and 52px, where the old console spent 100px on a title it repeats below. */
+.k-crumb {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12.5px;
+}
+.k-crumb-root {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--k-faint);
+  font: inherit;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+  transition: color 0.18s ease;
+}
+.k-crumb-root:hover {
+  color: var(--k-ink);
+}
+.k-crumb-sep {
+  color: var(--k-faint);
+  opacity: 0.6;
+}
+.k-crumb-here {
+  color: var(--k-ink);
+  font-weight: 500;
+}
+
+.k-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.k-iconbtn,
+.k-close {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--k-dim);
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+.k-iconbtn svg,
+.k-close svg {
+  width: 16px;
+  height: 16px;
+}
+.k-iconbtn:hover,
+.k-close:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--k-ink);
+}
+/* It is a control, so it is sized like one. It was a 26px avatar and two lines of 10-12px
+   type with no padding and no hit area — about 90x26 of target in a 52px bar, which is
+   both hard to hit and reads as a label rather than something you press. */
+.k-who {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 40px;
+  padding: 0 10px 0 7px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+.k-who:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--k-line-2);
+}
+.k-who-caret {
+  width: 13px;
+  height: 13px;
+  color: var(--k-faint);
+}
+.k-who-ava {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid var(--k-line-2);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+.k-who-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+.k-who-text b {
+  font-size: 12.5px;
+  font-weight: 500;
+}
+.k-who-text em {
+  font-style: normal;
+  font-size: 10.5px;
+  color: var(--k-faint);
+}
+
+.k-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+}
+.k-scroll::-webkit-scrollbar {
+  width: 9px;
+}
+.k-scroll::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.16) padding-box;
+}
+
+/* ————————————————— page ————————————————— */
+.k-page {
+  padding: 26px 30px 40px;
+}
+.k-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 22px;
+}
+.k-head h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+}
+/* the one line that tells a stranger what they are looking at */
+.k-head p {
+  margin: 7px 0 0;
+  max-width: 58ch;
+  font-size: 13.5px;
+  color: var(--k-dim);
+}
+.k-head-acts {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.k-body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ————————————————— buttons (raised) ————————————————— */
+/* Flat, for the same reason the panels are.
+ *
+ * These carried the agent bar's treatment — a fill fading down the height, a rim lit
+ * along the top, a drop shadow, and on the primary an outward white glow and an inset
+ * highlight. Five effects on a 34px button. That vocabulary earns its place on the
+ * composer, which is one large control on an empty page; on a console header next to a
+ * title it is the bevelled-button look, and it dates the whole page.
+ *
+ * A button needs to read as pressable and to rank against its neighbour. Fill and a
+ * hairline do both: the secondary is a tint of the ground, the primary is solid white.
+ * Nothing glows.
+ */
+.k-btn {
+  flex: 0 0 auto;
+  padding: 9px 15px;
+  border: 1px solid var(--k-line-2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.055);
+  color: rgba(255, 255, 255, 0.92);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+.k-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.k-btn.pri {
+  border-color: transparent;
+  background: #ffffff;
+  color: #0e0e0e;
+  font-weight: 600;
+}
+.k-btn.pri:hover {
+  background: #eceae3;
+}
+
+/* ————————————————— readings ————————————————— */
+/* Deliberately unboxed. A figure is not a control, and the moment you put it in a card
+   with a border people try to click it — which is exactly what the old tiles did. */
+.k-figs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 2px 30px;
+  padding: 2px 0 4px;
+}
+.k-fig-l {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--k-faint);
+}
+.k-fig-v {
+  margin-top: 5px;
+  font-size: 27px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.k-fig-v.ok {
+  color: #a6dfb6;
+}
+.k-fig-v.warn {
+  color: #e9c694;
+}
+.k-fig-n {
+  margin-top: 3px;
+  font-size: 12px;
+  color: var(--k-faint);
+}
+
+/* ————————————————— card (raised) ————————————————— */
+/* Flat, with an even edge all the way round.
+ *
+ * These were built the way the buttons are — a fill fading down the height under a
+ * border-box gradient brightest along the top. That treatment scales with the object,
+ * and nobody scaled it. On a 38px capsule a 15%-to-4.5% ramp is a highlight; on a 130px
+ * panel it is a visible wash, and a bottom border at 4.5% white against a #0d0d0d ground
+ * is invisible. So each card had a bright top and no bottom: the shape dissolved rather
+ * than ended, which is what made them read as odd glowing blobs rather than panels.
+ *
+ * A panel's job is to say "these things belong together", and that needs a closed edge,
+ * not a lit one. Flat fill, one hairline all the way round, no glow. The raised/recessed
+ * material stays where it belongs — on controls small enough that the gradient reads as
+ * a highlight instead of a gradient.
+ */
+.k-card {
+  padding: 18px 20px 6px;
+  border: 1px solid var(--k-line-2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.026);
+}
+.k-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding-bottom: 4px;
+}
+.k-card h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+.k-card-head p {
+  margin: 4px 0 0;
+  max-width: 62ch;
+  font-size: 12.5px;
+  color: var(--k-dim);
+}
+
+/* ————————————————— rows ————————————————— */
+/* Aligned by construction, not by eye.
+ *
+ * Each row used to flush its own value, tag and chevron to the right independently, so
+ * the columns landed wherever that row's tag happened to be wide — three rows, three
+ * different x positions for the same "0". Nothing was crooked in isolation; the list was
+ * crooked as a whole, which is exactly the kind of thing that reads as unfinished.
+ *
+ * The list owns the tracks now and every row borrows them with `grid-template-columns:
+ * subgrid`. So the value column is as wide as the widest value in that list, the tag
+ * column as wide as the widest tag, and every row sits on the same four verticals — with
+ * no fixed widths to guess at and nothing to re-tune when the content changes.
+ *
+ * Each row declares all four cells even when empty, because a missing cell would shift
+ * everything after it into the wrong track.
+ */
+.k-rows {
+  display: grid;
+  grid-template-columns: 1fr auto auto 15px;
+  margin: 8px -20px 0;
+}
+.k-row {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: center;
+  column-gap: 14px;
+  padding: 11px 20px;
+  border: 0;
+  border-top: 1px solid var(--k-line);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+.k-row.is-link {
+  cursor: pointer;
+  transition: background 0.16s ease;
+}
+.k-row.is-link:hover {
+  background: rgba(255, 255, 255, 0.045);
+}
+.k-row-name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 13.5px;
+}
+.k-row-name em {
+  font-style: normal;
+  margin-top: 1px;
+  font-size: 12px;
+  color: var(--k-faint);
+}
+/* numbers line up on their right edge, tags all start at the same left edge */
+.k-row-val {
+  justify-self: end;
+  font-size: 13.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--k-ink);
+}
+.k-row-tagcell {
+  justify-self: start;
+  display: flex;
+}
+.k-row-gocell {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+}
+.k-row-go {
+  width: 15px;
+  height: 15px;
+  color: var(--k-faint);
+  transition: color 0.16s ease, transform 0.2s var(--k-ease);
+}
+.k-row.is-link:hover .k-row-go {
+  color: var(--k-ink);
+  transform: translateX(2px);
+}
+
+/* a browser without subgrid still gets a readable row, just not shared tracks */
+@supports not (grid-template-columns: subgrid) {
+  .k-rows {
+    display: block;
+  }
+  .k-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+  }
+}
+
+/* No box.
+ *
+ * A filled green pill is a lot of ink for "nothing is wrong", and at this size a tinted
+ * block with a tinted border and tinted text is three treatments carrying one fact. It
+ * was also the only saturated shape on a page that is otherwise ink and paper, so it
+ * caught the eye first and said the least.
+ *
+ * Colour is a marker now, not a container: a 5px dot in the state's hue with the label in
+ * ordinary text. The signal survives — you can still find the amber ones at a glance —
+ * and the row stops shouting. Neutral tags are simply text, so a column of tags reads as
+ * one thing rather than two.
+ */
+.k-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--k-dim);
+  white-space: nowrap;
+}
+.k-tag.ok::before,
+.k-tag.warn::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+}
+.k-tag.ok::before {
+  background: #6ebe82;
+  box-shadow: 0 0 6px rgba(110, 190, 130, 0.55);
+}
+.k-tag.warn::before {
+  background: #d2a05a;
+  box-shadow: 0 0 6px rgba(210, 160, 90, 0.55);
+}
+
+/* ————————————————— credit block ————————————————— */
+/* The summary centres against the figure rather than sitting on its baseline. Baseline
+   alignment is right for two runs of text; against a 46px numeral it drops a two-line
+   block to the bottom of the figure's box and leaves a hole above it. */
+.k-credit {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  margin: 12px 0 14px;
+}
+.k-credit-fig {
+  font-size: 46px;
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.k-credit-cur {
+  margin-right: 4px;
+  font-size: 22px;
+  color: var(--k-faint);
+  vertical-align: 0.35em;
+}
+.k-credit-side {
+  padding-top: 2px;
+}
+.k-credit-spent {
+  font-size: 13px;
+  color: var(--k-dim);
+}
+.k-credit-spent b {
+  font-weight: 600;
+  color: var(--k-ink);
+}
+.k-credit-tok {
+  font-size: 12px;
+  color: var(--k-faint);
+}
+
+/* the meter is a recess with something filling it */
+.k-meter {
+  height: 7px;
+  border-radius: 99px;
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8), inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+.k-meter span {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, rgba(var(--k-violet), 0.75), rgba(var(--k-violet), 1));
+  box-shadow: 0 0 12px -2px rgba(var(--k-violet), 0.75);
+}
+.k-meter-l {
+  margin: 7px 0 14px;
+  font-size: 12px;
+  color: var(--k-faint);
+}
+
+/* ————————————————— table ————————————————— */
+.k-table-wrap {
+  margin: 8px -20px 0;
+  overflow-x: auto;
+}
+.k-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.k-table th {
+  padding: 0 14px 8px;
+  border-bottom: 1px solid var(--k-line);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-align: left;
+  color: var(--k-faint);
+  white-space: nowrap;
+}
+.k-table th:first-child,
+.k-table td:first-child {
+  padding-left: 20px;
+}
+.k-table th:last-child,
+.k-table td:last-child {
+  padding-right: 20px;
+}
+.k-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--k-line);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.k-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.03);
+}
+.k-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.k-table code {
+  font-family: "Geist Mono", ui-monospace, Menlo, monospace;
+  font-size: 11.5px;
+  color: var(--k-dim);
+}
+.k-td-act,
+.k-th-act {
+  text-align: right;
+}
+.k-linkbtn {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--k-dim);
+  font: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: color 0.16s ease;
+}
+.k-linkbtn:hover {
+  color: var(--k-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.k-ava {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-right: 9px;
+  border-radius: 999px;
+  border: 1px solid var(--k-line-2);
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 10px;
+  font-weight: 600;
+  vertical-align: -6px;
+}
+.k-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 8px;
+  border-radius: 999px;
+  background: var(--k-faint);
+  vertical-align: 1px;
+}
+.k-dot.ok {
+  background: #6ebe82;
+  box-shadow: 0 0 7px rgba(110, 190, 130, 0.7);
+}
+.k-dot.warn {
+  background: #d2a05a;
+  box-shadow: 0 0 7px rgba(210, 160, 90, 0.7);
+}
+.k-dot.err {
+  background: #c96b6b;
+}
+
+/* ————————————————— fields (recessed) ————————————————— */
+.k-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin: 14px 0 16px;
+}
+.k-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.k-field-l {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--k-faint);
+}
+.k-input {
+  padding: 10px 12px;
+  border: 1px solid var(--k-line);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.22);
+  color: var(--k-ink);
+  font: inherit;
+  font-size: 13.5px;
+  outline: none;
+  transition: border-color 0.18s ease;
+}
+.k-input:focus {
+  border-color: rgba(255, 255, 255, 0.28);
+}
+.k-field-h {
+  font-size: 11.5px;
+  color: var(--k-faint);
+}
+
+.k-formfoot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 4px 0 16px;
+}
+
+/* ————————————————— switch ————————————————— */
+.k-switch {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  width: calc(100% + 40px);
+  margin: 8px -20px 0;
+  padding: 12px 20px;
+  border: 0;
+  border-top: 1px solid var(--k-line);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.16s ease;
+}
+.k-switch:hover {
+  background: rgba(255, 255, 255, 0.045);
+}
+.k-switch-track {
+  position: relative;
+  flex: 0 0 auto;
+  width: 38px;
+  height: 22px;
+  border-radius: 999px;
+  border: 1px solid var(--k-line-2);
+  background: rgba(0, 0, 0, 0.3);
+  transition: background 0.34s var(--k-ease), border-color 0.34s var(--k-ease);
+}
+.k-switch-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  /* raised: lit along the top */
+  background: rgba(255, 255, 255, 0.55);
+  transition: transform 0.34s var(--k-ease), background 0.34s var(--k-ease);
+}
+.k-switch.on .k-switch-track {
+  background: rgba(var(--k-violet), 0.32);
+  border-color: rgba(var(--k-violet), 0.55);
+}
+.k-switch.on .k-switch-knob {
+  transform: translateX(16px);
+  background: rgb(168, 145, 255);
+}
+.k-switch-text {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 13.5px;
+}
+.k-switch-text em {
+  font-style: normal;
+  margin-top: 1px;
+  font-size: 12px;
+  color: var(--k-faint);
+}
+.k-switch-state {
+  flex: 0 0 auto;
+  font-size: 12px;
+  color: var(--k-faint);
+}
+.k-switch.on .k-switch-state {
+  color: rgb(178, 156, 255);
+}
+
+/* ————————————————— nothing here yet ————————————————— */
+.k-empty {
+  background: rgba(255, 255, 255, 0.02);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 54px 30px 60px;
+  border: 1px dashed var(--k-line-2);
+  border-radius: 12px;
+  text-align: center;
+}
+.k-empty svg {
+  width: 26px;
+  height: 26px;
+  color: var(--k-faint);
+  opacity: 0.6;
+}
+.k-empty p {
+  margin: 0;
+  max-width: 46ch;
+  font-size: 13px;
+  color: var(--k-dim);
+}
+
+/* ————————————————— light ————————————————— */
+.k-console.day {
+  --k-ink: #14130f;
+  --k-dim: rgba(26, 25, 22, 0.66);
+  --k-faint: rgba(26, 25, 22, 0.46);
+  --k-line: rgba(26, 25, 22, 0.09);
+  --k-line-2: rgba(26, 25, 22, 0.14);
+  background: #f7f5ef;
+  border-color: rgba(26, 25, 22, 0.16);
+}
+.k-console.day .k-side {
+  background: rgba(26, 25, 22, 0.022);
+}
+.k-console.day .k-brand img {
+  filter: invert(1) brightness(0.15);
+}
+.k-console.day .k-navitem.on {
+  background: #1a1916;
+  color: #f6f4ee;
+}
+.k-console.day .k-search,
+.k-console.day .k-input,
+.k-console.day .k-switch-track {
+  background: rgba(26, 25, 22, 0.045);
+  border-color: rgba(26, 25, 22, 0.14);
+}
+.k-console.day .k-card {
+  background: #ffffff;
+  border-color: rgba(26, 25, 22, 0.11);
+}
+.k-console.day .k-empty {
+  background: rgba(26, 25, 22, 0.02);
+}
+.k-console.day .k-btn {
+  background: #ffffff;
+  border-color: rgba(26, 25, 22, 0.16);
+  color: #1a1916;
+}
+.k-console.day .k-btn:hover {
+  background: #f4f2ec;
+  border-color: rgba(26, 25, 22, 0.26);
+}
+.k-console.day .k-btn.pri {
+  background: #1a1916;
+  border-color: transparent;
+  color: #f6f4ee;
+}
+.k-console.day .k-btn.pri:hover {
+  background: #333129;
+}
+
+.k-console.day .k-row.is-link:hover,
+.k-console.day .k-switch:hover,
+.k-console.day .k-navitem:hover,
+.k-console.day .k-table tbody tr:hover td {
+  background: rgba(26, 25, 22, 0.04);
+}
+.k-console.day .k-who-ava,
+.k-console.day .k-ava {
+  background: rgba(26, 25, 22, 0.06);
+  border-color: rgba(26, 25, 22, 0.14);
+  color: #1a1916;
+}
+.k-console.day .k-meter {
+  background: rgba(26, 25, 22, 0.1);
+  box-shadow: inset 0 1px 2px rgba(26, 25, 22, 0.2);
+}
+.k-console.day .k-fig-v.ok {
+  color: #2f6b40;
+}
+.k-console.day .k-fig-v.warn {
+  color: #7a5320;
+}
+.k-console.day .k-tag.ok::before {
+  background: #3f8a55;
+}
+.k-console.day .k-tag.warn::before {
+  background: #b07f38;
+}
+.k-console.day .k-scroll {
+  scrollbar-color: rgba(26, 25, 22, 0.2) transparent;
+}
+
+/* ————————————————— narrow ————————————————— */
+@media (max-width: 900px) {
+  .k-console {
+    inset: 0;
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+  .k-side {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--k-line);
+  }
+  .k-side .k-search,
+  .k-side .k-side-foot,
+  .k-brand span {
+    display: none;
+  }
+  .k-nav {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+  }
+  .k-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .k-group + .k-group {
+    margin-top: 0;
+  }
+  .k-group-l {
+    padding: 0 4px 0 8px;
+    white-space: nowrap;
+  }
+  .k-navitem {
+    width: auto;
+    white-space: nowrap;
+  }
+  .k-page {
+    padding: 20px 18px 34px;
+  }
+  .k-head {
+    flex-direction: column;
+    gap: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .k-console,
+  .k-switch-knob,
+  .k-switch-track,
+  .k-row-go {
+    transition-duration: 0.01ms;
+  }
+}

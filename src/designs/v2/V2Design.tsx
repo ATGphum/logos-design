@@ -19,6 +19,7 @@
  */
 import { useRef, useState } from "react"
 import { useTheme } from "../../vendor/webui/theme"
+import { getLandingPageHref } from "../../sandbox/landingPageHref"
 import "../console/chat.css"
 import "../console/console.css"
 import "./v2.css"
@@ -91,14 +92,9 @@ export default function V2Design() {
     requestAnimationFrame(() => setCsHidden(false))
   }
 
-  /* Mainpage is a button on the agent page now, and it goes to the actual landing page
-     rather than to the sandbox gallery. The marketing site is in this repo — the
-     prototype at marketing/llm-interface.html opens straight onto its mp-view — so the
-     dev server already serves it and the two surfaces can simply be joined up. Browser
-     back returns here. */
-  const MAINPAGE = "/marketing/llm-interface.html"
+  /* Mainpage goes to the standalone landing page in every preview environment. */
   const backHome = () => {
-    window.location.assign(MAINPAGE)
+    window.location.assign(getLandingPageHref())
   }
 
   const rootClass =
@@ -111,7 +107,7 @@ export default function V2Design() {
     (signedIn ? "" : " v2-signedout")
 
   return (
-    <div className={rootClass}>
+    <div id="v2-root" className={rootClass}>
       <AgentView
         light={light}
         onToggleLight={() => setLight((v) => !v)}

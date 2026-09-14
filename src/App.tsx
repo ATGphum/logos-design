@@ -2,6 +2,7 @@ import { Component, Suspense, useEffect, useState, type ReactNode } from "react"
 import { ArrowRight, Eye, EyeOff } from "lucide-react"
 import { ThemeProvider } from "./vendor/webui/theme"
 import { designs } from "./designs/registry"
+import { getLandingPageHref } from "./sandbox/landingPageHref"
 import { ViewAsProvider, ViewAsSwitch } from "./sandbox/viewAs"
 
 function useHashRoute(): string {
@@ -40,11 +41,7 @@ function Gallery() {
   const [showOtherDesigns, setShowOtherDesigns] = useState(false)
   const logosAgent = designs.find((design) => design.id === "v2")
   const otherDesigns = designs.filter((design) => design.id !== "v2")
-  const landingPageHref = import.meta.env.DEV
-    ? "./marketing/llm-interface.html"
-    : import.meta.env.MODE === "single"
-      ? "./marketing-preview.html"
-      : "./marketing.html"
+  const landingPageHref = getLandingPageHref()
 
   return (
     <div className="gal-root">

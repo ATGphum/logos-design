@@ -4,23 +4,43 @@
 /* ===== Gallery shell (gal-*) — sandbox chrome, not part of any design ===== */
 .gal-root {
   min-height: 100vh;
-  padding: 48px clamp(24px, 8vw, 120px);
+  padding: clamp(40px, 7vw, 88px) clamp(24px, 8vw, 120px) 112px;
   font-family: var(--app-font-sans, sans-serif);
 }
-.gal-header h1 {
-  font-size: 28px;
-  letter-spacing: 0.14em;
+.gal-root > header,
+.gal-root > main {
+  width: min(1080px, 100%);
+  margin-inline: auto;
+}
+.gal-eyebrow {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  margin-bottom: 8px;
+  opacity: 0.5;
+}
+.gal-header h1 {
+  font-size: clamp(32px, 5vw, 52px);
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
 }
 .gal-header p {
-  opacity: 0.65;
-  margin-bottom: 36px;
+  font-size: 16px;
+  opacity: 0.58;
+  margin-bottom: clamp(36px, 6vw, 64px);
 }
 .gal-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 16px;
+}
+.gal-grid-featured {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
 }
 .gal-card {
   display: block;
@@ -29,11 +49,25 @@
   padding: 20px;
   text-decoration: none;
   color: inherit;
-  transition: border-color 0.15s, transform 0.15s;
+  transition:
+    border-color 0.15s,
+    background-color 0.15s,
+    transform 0.15s;
 }
 a.gal-card:hover {
   border-color: var(--text-weak, #888);
   transform: translateY(-2px);
+}
+.gal-card-featured {
+  min-height: 240px;
+  padding: 26px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: color-mix(in srgb, currentColor 2%, transparent);
+}
+.gal-card-featured:hover {
+  background: color-mix(in srgb, currentColor 4%, transparent);
 }
 .gal-card-top {
   display: flex;
@@ -41,9 +75,25 @@ a.gal-card:hover {
   align-items: baseline;
   margin-bottom: 10px;
 }
+.gal-card-kind {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+.gal-card-copy {
+  max-width: 40ch;
+}
 .gal-title {
+  display: block;
   font-weight: 600;
   font-size: 17px;
+}
+.gal-card-featured .gal-title {
+  margin-bottom: 12px;
+  font-size: clamp(24px, 3vw, 32px);
+  letter-spacing: -0.025em;
 }
 .gal-status {
   font-size: 11px;
@@ -58,12 +108,76 @@ a.gal-card:hover {
   font-size: 13.5px;
   line-height: 1.5;
   opacity: 0.75;
-  margin-bottom: 8px;
+  margin: 0 0 8px;
+}
+.gal-card-featured .gal-desc {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  opacity: 0.62;
 }
 .gal-maps {
   font-size: 12px;
   opacity: 0.5;
   font-family: var(--app-font-mono, monospace);
+}
+.gal-other {
+  margin-top: clamp(56px, 9vw, 96px);
+  padding-top: 32px;
+  border-top: 1px solid var(--border-weak-base, #3333);
+}
+.gal-section-heading {
+  margin-bottom: 24px;
+}
+.gal-section-heading .gal-eyebrow {
+  margin-bottom: 6px;
+}
+.gal-section-heading h2 {
+  font-size: 20px;
+  font-weight: 600;
+}
+.gal-grid-secondary .gal-card {
+  min-height: 180px;
+}
+.gal-reveal {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 9999;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 16px;
+  border: 1px solid #8886;
+  border-radius: 999px;
+  background: #111d;
+  box-shadow: 0 2px 16px #0006;
+  backdrop-filter: blur(8px);
+  color: #eee;
+  font: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+.gal-reveal:hover {
+  border-color: #999b;
+}
+.gal-reveal:focus-visible,
+.gal-card:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+@media (max-width: 720px) {
+  .gal-grid-featured {
+    grid-template-columns: 1fr;
+  }
+  .gal-card-featured {
+    min-height: 210px;
+  }
+  .gal-reveal {
+    right: 12px;
+    bottom: 12px;
+  }
 }
 .gal-back {
   position: fixed;

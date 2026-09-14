@@ -48,7 +48,7 @@ export const designs: DesignEntry[] = [
   },
   {
     id: "v2",
-    title: "V2 shell (experimental)",
+    title: "Logos Agent",
     description:
       "Same surfaces, inverted entry: the agent page is what loads, login is a small window over it, and Mainpage and Console become buttons on the agent rather than places you start from. Composes the V1 views rather than forking them.",
     status: "exploration",

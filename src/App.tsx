@@ -1,4 +1,5 @@
 import { Component, Suspense, useEffect, useState, type ReactNode } from "react"
+import { ArrowRight, Eye, EyeOff } from "lucide-react"
 import { ThemeProvider } from "./vendor/webui/theme"
 import { designs } from "./designs/registry"
 import { ViewAsProvider, ViewAsSwitch } from "./sandbox/viewAs"
@@ -36,39 +37,101 @@ class DesignBoundary extends Component<
 }
 
 function Gallery() {
+  const [showOtherDesigns, setShowOtherDesigns] = useState(false)
+  const logosAgent = designs.find((design) => design.id === "v2")
+  const otherDesigns = designs.filter((design) => design.id !== "v2")
+  const landingPageHref = import.meta.env.DEV
+    ? "./marketing/llm-interface.html"
+    : import.meta.env.MODE === "single"
+      ? "./marketing-preview.html"
+      : "./marketing.html"
+
   return (
     <div className="gal-root">
       <header className="gal-header">
-        <h1>LOGOS design</h1>
-        <p>
-          Prototypes built on <code>logos-webui</code> design tokens. Pick a
-          design; PRs get a self-contained preview build.
-        </p>
+        <span className="gal-eyebrow">Product demo</span>
+        <h1>LOGOS</h1>
+        <p>Choose an experience to explore.</p>
       </header>
-      <div className="gal-grid">
-        {designs.map((d) => (
-          <a key={d.id} className="gal-card" href={`#/${d.id}`}>
+
+      <main>
+        <div className="gal-grid gal-grid-featured">
+          <a className="gal-card gal-card-featured" href={landingPageHref}>
             <div className="gal-card-top">
-              <span className="gal-title">{d.title}</span>
-              <span className={`gal-status gal-status-${d.status}`}>
-                {d.status}
-              </span>
+              <span className="gal-card-kind">Website</span>
+              <ArrowRight aria-hidden="true" size={20} strokeWidth={1.5} />
             </div>
-            <p className="gal-desc">{d.description}</p>
-            <p className="gal-maps">→ {d.maps_to}</p>
+            <div className="gal-card-copy">
+              <span className="gal-title">Landing Page</span>
+              <p className="gal-desc">
+                Explore the public LOGOS story, from the product premise to how
+                the system works.
+              </p>
+            </div>
           </a>
-        ))}
-        <div className="gal-card gal-card-static">
-          <div className="gal-card-top">
-            <span className="gal-title">Marketing page</span>
-            <span className="gal-status gal-status-shipped">html</span>
-          </div>
-          <p className="gal-desc">
-            The marketing site stays a standalone HTML prototype — open{" "}
-            <code>marketing/llm-interface.html</code> directly.
-          </p>
+
+          {logosAgent ? (
+            <a className="gal-card gal-card-featured" href="#/v2">
+              <div className="gal-card-top">
+                <span className="gal-card-kind">Product</span>
+                <ArrowRight aria-hidden="true" size={20} strokeWidth={1.5} />
+              </div>
+              <div className="gal-card-copy">
+                <span className="gal-title">{logosAgent.title}</span>
+                <p className="gal-desc">
+                  Step into the agent-first LOGOS experience, with the console
+                  and main site close at hand.
+                </p>
+              </div>
+            </a>
+          ) : null}
         </div>
-      </div>
+
+        {showOtherDesigns ? (
+          <section className="gal-other" aria-labelledby="gal-other-title">
+            <div className="gal-section-heading">
+              <span className="gal-eyebrow">Design archive</span>
+              <h2 id="gal-other-title">Other designs</h2>
+            </div>
+            <div className="gal-grid gal-grid-secondary">
+              {otherDesigns.map((design) => (
+                <a
+                  key={design.id}
+                  className="gal-card"
+                  href={`#/${design.id}`}
+                >
+                  <div className="gal-card-top">
+                    <span className="gal-title">{design.title}</span>
+                    <span
+                      className={`gal-status gal-status-${design.status}`}
+                    >
+                      {design.status}
+                    </span>
+                  </div>
+                  <p className="gal-desc">{design.description}</p>
+                  <p className="gal-maps">{design.maps_to}</p>
+                </a>
+              ))}
+            </div>
+          </section>
+        ) : null}
+      </main>
+
+      <button
+        className="gal-reveal"
+        type="button"
+        aria-expanded={showOtherDesigns}
+        onClick={() => setShowOtherDesigns((isVisible) => !isVisible)}
+      >
+        {showOtherDesigns ? (
+          <EyeOff aria-hidden="true" size={17} />
+        ) : (
+          <Eye aria-hidden="true" size={17} />
+        )}
+        {showOtherDesigns
+          ? "Hide other designs"
+          : `Show other designs (${otherDesigns.length})`}
+      </button>
     </div>
   )
 }

@@ -5,6 +5,8 @@
 - `V2Design.tsx` owns the full-screen shell, login gate, account controls, console, and thread states.
 - `v2.css` contains the complete visual treatment for the shell and its responsive states.
 - `../../sandbox/landingPageHref.ts` resolves the Landing Page target for local development, GitHub Pages, and the self-contained preview build.
+- `../../sandbox/v2AuthHandoff.ts` carries a one-time simulated OAuth success from the
+  landing/login previews so V2 opens signed in without repeating its login gate.
 
 ## Production CSS invariant
 
@@ -17,3 +19,6 @@ The expected default shell has hidden Code/Research/Write suggestions, a 58px he
 - Development: `/marketing/llm-interface.html`
 - Hosted build: `${BASE_URL}marketing.html`
 - Single-file preview: `./marketing-preview.html`
+
+Successful beta-provider login resolves the matching app root and opens `#/v2`. Opening
+`#/v2` directly still starts signed out and shows the V2 login gate.

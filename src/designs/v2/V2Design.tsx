@@ -20,6 +20,7 @@
 import { useRef, useState } from "react"
 import { useTheme } from "../../vendor/webui/theme"
 import { getLandingPageHref } from "../../sandbox/landingPageHref"
+import { consumeV2AuthHandoff } from "../../sandbox/v2AuthHandoff"
 import "../console/chat.css"
 import "../console/console.css"
 import "./v2.css"
@@ -44,8 +45,9 @@ export default function V2Design() {
 
   /* the pop-out shows once on opening and is dismissable with its X; the Login / Sign up
      buttons in the top right bring it back. The agent page itself stays untouched. */
-  const [signedIn, setSignedIn] = useState(false)
-  const [gateOpen, setGateOpen] = useState(true)
+  const [enteredAuthenticated] = useState(consumeV2AuthHandoff)
+  const [signedIn, setSignedIn] = useState(enteredAuthenticated)
+  const [gateOpen, setGateOpen] = useState(!enteredAuthenticated)
   const [authMode, setAuthMode] = useState<AuthMode>("login")
 
   const openAuth = (mode: AuthMode) => {

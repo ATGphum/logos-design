@@ -3710,20 +3710,14 @@
       w.classList.remove('rw-invalid');
     }
     function mpRingContinue() {
-      var cs = document.getElementById('cs-view');
-      if (cs) {
-        cs.style.display = 'block';
-        var mp0 = document.getElementById('mp-view');
-        if (mp0 && !mp0.classList.contains('mp-light') && !cs.classList.contains('cs-night')) {
-          cs.classList.add('cs-night');
-          var ico = document.getElementById('cs-mode-ico');
-          if (ico) ico.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
-        }
-      }
-      var v = document.getElementById('mp-view');
-      v.classList.add('mp-hidden');
-      /* mobile: fade the old view out quickly — no long overlap */
-      setTimeout(function () { v.style.display = 'none'; v.classList.remove('mp-login-mode'); }, (window.matchMedia && window.matchMedia('(max-width: 700px)').matches) ? 240 : 650);
+      try { sessionStorage.setItem('logos-design:v2-auth-handoff', '1'); } catch (e) {}
+
+      /* Source runs one directory below the app; hosted and single-file landing pages
+         sit beside it. Resolve both shapes without baking in a deployment base path. */
+      var sourcePreview = /\/marketing\/llm-interface\.html$/.test(location.pathname);
+      var app = new URL(sourcePreview ? '../' : './', location.href);
+      app.hash = '/v2';
+      location.assign(app.href);
     }
     /* mobile: compact login buttons — icon + provider name, same vibe, fits the ring.
        Runs on load AND on resize/orientation, so it works in every mobile viewer. */

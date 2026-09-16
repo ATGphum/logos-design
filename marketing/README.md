@@ -43,5 +43,6 @@ conflict. To keep merges painless:
 1. `<style>` — all CSS, grouped by area with `/* ===== SECTION ===== */` banners
 2. `#mp-view` — marketing page, enso hero, ring login
 3. `#login-view` — full login screen
-4. `#cs-view` — console: sidebar, top bar, one `.cs-panel` per page
+4. `#cs-view` — legacy embedded console retained as prototype reference; successful
+   ring login now hands off to the authenticated V2 agent experience
 5. `<script>` — page logic; console state starts at `CI_LIST`

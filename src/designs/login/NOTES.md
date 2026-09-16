@@ -22,7 +22,8 @@ split-panel `#login-view` concept.
 3. A valid e-mail produces the current product-style reserved confirmation.
 4. Access for beta users reveals the three OAuth provider choices inside the
    same ring.
-5. A provider choice simulates the auth handoff by opening `#/console`.
+5. A provider choice simulates the auth handoff by opening authenticated V2 at
+   `#/v2`; the one-time handoff marker prevents V2 from showing a second login.
 6. Back unwinds the current step; from the initial sign-up view it returns to
    the design gallery.
 

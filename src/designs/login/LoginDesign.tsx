@@ -8,6 +8,7 @@ import githubIcon from "./assets/login-ico-github.webp"
 import googleIcon from "./assets/login-ico-google.webp"
 import discordIcon from "./assets/login-ico-discord.webp"
 import ensoWhite from "./assets/enso-white.svg"
+import { markV2AuthHandoff } from "../../sandbox/v2AuthHandoff"
 
 type LoginStep = "signup" | "login" | "reserved"
 type Provider = "github" | "google" | "discord"
@@ -85,7 +86,8 @@ export default function LoginDesign() {
     if (provider) return
     setProvider(nextProvider)
     timerRef.current = window.setTimeout(() => {
-      window.location.hash = "#/console"
+      markV2AuthHandoff()
+      window.location.hash = "#/v2"
     }, 420)
   }
 
